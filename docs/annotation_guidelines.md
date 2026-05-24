@@ -12,6 +12,8 @@ For each case, annotate what a lightweight router should propose from the curren
 
 The router does not rewrite memory content, delete memories, merge memories, assign project IDs, predict confidence, or resolve conflicts. It only predicts attention hints.
 
+Supervised dataset cases must store these labels under a `target` object. Do not use `expected_output` as the dataset field name.
+
 ## Memory Types
 
 Use one of four memory types for each `write_span`:
@@ -64,7 +66,7 @@ Each JSONL case must satisfy:
 
 ## MVP Categories
 
-Seed examples should cover these categories with at least two examples each:
+Seed examples should cover these categories with at least four examples each during Day 2:
 
 - `simple_write`
 - `multi_write`

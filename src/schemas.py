@@ -136,7 +136,7 @@ class DecisionCase(StrictModel):
     current_user_input: str = Field(min_length=1)
     recent_context: list[ContextTurn] = Field(default_factory=list, max_length=4)
     candidate_memories: list[CandidateMemory] = Field(default_factory=list, max_length=8)
-    expected_output: RouterTarget
+    target: RouterTarget
 
     @field_validator("tags")
     @classmethod
@@ -154,14 +154,14 @@ class DecisionCase(StrictModel):
 
         unknown_read_hints = [
             memory_id
-            for memory_id in self.expected_output.read_hints
+            for memory_id in self.target.read_hints
             if memory_id not in set(memory_ids)
         ]
         if unknown_read_hints:
             raise ValueError(f"read_hints reference missing candidate IDs: {unknown_read_hints}")
 
         write_seen: set[str] = set()
-        for write_span in self.expected_output.write_spans:
+        for write_span in self.target.write_spans:
             if write_span.span in write_seen:
                 raise ValueError(f"duplicate write span: {write_span.span!r}")
             write_seen.add(write_span.span)
@@ -171,7 +171,7 @@ class DecisionCase(StrictModel):
                     f"{write_span.span!r}"
                 )
 
-        for ignore_span in self.expected_output.ignore_spans:
+        for ignore_span in self.target.ignore_spans:
             if ignore_span not in self.current_user_input:
                 raise ValueError(
                     "ignore_spans must be exact substrings of current_user_input: "
