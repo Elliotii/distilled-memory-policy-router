@@ -1,6 +1,6 @@
 # Synthetic Data Generation Prompts
 
-These prompts are Day 2 scaffolding for future synthetic data generation. They are not wired to a real API yet. Generated cases must use the repository schema in `src/schemas.py` and the target field must be named `target`.
+These prompts are offline scaffolding for future synthetic data generation. They are not wired to a real API yet. Generated cases must use the repository schema in `src/schemas.py` and the target field must be named `target`.
 
 The practical focus is business-continuity memory for coding agents: project progress, durable preferences and decisions, important facts, and selective ignore behavior. `sop` remains an allowed memory type, but generation should not overproduce generic workflow rules that would more naturally live in skills, rule files, `AGENTS.md`, or project instructions.
 

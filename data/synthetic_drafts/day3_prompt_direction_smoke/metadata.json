@@ -1,0 +1,45 @@
+{
+  "mode": "mock",
+  "workflow": "small-draft",
+  "generator_name": "local_mock_generator",
+  "generator_version": "day3_offline_v1",
+  "requested_count": 100,
+  "schema_target_field": "target",
+  "api_provider": null,
+  "model_name": null,
+  "prompt_templates": [
+    {
+      "name": "direct_coding_agent",
+      "generator_prompt_id": "direct_coding_agent_v2",
+      "prompt_version": "v2",
+      "description": "Business/project memory examples for coding agents."
+    },
+    {
+      "name": "game_dev_workflow",
+      "generator_prompt_id": "game_dev_workflow_v2",
+      "prompt_version": "v2",
+      "description": "Game-dev progress, fact, decision, and noise-filtering examples."
+    },
+    {
+      "name": "hard_negative_noisy_memory",
+      "generator_prompt_id": "hard_negative_noisy_memory_v2",
+      "prompt_version": "v2",
+      "description": "Hard negatives for business-memory pollution and irrelevant reads."
+    }
+  ],
+  "run_id": "day3_prompt_direction_smoke",
+  "generated_at_utc": "2026-05-24T12:08:56+00:00",
+  "raw_count": 100,
+  "valid_count": 100,
+  "invalid_count": 0,
+  "validation_passed": true,
+  "validation_scope": "structural_only",
+  "semantic_quality_checked": false,
+  "output_paths": {
+    "raw_cases": "data/synthetic_drafts/day3_prompt_direction_smoke/raw_cases.jsonl",
+    "valid_cases": "data/synthetic_drafts/day3_prompt_direction_smoke/cases.jsonl",
+    "invalid_samples": "data/synthetic_drafts/day3_prompt_direction_smoke/invalid_samples.jsonl",
+    "validation_report": "data/synthetic_drafts/day3_prompt_direction_smoke/validation_report.txt",
+    "distribution_report": "data/synthetic_drafts/day3_prompt_direction_smoke/distribution_report.md"
+  }
+}

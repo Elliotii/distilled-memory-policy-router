@@ -1,0 +1,45 @@
+{
+  "mode": "mock",
+  "workflow": "small-draft",
+  "generator_name": "local_mock_generator",
+  "generator_version": "day3_offline_v1",
+  "requested_count": 100,
+  "schema_target_field": "target",
+  "api_provider": null,
+  "model_name": null,
+  "prompt_templates": [
+    {
+      "name": "direct_coding_agent",
+      "generator_prompt_id": "direct_coding_agent_v2",
+      "prompt_version": "v2",
+      "description": "General coding-agent memory policy examples."
+    },
+    {
+      "name": "game_dev_workflow",
+      "generator_prompt_id": "game_dev_workflow_v2",
+      "prompt_version": "v2",
+      "description": "Game-development workflow examples without real engine integration."
+    },
+    {
+      "name": "hard_negative_noisy_memory",
+      "generator_prompt_id": "hard_negative_noisy_memory_v2",
+      "prompt_version": "v2",
+      "description": "Hard negatives for false writes, missed ignores, and irrelevant reads."
+    }
+  ],
+  "run_id": "day3_provider_mock_smoke",
+  "generated_at_utc": "2026-05-24T12:01:44+00:00",
+  "raw_count": 100,
+  "valid_count": 100,
+  "invalid_count": 0,
+  "validation_passed": true,
+  "validation_scope": "structural_only",
+  "semantic_quality_checked": false,
+  "output_paths": {
+    "raw_cases": "data/synthetic_drafts/day3_provider_mock_smoke/raw_cases.jsonl",
+    "valid_cases": "data/synthetic_drafts/day3_provider_mock_smoke/cases.jsonl",
+    "invalid_samples": "data/synthetic_drafts/day3_provider_mock_smoke/invalid_samples.jsonl",
+    "validation_report": "data/synthetic_drafts/day3_provider_mock_smoke/validation_report.txt",
+    "distribution_report": "data/synthetic_drafts/day3_provider_mock_smoke/distribution_report.md"
+  }
+}

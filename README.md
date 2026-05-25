@@ -44,10 +44,14 @@ docs/
 data/
   seed_examples.jsonl
 src/
+  analysis/
+    dataset_distribution.py
   schemas.py
   data_generation/
     generate_cases.py
+    pipeline.py
     prompt_templates.py
+    providers/
   validation/
     validate_cases.py
 ```
@@ -79,10 +83,20 @@ The generation scripts are offline-only for now:
 python3 src/data_generation/generate_cases.py --list-templates
 python3 src/data_generation/generate_cases.py --dry-run --template direct_coding_agent --count 5
 python3 src/data_generation/generate_cases.py --mock --count 5
-python3 src/data_generation/generate_cases.py --workflow small-draft --run-id day2_mock_100_business_framing_v2 --count 100 --min-per-category 10
+python3 src/data_generation/generate_cases.py --workflow small-draft --run-id day3_mock_100_business_framing --count 100 --min-per-category 10
 ```
 
 No real model API is connected.
+
+## Analysis Reports
+
+Generate a structural distribution gap report with:
+
+```bash
+python3 src/analysis/dataset_distribution.py --dataset seed:data/seed_examples.jsonl --dataset mock:data/synthetic_drafts/day3_prompt_direction_smoke/cases.jsonl --output results/day3_distribution_gap_report.md --min-per-category 5
+```
+
+This report compares category balance, write-type distribution, recent-context coverage, candidate-memory coverage, and ignore-span coverage. It is still structural analysis, not semantic review.
 
 Workflow outputs use this path convention:
 
