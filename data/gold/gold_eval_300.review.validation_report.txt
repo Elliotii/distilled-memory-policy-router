@@ -1,0 +1,35 @@
+Validation report for data/gold/gold_eval_300.review.jsonl
+total cases: 300
+category counts:
+  simple_write: 30
+  multi_write: 30
+  read_relevant_memory: 30
+  ignore_noise: 30
+  correction_or_revision: 30
+  context_dependent_reference: 30
+  conflicting_memory: 30
+  mixed_write_and_ignore: 30
+  no_action_needed: 30
+  distractor_memory_selection: 30
+memory type counts - candidate_memories:
+  sop: 110
+  fact: 339
+  decision: 132
+  task_state: 62
+memory type counts - target.write_spans:
+  sop: 49
+  fact: 84
+  decision: 59
+  task_state: 27
+target totals:
+  read_hints: 273
+  write_spans: 219
+  ignore_spans: 67
+invalid read_hints: 0
+invalid spans: 0
+duplicate case_id: 0
+duplicate current_user_input: 0
+schema errors: 0
+invalid JSON records: 0
+category minimum errors: 0
+All checks passed.

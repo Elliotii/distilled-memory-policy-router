@@ -1,0 +1,10 @@
+Semantic audit for data/gold/gold_eval_300.review.jsonl
+records: 300
+category_counts: {'simple_write': 30, 'multi_write': 30, 'read_relevant_memory': 30, 'ignore_noise': 30, 'correction_or_revision': 30, 'context_dependent_reference': 30, 'conflicting_memory': 30, 'mixed_write_and_ignore': 30, 'no_action_needed': 30, 'distractor_memory_selection': 30}
+write_type_counts: {'sop': 49, 'fact': 84, 'decision': 59, 'task_state': 27}
+metrics: {'candidate_memories': 214, 'recent_context': 164, 'ignore_spans': 60, 'rich_candidate_cases': 75}
+semantic_problems: 0
+type_label_flags: 0
+near_duplicates>=0.82: 0
+safety_hits: 0
+Semantic audit passed.

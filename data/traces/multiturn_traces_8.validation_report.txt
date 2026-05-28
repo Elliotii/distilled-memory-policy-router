@@ -1,0 +1,10 @@
+Trace validation report for data/traces/multiturn_traces_8.jsonl
+total traces: 8
+total turns: 24
+turns_with_candidate_memories: 17
+turns_with_recent_context: 16
+target.read_hints: 21
+target.write_spans: 18
+target.ignore_spans: 6
+errors: 0
+All checks passed.

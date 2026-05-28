@@ -1,0 +1,33 @@
+{
+  "dataset_id": "multiturn_traces_8",
+  "description": "MVP multi-turn trace set for demonstrating memory-policy behavior across short conversations. Each turn reuses the same router target contract as single-turn cases.",
+  "record_count": 8,
+  "turn_count": 24,
+  "split": "trace_eval",
+  "review_status": "synthetic_reviewed",
+  "status": "mvp_trace_set",
+  "created_utc": "2026-05-28T08:13:02+00:00",
+  "domain_counts": {
+    "backend": 1,
+    "frontend": 1,
+    "devops": 1,
+    "data_engineering": 1,
+    "testing": 1,
+    "cli": 1,
+    "product_engineering": 1,
+    "ml_platform": 1
+  },
+  "target_totals": {
+    "read_hints": 21,
+    "write_spans": 18,
+    "ignore_spans": 6
+  },
+  "coverage": {
+    "turns_with_candidate_memories": 17,
+    "turns_with_recent_context": 16,
+    "traces_with_correction_or_conflict": 2,
+    "traces_with_ignore_noise": 3
+  },
+  "validation_artifact": "data/traces/multiturn_traces_8.validation_report.txt",
+  "schema_doc": "docs/multiturn_trace_schema.md"
+}

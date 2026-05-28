@@ -1,0 +1,49 @@
+{
+  "dataset_id": "gold_eval_300",
+  "description": "Final MVP gold evaluation set promoted from data/gold/gold_eval_300.review.jsonl after Opus web audits and human-review minor fixes. The JSONL keeps the router schema unchanged; character offsets are stored in data/gold/gold_eval_300.offsets.jsonl.",
+  "source_review_file": "data/gold/gold_eval_300.review.jsonl",
+  "record_count": 300,
+  "split": "gold_eval",
+  "review_status": "human_reviewed",
+  "status": "final_gold_eval",
+  "created_utc": "2026-05-28T07:37:46+00:00",
+  "category_counts": {
+    "simple_write": 30,
+    "multi_write": 30,
+    "read_relevant_memory": 30,
+    "ignore_noise": 30,
+    "correction_or_revision": 30,
+    "context_dependent_reference": 30,
+    "conflicting_memory": 30,
+    "mixed_write_and_ignore": 30,
+    "no_action_needed": 30,
+    "distractor_memory_selection": 30
+  },
+  "write_type_counts": {
+    "sop": 49,
+    "fact": 84,
+    "decision": 59,
+    "task_state": 27
+  },
+  "target_totals_and_coverage": {
+    "records": 300,
+    "read_hints": 273,
+    "write_spans": 219,
+    "ignore_spans": 67,
+    "cases_with_candidate_memories": 214,
+    "cases_with_recent_context": 164,
+    "cases_with_5_to_8_candidate_memories": 75,
+    "cases_with_ignore_spans": 60
+  },
+  "validation_artifacts": [
+    "data/gold/gold_eval_300.validation_report.txt",
+    "data/gold/gold_eval_300.semantic_audit_report.txt",
+    "data/gold/gold_eval_300.distribution_report.md"
+  ],
+  "offset_artifact": "data/gold/gold_eval_300.offsets.jsonl",
+  "notes": [
+    "All records are marked review_status=human_reviewed.",
+    "The final JSONL intentionally does not embed offsets because the project router schema predicts only read_hints, write_spans, and ignore_spans.",
+    "Offsets are derived locally from exact substring spans and stored separately for evaluation convenience."
+  ]
+}

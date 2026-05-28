@@ -58,6 +58,14 @@ src/
 
 ## Current Dataset
 
+The authoritative MVP data assets are listed in `docs/data_asset_inventory.md`.
+The current completed entrypoints are:
+
+- `data/processed/synthetic_train_5000.jsonl`
+- `data/dev/dev_250.jsonl`
+- `data/gold/gold_eval_300.jsonl`
+- `data/traces/multiturn_traces_8.jsonl`
+
 `data/seed_examples.jsonl` contains manually written English seed examples covering the ten MVP capability categories:
 
 - `simple_write`
@@ -77,7 +85,7 @@ Structural validation is not semantic review. Passing the validator means the JS
 
 ## Generation Scaffolding
 
-The generation scripts are offline-only for now:
+The generation scripts default to offline mock generation:
 
 ```bash
 python3 src/data_generation/generate_cases.py --list-templates
@@ -86,7 +94,22 @@ python3 src/data_generation/generate_cases.py --mock --count 5
 python3 src/data_generation/generate_cases.py --workflow small-draft --run-id day3_mock_100_business_framing --count 100 --min-per-category 10
 ```
 
-No real model API is connected.
+An OpenAI-compatible teacher provider can be configured for Packy, but real API use is
+blocked unless the command explicitly passes `--provider packy --allow-real-api`.
+See `docs/teacher_api_setup.md` before running a real teacher smoke test. Current Packy
+guidance is to use `reasoning_effort=xhigh` on the existing chat-completions route and
+run controlled category-targeted drafts before any larger synthetic batch.
+
+```bash
+python3 src/data_generation/generate_cases.py \
+  --provider packy \
+  --allow-real-api \
+  --workflow teacher-controlled \
+  --run-id day4_packy_controlled_100_xhigh \
+  --count 100 \
+  --max-real-count 100 \
+  --min-per-category 10
+```
 
 ## Analysis Reports
 
