@@ -1,0 +1,80 @@
+{
+  "purpose": "Day7 student-router instruction data",
+  "source_files": {
+    "train": "data/processed/synthetic_train_5000.jsonl",
+    "dev": "data/dev/dev_250.jsonl",
+    "gold": "data/gold/gold_eval_300.jsonl"
+  },
+  "output_files": {
+    "dev_prompt": "results/day7_student_data/dev_prompt_messages.jsonl",
+    "dev_smoke_prompt": "results/day7_student_data/dev_smoke_20_prompt_messages.jsonl",
+    "gold_prompt": "results/day7_student_data/gold_prompt_messages.jsonl",
+    "manifest": "results/day7_student_data/manifest.json",
+    "train_sft": "results/day7_student_data/train_sft_messages.jsonl"
+  },
+  "format": {
+    "sft": "messages = system,user,assistant; assistant content is compact router target JSON",
+    "prompt": "messages = system,user; target retained only for local scoring",
+    "router_target_only": [
+      "read_hints",
+      "write_spans",
+      "ignore_spans"
+    ]
+  },
+  "counts": {
+    "train_sft": 5000,
+    "dev_prompt": 250,
+    "gold_prompt": 300,
+    "dev_smoke_prompt": 20
+  },
+  "category_counts": {
+    "train": {
+      "conflicting_memory": 500,
+      "context_dependent_reference": 500,
+      "correction_or_revision": 500,
+      "distractor_memory_selection": 500,
+      "ignore_noise": 500,
+      "mixed_write_and_ignore": 500,
+      "multi_write": 500,
+      "no_action_needed": 500,
+      "read_relevant_memory": 500,
+      "simple_write": 500
+    },
+    "dev": {
+      "conflicting_memory": 25,
+      "context_dependent_reference": 25,
+      "correction_or_revision": 25,
+      "distractor_memory_selection": 25,
+      "ignore_noise": 25,
+      "mixed_write_and_ignore": 25,
+      "multi_write": 25,
+      "no_action_needed": 25,
+      "read_relevant_memory": 25,
+      "simple_write": 25
+    },
+    "gold": {
+      "conflicting_memory": 30,
+      "context_dependent_reference": 30,
+      "correction_or_revision": 30,
+      "distractor_memory_selection": 30,
+      "ignore_noise": 30,
+      "mixed_write_and_ignore": 30,
+      "multi_write": 30,
+      "no_action_needed": 30,
+      "read_relevant_memory": 30,
+      "simple_write": 30
+    },
+    "dev_smoke": {
+      "conflicting_memory": 2,
+      "context_dependent_reference": 2,
+      "correction_or_revision": 2,
+      "distractor_memory_selection": 2,
+      "ignore_noise": 2,
+      "mixed_write_and_ignore": 2,
+      "multi_write": 2,
+      "no_action_needed": 2,
+      "read_relevant_memory": 2,
+      "simple_write": 2
+    }
+  }
+}

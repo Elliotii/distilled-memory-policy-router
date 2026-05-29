@@ -1,0 +1,61 @@
+# Frozen marker list for v0.3 span normalization.
+# Edit only before student evaluation starts.
+
+[write_leading_markers]
+as a general rule
+as a rule
+capture that
+for future work
+for the record
+from now on
+going forward
+heads up
+i prefer
+i want
+note that
+please remember
+please remember that
+record that
+remember
+remember that
+status update
+the important thing is
+the durable note is
+the durable note:
+the actual update is
+the actual update:
+the real update is
+the real update:
+update:
+correction:
+quick correction
+quick correction:
+we agreed
+we agreed that
+we chose
+we chose to
+we decided
+we decided that
+we decided to
+
+[ignore_leading_markers]
+also ignore
+also disregard
+also skip
+and ignore
+and disregard
+disregard
+disregard this
+forget
+ignore
+ignore that
+ignore the
+ignore this
+ignore these
+please disregard
+please forget
+please ignore
+skip
+skip this
+this is just
+this was just

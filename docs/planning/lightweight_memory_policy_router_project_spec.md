@@ -1,42 +1,90 @@
-# Distilled Memory Policy Router for Coding-Agent Contexts
+# Distilled Memory Policy Router for Business-Memory Coding Agents
 
-Version: v0.2  
-Date: 2026-05-24  
-Status: Project planning spec after external review  
-Previous working title: Lightweight Memory Policy Router for Coding Agents
+Version: v0.3  
+Date: 2026-05-28  
+Status: Re-scoped canonical project spec  
+Archive: `docs/planning/archive/lightweight_memory_policy_router_project_spec_v0.2.md`
+
+## Changelog
+
+- v0.3 re-scopes the project from an offline router benchmark into a
+  business-memory agent utility study.
+- The offline router evaluation is retained as an intrinsic/component test.
+  It is no longer the headline result.
+- The headline MVP now includes a small downstream ablation with a fixed
+  DeepSeek V4 Flash main agent. The only changed variable in that ablation is
+  the memory-policy source.
+- Model roles are renamed:
+  - DeepSeek V4 Pro/Max = synthetic label source / source teacher / optional
+    offline ceiling router baseline.
+  - DeepSeek V4 Flash = offline router baseline, downstream self-routing
+    baseline, and fixed downstream main agent. It is not called the teacher.
+  - Fine-tuned small router = proposed memory-policy controller.
+- Added raw and normalized metric reporting, decomposed read/write/ignore
+  precision-recall metrics, cost/latency logging, a fixed trivial writer, and
+  a downstream business-memory scenario ablation.
 
 ## 0. One-Sentence Summary
 
-Train and evaluate a small fine-tuned router that predicts structured read/write/ignore memory-policy hints for coding-agent interactions, learning from a prompt-based teacher while reducing false memory writes and irrelevant memory reads compared with naive baselines.
+A small memory-policy router, distilled from stronger synthetic supervision
+from DeepSeek V4 Pro/Max, is evaluated as a low-cost memory controller for a
+fixed cost-sensitive DeepSeek V4 Flash agent, with the goal of improving
+business-memory behavior: retaining relevant facts, preferences/decisions, and
+task progress while reducing irrelevant reads and noisy or sensitive writes.
 
 ## 1. Project Motivation
 
-Long-running coding agents need memory, but better memory does not simply mean storing or retrieving more history. The harder problem is policy:
+The original business problem is practical: how can an AI coding or business
+agent reliably remember business progress, business facts, and user/team
+preferences without polluting memory with temporary, noisy, sensitive,
+incorrect, or irrelevant content?
 
-- Which candidate memories should be read for the current task?
-- Which spans in the current user input deserve long-term memory?
-- Which temporary, noisy, incorrect, or irrelevant spans should be explicitly ignored?
+The project focuses on two policy decisions:
 
-This project turns agent-memory policy into a measurable structured-prediction task. It does not build a full autonomous agent or a complete memory operating system. Instead, it builds and evaluates a lightweight router that provides memory-relevant attention hints to a stronger LLM or downstream coding agent.
+- When should memory be read, and which candidate memories should be injected?
+- When should new durable memory be written, and which spans should be ignored?
 
-## 2. Core Research Question and Hypotheses
+The project does not build a complete memory operating system or autonomous
+coding agent. It studies a narrow control-plane component that can sit before a
+medium/strong main agent such as DeepSeek V4 Flash.
 
-Main research question:
+## 2. Core Research Questions and Hypotheses
 
-> Can a small fine-tuned router learn structured read/write/ignore memory-policy decisions for coding-agent interactions from a strong prompt teacher, while reducing false memory writes and irrelevant memory reads compared with naive baselines?
+Primary downstream question:
+
+> When the memory-policy source is the only changed variable, does substituting
+> a fine-tuned small router for DeepSeek V4 Flash self-routing improve the
+> business-memory behavior of a fixed DeepSeek V4 Flash agent without hurting
+> task success, at lower routing cost and latency?
+
+Secondary intrinsic question:
+
+> Does the fine-tuned router beat naive, rule-based, zero-shot, and DeepSeek
+> V4 Flash router baselines on human-reviewed gold data, and how much of the
+> optional DeepSeek V4 Pro/Max routing ceiling does it retain?
 
 Hypotheses:
 
-- **H1:** LoRA/SFT improves JSON validity and read/write/ignore F1 over the same student model in zero-shot mode.
-- **H2:** Explicit `ignore_spans` supervision should reduce memory-pollution components, especially false writes and missed-ignore cases. In the MVP, this is evaluated against rule-based, zero-shot, and naive baselines; a stronger causal test would add a no-ignore/write-only ablation as stretch work.
+- **H1 intrinsic:** Fine-tuning improves JSON/schema validity and decomposed
+  read/write/ignore metrics over the same student model in zero-shot mode, and
+  improves write quality over deterministic rules and DeepSeek V4 Flash
+  router baseline on human-reviewed gold.
+- **H2 downstream:** Fine-tuned-router + DeepSeek V4 Flash main agent matches
+  or improves DeepSeek V4 Flash self-routing on business-fact recall,
+  preference/decision adherence, and task/progress continuity, while reducing
+  irrelevant reads and noisy/sensitive writes.
+- **H3 cost/control:** Fine-tuned-router + DeepSeek V4 Flash achieves H2 at
+  lower routing token cost and latency than DeepSeek V4 Flash self-routing,
+  and with lower injected-memory token cost than inject-all.
 
-The project should be evaluated as a research-engineering project, not as a claim of novel agent-memory theory.
+The project should be evaluated as a research-engineering system study. Do not
+claim that the router solves general agent memory or beats the Pro/Max ceiling.
 
 ## 3. MVP and Stretch Boundary
 
 ### 3.1 Must-Finish MVP
 
-The MVP should be clean, small, and credible:
+Completed or required MVP assets:
 
 ```text
 Seed examples: 50
@@ -44,11 +92,14 @@ Synthetic train: 5,000 examples
 Dev: 250 examples
 Gold eval: 300 human-reviewed examples
 Multi-turn traces: 6-8 traces
-Teacher: DeepSeek V4 Flash
+Source teacher / synthetic label source: DeepSeek V4 Pro/Max
+Fixed downstream main agent: DeepSeek V4 Flash
 Student: one selected 3B-4B model
 Fine-tuning: one final LoRA/QLoRA router
-Baselines: empty, naive all-read, rule-based, prompt teacher, zero-shot student, fine-tuned student
-Docs: README, report, error analysis, resume bullets
+Intrinsic baselines: empty, all-read, rule-based, V4 Flash router baseline,
+  zero-shot student, fine-tuned student, optional Pro/Max ceiling router
+Downstream ablation: 12-16 business-memory scenarios, conditions A-E
+Docs: README, report, error analysis, claims table, resume bullets
 ```
 
 ### 3.2 Stretch Version
@@ -58,1127 +109,530 @@ Only after the MVP is complete:
 ```text
 Synthetic train: 10,000-15,000 examples
 Gold eval: 500-800 examples
-Multi-turn traces: 12-20 traces
+More downstream scenarios
 Full three-model bake-off
 Optional non-Qwen comparison
-Optional classifier-style baseline
-Optional no-ignore/write-only ablation
+Optional Pro/Max downstream ceiling on all scenarios
+No-ignore / write-only ablation
 LLM semantic judge audit
-Cost-normalized comparison
-Richer game-dev workflow traces
+Richer coding-repo or game-dev workflow traces
 ```
 
 Do not touch real Godot/godogen integration during the MVP.
 
-## 4. Project Scope
+## 4. Scope
 
 ### 4.1 In Scope
 
-- Structured input/output schema for memory attention hints.
-- Synthetic English dataset generation.
-- Programmatic validation and LLM review.
-- Human-reviewed gold evaluation set.
-- Prompt teacher using DeepSeek V4 Flash.
-- Minimal CLI harness.
-- Baseline implementations.
-- Zero-shot student evaluation.
-- LoRA/SFT fine-tuned student router.
-- Span-level evaluation.
-- Memory-pollution component analysis.
-- Per-category breakdown.
-- Small multi-turn trace demo.
-- English README, report, and resume bullets.
+- Structured router I/O for `read_hints`, `write_spans`, and `ignore_spans`.
+- Synthetic English dataset generation and repair.
+- Programmatic validation and human-reviewed gold evaluation.
+- Intrinsic offline router evaluation on dev/gold.
+- Deterministic baselines: empty, all-read, rule-based.
+- DeepSeek V4 Flash as an offline router baseline and downstream self-routing
+  baseline.
+- One selected 3B-4B student, zero-shot and fine-tuned.
+- LoRA/QLoRA fine-tuning for one final router.
+- Raw and normalized span evaluation.
+- Cost and latency logging for routing decisions.
+- A small downstream business-memory ablation using a fixed DeepSeek V4 Flash
+  main agent.
+- A fixed trivial writer for downstream evaluation.
+- Memory-pollution analysis: irrelevant reads, false durable writes,
+  noisy/sensitive writes, missed critical memory.
 
 ### 4.2 Out of Scope for MVP
 
-- Full coding agent implementation.
+- Full autonomous coding agent implementation.
 - Full game-development agent implementation.
-- Agent Memory OS.
-- KV cache, hidden state, or Transformer-internal memory research.
-- Context-budget router or RAG reranker as the main project.
-- Real Godot/godogen workflow integration.
-- Memory delete/update/merge/decay operations.
-- Having the small model generate final rewritten memory content.
-- Having the small model manage project scope or project IDs.
-- Numeric confidence prediction.
-- `needs_review` prediction.
-- Summary Memory baseline.
-- Classifier-style baseline.
-- Public benchmark adaptation.
-- Pi / pi-agent integration as a main dependency.
-
-Pi, Claude Code-style workflow, and godogen integration are future work.
+- Full Agent Memory OS.
+- Full retrieval from an unbounded memory database.
+- Intelligent memory writing, merging, deduplication, decay, deletion,
+  canonicalization, or truth verification.
+- Final `memory.md` generation.
+- Project-ID management, confidence scores, or `needs_review`.
+- Online/continual learning.
+- Real production traffic.
+- Claims of production-scale generalization.
+- Public benchmark adaptation as the main proof.
 
 ### 4.3 MVP Limitation
 
-The MVP evaluates second-stage memory policy given a small candidate set. It does not evaluate an end-to-end retrieval system over the full memory store.
+The intrinsic router task evaluates second-stage memory policy given a small
+candidate set. It does not solve end-to-end memory retrieval.
 
-In other words:
-
-```text
-This project studies whether the router can select, write, and ignore well after candidate memories are provided.
-It does not claim to solve full memory retrieval from an unbounded memory database.
-```
+The downstream ablation is a controlled pilot, not a production benchmark. It
+tests whether memory-policy source changes business-memory behavior under a
+fixed medium-strength main agent.
 
 ## 5. System Architecture
 
-```text
-Memory Store
-        |
-        v
-Harness / Retriever
-        |
-        v
-Candidate memories (0-8)
-        |
-        v
-Current user input + Recent context + Candidate memories
-        |
-        v
-Small Memory Policy Router
-        |
-        v
-Structured attention hints
-        |
-        v
-Strong LLM / Prompt Controller
-        |
-        v
-Final memory rewrite / injection decision
-        |
-        v
-Downstream coding agent / LLM
-```
-
-The `read` path is intentionally two-stage:
+### 5.1 Intrinsic Router Layer
 
 ```text
-1. Harness/retriever selects a small candidate set from the full memory store.
-2. Small router selects read_hints from those candidates.
+Current user input + recent context + candidate memories
+        |
+        v
+Memory Policy Router
+        |
+        v
+{ read_hints, write_spans, ignore_spans }
+        |
+        v
+Evaluator vs dev/gold targets
 ```
 
-The small router is a learned component inside the memory harness. It is not an independent agent, a full retriever, or a complete memory manager. It predicts memory-relevant attention hints:
+This layer answers: did the router predict the right policy object?
 
-- `read_hints`
-- `write_spans`
-- `ignore_spans`
+### 5.2 Downstream Business-Memory Layer
 
-The strong LLM or prompt controller handles:
+```text
+Session turns + candidate memories
+        |
+        v
+Memory-policy source (A-E)
+        |
+        v
+Fixed trivial writer + memory injection
+        |
+        v
+Fixed DeepSeek V4 Flash main agent
+        |
+        v
+Probe answers + memory store changes + cost/latency logs
+```
 
-- Final memory rewriting.
-- Correction handling.
-- Conflict resolution.
-- Memory injection formatting.
+This layer answers: did the memory-policy source improve business-memory
+behavior for the fixed main agent?
 
-The harness handles:
+### 5.3 Minimal Downstream Agent Harness
 
-- Project/session scope.
-- Short-term context buffer.
-- Long-term memory store.
-- Candidate memory retrieval.
-- Hard constraints and validation.
-- Trace logging.
-- Evaluation execution.
-- The final decision about whether a proposed memory write is accepted into storage.
+The downstream agent is a fixed scenario runner, not an autonomous coding
+agent. It has no tools, no repository access, no planner, and no memory
+lifecycle intelligence. Its only purpose is to measure whether changing the
+memory-policy source changes the behavior of a fixed DeepSeek V4 Flash
+answerer.
 
-## 6. Input and Output Schema
+The harness should contain only:
+
+- a scenario runner;
+- a policy adapter for conditions A-E;
+- a flat JSON memory store;
+- a fixed trivial writer;
+- a memory injector;
+- a fixed DeepSeek V4 Flash answerer;
+- a scorer and cost/latency logger.
+
+The harness must keep the scenario text, candidate memories, writer, answer
+prompt, model settings, and scoring logic fixed across conditions. The only
+changed variable is the memory-policy source. This keeps the downstream test a
+controlled ablation rather than a new agent product.
+
+## 6. Router Input and Output Contract
 
 All dataset content should be in English.
 
-### 6.1 Case Metadata
-
-Each decision case should include metadata useful for validation, splitting, and analysis:
-
-```json
-{
-  "case_id": "train_000001",
-  "split": "train",
-  "family_id": "correction_engine_version_03",
-  "category": "correction_or_revision",
-  "tags": ["context_dependent", "hard_negative_memory"],
-  "domain": "game_dev",
-  "difficulty": "medium",
-  "generator_prompt_id": "gen_prompt_b",
-  "review_status": "synthetic",
-  "gold_notes": null
-}
-```
-
-Recommended metadata fields:
-
-- `family_id`: mandatory for leakage control.
-- `category`: mandatory for per-category breakdowns.
-- `tags`: optional but useful for fine-grained analysis.
-- `generator_prompt_id`: useful for detecting prompt/template bias.
-- `review_status`: `synthetic`, `llm_reviewed`, or `human_reviewed`.
-- `gold_notes`: optional notes for gold examples and error analysis.
-
-### 6.2 Input Schema
-
-```json
-{
-  "current_user_input": "I misspoke earlier: Godot 4.2 should be changed to Godot 4.3, and we should postpone Steam SDK integration, and the dev server froze for a second but it is fine now.",
-  "recent_context": [
-    {
-      "role": "user",
-      "content": "Let's use Godot 4.2 for this project."
-    },
-    {
-      "role": "assistant",
-      "content": "Got it. I will assume the project uses Godot 4.2."
-    }
-  ],
-  "candidate_memories": [
-    {
-      "id": "m1",
-      "type": "fact",
-      "content": "The project uses Godot 4.2."
-    },
-    {
-      "id": "m2",
-      "type": "sop",
-      "content": "Use a dark UI style for this project."
-    }
-  ]
-}
-```
-
-Required input fields:
+Each decision case has:
 
 - `current_user_input`
-- `candidate_memories`
-
-Recommended input field:
-
-- `recent_context`
-
-Constraints:
-
-- `recent_context`: 0-4 turns.
-- `candidate_memories`: 0-8 items.
-- `candidate_memories[*].id` must be unique within a case.
-
-The router never receives the full memory store. It only receives the small `candidate_memories` list produced by the harness/retriever.
-
-### 6.3 Model Prediction Schema
+- `recent_context`: 0-4 turns
+- `candidate_memories`: 0-8 items
+- `target`: router prediction target
 
 The router predicts only:
 
 ```json
 {
-  "read_hints": ["m1"],
-  "write_spans": [
-    {
-      "span": "we should postpone Steam SDK integration",
-      "type": "decision"
-    }
-  ],
-  "ignore_spans": [
-    "the dev server froze for a second"
-  ]
+  "read_hints": [],
+  "write_spans": [],
+  "ignore_spans": []
 }
 ```
 
-The router does not output:
+Constraints:
 
-- Final rewritten memory content.
-- Delete/update operations.
-- Numeric confidence.
-- `needs_review`.
-- Project ID.
-- Related memory IDs.
-- Character offsets.
+- `read_hints` entries must reference candidate memory IDs present in the same
+  case.
+- `write_spans[*].span` must be an exact substring of `current_user_input`.
+- `write_spans[*].type` must be one of `fact`, `decision`, `sop`,
+  `task_state`.
+- `ignore_spans[*]` must be exact substrings of `current_user_input`.
+- The router must not output final memory text, offsets, confidence,
+  `needs_review`, project IDs, update/delete/merge decisions, or downstream
+  actions.
 
-### 6.4 Gold Evaluation Target Schema
+## 7. Memory Types and Business Priority
 
-Gold evaluation examples must include character offsets for span labels:
+Primary business-memory labels:
 
-Offsets should use half-open character ranges: `[char_start, char_end)`.
+- `fact`: stable facts, locations, ownership, configuration, tooling, or
+  business values.
+- `decision`: explicit choices, preferences, selected plans, or agreed
+  directions.
+- `task_state`: progress, blocked/pending work, active investigations, or
+  completion status.
 
-```json
-{
-  "read_hints": ["m1"],
-  "write_spans": [
-    {
-      "span": "Godot 4.2 should be changed to Godot 4.3",
-      "char_start": 20,
-      "char_end": 60,
-      "type": "fact"
-    },
-    {
-      "span": "we should postpone Steam SDK integration",
-      "char_start": 66,
-      "char_end": 106,
-      "type": "decision"
-    }
-  ],
-  "ignore_spans": [
-    {
-      "span": "the dev server froze for a second but it is fine now",
-      "char_start": 112,
-      "char_end": 164
-    }
-  ]
-}
-```
+Secondary label:
 
-Training data may omit offsets. Gold evaluation data should require offsets. The model should not be trained to predict offsets.
+- `sop`: recurring procedures, policies, or required practices.
 
-## 7. Memory Types and Annotation Rules
-
-The project uses four memory types:
-
-```text
-sop
-fact
-decision
-task_state
-```
-
-Definitions:
-
-- `sop`: Long-term rules, standards, preferences, coding style, workflow rules.
-- `fact`: Objective facts, architecture facts, technical stack facts, API/module relationships.
-- `decision`: Project direction, trade-offs, postponed items, constraints, priorities, accepted choices.
-- `task_state`: Current progress, active task, unfinished work, next step, debugging status.
-
-In a downstream agent system, `sop` memories may map to skill files, rule files, `AGENTS.md`, `CLAUDE.md`, or a project-rule memory store rather than an ordinary fact memory database. In this project, `sop` is a router label for persistent rules/preferences, not a claim about the final storage backend.
-
-### 7.1 Decision vs Task State Tie-Breaker
-
-Use `decision` when the span changes or records a durable project direction, constraint, priority, trade-off, or accepted choice.
-
-Use `task_state` when the span describes current progress, unfinished work, active debugging state, or the next step.
-
-Examples:
-
-```text
-"We will postpone Steam SDK integration." -> decision
-"Steam SDK integration is still not implemented." -> task_state
-"Always use GDScript for gameplay scripts." -> sop
-"The project currently uses Godot 4.3." -> fact
-```
-
-For ambiguous cases, use this annotation priority:
-
-```text
-sop > decision > fact > task_state
-```
-
-This priority rule is an annotation convention, not a claim about an ideal memory ontology.
+SOP remains a first-class label in the dataset and is reported, but it is
+secondary in the business-memory thesis because production SOP may often be
+handled by skills or explicit instructions. The downstream MVP should include
+only a small number of SOP-bearing scenarios to verify SOP neutrality rather
+than claiming SOP optimization.
 
 ## 8. Ignore Span Policy
 
-`ignore_spans` should be explicit but selective.
+Use `ignore_spans` for content that should not become durable memory:
 
-Do label spans that are likely to become memory pollution if mistakenly written, such as:
+- temporary or local failures;
+- flaky test or CI noise that resolved;
+- casual chatter or emotional venting;
+- secrets, tokens, passwords, personal data, or should-not-store content;
+- stale facts after a correction, when the stale text appears in the current
+  user input;
+- irrelevant event details that are not useful for future work.
 
-- Temporary environment errors.
-- One-off debugging noise.
-- Casual chatter with no long-term value.
-- Incorrect statements that are immediately corrected.
-- Irrelevant implementation details.
-- Transient tool or server failures.
-- Prompt-injection-like memory requests in small controlled amounts.
+The router does not verify factual truth. "Avoid incorrect memory" is measured
+only through corrected/superseded-fact scenarios where stale content should not
+resurface.
 
-Do not label every leftover piece of text that is not part of `write_spans`.
+## 9. Dataset Assets
 
-The purpose of `ignore_spans` is to train write-gating behavior, not to turn the task into exhaustive text segmentation.
+Authoritative MVP assets:
 
-## 9. Dataset Design
+- Train: `data/processed/synthetic_train_5000.jsonl`
+- Dev: `data/dev/dev_250.jsonl`
+- Gold: `data/gold/gold_eval_300.jsonl`
+- Gold offsets sidecar: `data/gold/gold_eval_300.offsets.jsonl`
+- Multi-turn traces: `data/traces/multiturn_traces_8.jsonl`
 
-### 9.1 Data Files
+The 5,000-record train split was assembled from accepted and repaired
+DeepSeek V4 Pro/Max generation batches. It is not directly distilled from
+DeepSeek V4 Flash.
 
-Use two primary JSONL files:
+After any change to `data/*.jsonl`, run the dataset validator.
 
-```text
-decision_cases.jsonl
-multi_turn_traces.jsonl
-```
+## 10. Model Roles
 
-Recommended derived files:
+DeepSeek V4 Pro/Max:
 
-```text
-train.jsonl
-dev.jsonl
-gold_eval.jsonl
-```
+- Role: source teacher / synthetic label source for the bulk of the 5,000
+  training labels, followed by repair and validation.
+- Optional role: offline ceiling router baseline to measure how much strong
+  routing quality the small student retained.
+- Not used as the fixed downstream main agent.
 
-`decision_cases.jsonl` and its split files are used for:
+DeepSeek V4 Flash:
 
-- Training.
-- Dev evaluation.
-- Gold evaluation.
-- Baseline evaluation.
-- LoRA/SFT.
+- Role 1: offline strong-LLM router baseline on dev/gold.
+- Role 2: downstream self-routing baseline, condition D.
+- Role 3: fixed downstream main agent in all downstream conditions.
+- Never call V4 Flash the teacher unless a future run actually uses it to
+  create labels.
 
-`multi_turn_traces.jsonl` is used for:
+Fine-tuned small router:
 
-- Demo.
-- README visualization.
-- Trace replay.
-- Supplementary evaluation.
+- Role: proposed memory-policy controller.
+- Distilled from stronger repaired synthetic supervision.
+- Predicts only `{read_hints, write_spans, ignore_spans}`.
 
-### 9.2 MVP Dataset Scale
-
-Recommended MVP scale:
-
-```text
-Seed examples: 50 high-quality examples
-Training set: 5,000 synthetic examples
-Dev set: 250 examples
-Gold eval set: 300 human-reviewed examples
-Multi-turn traces: 6-8 traces
-Turns per trace: 4-8 turns
-```
-
-### 9.3 Stretch Dataset Scale
-
-Only after MVP:
+Student model candidates:
 
 ```text
-Training set: 10,000-15,000 synthetic examples
-Gold eval set: 500-800 examples
-Multi-turn traces: 12-20 traces
+Primary: Qwen3-4B-Instruct-2507
+Fallback: Qwen2.5-Coder-3B-Instruct
+Optional smoke: Qwen3.5-4B
 ```
-
-Principle:
-
-> A clean 300-example gold set is better than a noisy 800-example gold set.
-
-## 10. Data Category Design
-
-The dataset should be organized by capability category, not only by memory type.
-
-Core categories:
-
-```text
-simple_write
-multi_write
-read_relevant_memory
-ignore_noise
-correction_or_revision
-context_dependent_reference
-conflicting_memory
-mixed_write_and_ignore
-no_action_needed
-distractor_memory_selection
-```
-
-Recommended MVP training distribution:
-
-```text
-simple_write: 10%
-multi_write: 12%
-read_relevant_memory: 12%
-ignore_noise: 12%
-correction_or_revision: 12%
-context_dependent_reference: 10%
-conflicting_memory: 10%
-mixed_write_and_ignore: 8%
-no_action_needed: 8%
-distractor_memory_selection: 6%
-```
-
-Useful secondary tags:
-
-```text
-read_without_write
-write_without_read
-ambiguous_type
-hard_negative_memory
-implicit_reference
-temporary_preference
-prompt_injection_like_memory_request
-```
-
-These tags should not become top-level categories in the MVP.
-
-Gold eval should include enough examples per category to make per-category breakdowns meaningful.
-
-MVP target:
-
-```text
-About 30 examples per category for 300 gold examples
-```
-
-Stretch target:
-
-```text
-50+ examples per category for 500-800 gold examples
-```
-
-## 11. Data Generation Pipeline
-
-Recommended pipeline:
-
-```text
-Human seed examples
--> DeepSeek V4 Flash generation
--> independent LLM judge/reviewer
--> programmatic validation
--> deduplication
--> family-based train/dev/eval split
--> human review for gold eval
-```
-
-Use at least three generation prompt variants to avoid overly uniform synthetic data style.
-
-### 11.1 Two-Stage Generation
-
-Prefer two-stage generation:
-
-```text
-Scenario card
--> Final JSON decision case
-```
-
-Scenario card fields may include:
-
-- Domain.
-- Recent context.
-- Candidate memory store.
-- Current user intent.
-- Hidden target behavior.
-- Hard distractor pattern.
-- Whether the case needs recent context.
-- Whether the case contains no action.
-- Whether the case contains ignore-worthy noise.
-
-This reduces shallow template repetition.
-
-### 11.2 Programmatic Validation Rules
-
-Each generated case must satisfy:
-
-- Valid JSON.
-- Required fields exist.
-- Memory type is one of `sop`, `fact`, `decision`, `task_state`.
-- `read_hints` IDs must exist in `candidate_memories`.
-- `write_spans[*].span` must be an exact substring of `current_user_input`.
-- `ignore_spans[*]` must be an exact substring of `current_user_input`.
-- Gold eval span labels must have valid `char_start` and `char_end`.
-- No empty spans.
-- `candidate_memories` length must be 0-8.
-- `recent_context` length must be 0-4 turns.
-- No duplicate or near-duplicate cases.
-
-### 11.3 Leakage Control
-
-Use `family_id` or equivalent metadata to avoid leakage.
-
-Examples from the same template family should not appear across train/dev/gold eval splits.
-
-Additional leakage controls:
-
-- Near-duplicate text filtering.
-- Entity holdout where feasible.
-- Scenario-template holdout where feasible.
-- Generator-prompt analysis.
-- Embedding-cluster deduplication as stretch.
-
-At minimum, avoid putting the same project/entity family in both train and gold eval.
-
-## 12. Teacher and Student Models
-
-### 12.1 Prompt Teacher
-
-Use:
-
-```text
-DeepSeek V4 Flash
-```
-
-Rationale:
-
-- New model.
-- Cost-effective.
-- Supports JSON output and tool calls.
-- Strong enough to serve as a practical teacher.
-- Suitable as a minimum viable strong teacher rather than an unrealistically expensive upper bound.
-
-Use non-thinking mode for data generation unless thinking mode clearly improves label quality while preserving strict JSON.
-
-### 12.2 Student Model Strategy
-
-Default primary student:
-
-```text
-Qwen3-4B-Instruct-2507
-```
-
-Fallback:
-
-```text
-Qwen2.5-Coder-3B-Instruct
-```
-
-Optional smoke test:
-
-```text
-Qwen3.5-4B
-```
-
-Rationale:
-
-- Qwen3-4B-Instruct-2507 is the default because it is a recent instruction model with strong structured-output potential and manageable size.
-- Qwen2.5-Coder-3B-Instruct is the fallback because it is code-specific and mature.
-- Qwen3.5-4B may be promising but should not be the default until text-only LoRA/SFT compatibility is verified.
-
-### 12.3 Bake-Off Protocol
-
-Run a small bake-off before LoRA:
-
-```text
-Cases: 150-200 stratified dev examples
-Models: Qwen3-4B-Instruct-2507, Qwen2.5-Coder-3B-Instruct, optional Qwen3.5-4B
-Decoding: temperature 0 or very low
-Repair: disabled for main score, optional for secondary score
-Metrics: JSON validity, schema validity, read F1, write overlap F1, ignore overlap F1, type macro-F1, latency
-```
-
-Pick the model with the best combination of:
-
-- Schema stability.
-- Write/ignore behavior.
-- Trainability.
-- Inference speed.
-- Low setup friction.
-
-Train one final model for the MVP.
-
-### 12.4 Training Setup
 
 Use LoRA or QLoRA, not full fine-tuning.
 
-Recommended starting setup:
+## 11. Intrinsic Baselines
 
-```text
-Method: QLoRA / 4-bit LoRA
-Model size: 3B-4B
-Sequence length: 2048 or 4096
-LoRA rank: 16 or 32
-Epochs: 1-3
-Train examples: 3k-8k, MVP target 5k
-Batch size: 1-2
-Gradient accumulation: yes
-Validation: every few hundred steps
-```
+Required intrinsic baselines:
 
-Avoid:
+- `empty`: no reads, no writes, no ignores.
+- `all-read`: read every candidate memory; no writes or ignores.
+- `rule-based`: deterministic lexical read/write/ignore heuristics.
+- `v4flash-router`: DeepSeek V4 Flash predicts the router target from the
+  same router prompt.
+- `student-zero-shot`: selected small student predicts without fine-tuning.
+- `student-finetuned`: selected small student after LoRA/QLoRA.
+- `promax-router` optional: DeepSeek V4 Pro/Max as an offline ceiling.
 
-- Full fine-tuning.
-- Huge context lengths.
-- Training all candidate models.
-- Offset prediction.
-- Complex multi-turn training in MVP.
+Report all systems with the same evaluator and the same raw/normalized matching
+policy.
 
-## 13. Baselines
+## 12. Downstream Ablation Conditions
 
-Required MVP baselines:
+Use 12-16 synthetic business-memory scenarios. The fixed main agent is always
+DeepSeek V4 Flash. The only changed variable is memory-policy source.
 
-```text
-Empty / No-action Router
-Naive All-read Router
-Rule-based Router
-Prompt Teacher
-Zero-shot Student
-Fine-tuned Student
-```
+| Condition | Policy source | Purpose |
+| --- | --- | --- |
+| A | no long-term memory | floor; verifies memory is needed |
+| B | inject all candidate memories | context-cost and pollution reference |
+| C | rule-based router | cheap non-neural baseline |
+| D | V4 Flash self-routing | make-or-break comparison |
+| E | fine-tuned small router | proposed system |
+| F optional | Pro/Max router | ceiling/reference, budget permitting |
 
-Definitions:
+Fixed across conditions:
 
-- `Empty / No-action Router`: outputs no reads, no writes, and no ignores.
-- `Naive All-read Router`: reads all candidate memories and applies no selective policy.
-- `Rule-based Router`: uses deterministic heuristics for lexical read selection, write triggers, ignore triggers, and type mapping.
-- `Prompt Teacher`: DeepSeek V4 Flash produces structured memory attention hints.
-- `Zero-shot Student`: the selected student model predicts the schema without fine-tuning.
-- `Fine-tuned Student`: the selected student model after LoRA/SFT.
+- scenario set;
+- candidate-memory pool;
+- fixed trivial writer;
+- final answer prompt;
+- V4 Flash main agent model/version;
+- scoring logic;
+- temperature/decoding where feasible.
 
-Optional future baselines:
-
-```text
-No-ignore / write-only ablation
-Classifier-style sentence baseline
-Summary Memory
-Recent History
-```
-
-These are not required for the MVP.
-
-## 14. Evaluation Plan
-
-Primary evaluation should be deterministic/programmatic whenever possible. LLM-based evaluation can be used as a secondary semantic audit.
-
-### 14.1 Core Metrics
-
-- JSON validity rate.
-- Schema validity rate.
-- `read_hints` precision / recall / F1.
-- `write_span` exact-match precision / recall / F1.
-- `write_span` overlap precision / recall / F1.
-- `write_type` accuracy and macro-F1.
-- `ignore_span` exact-match precision / recall / F1.
-- `ignore_span` overlap precision / recall / F1.
-- Teacher-router agreement.
-- Memory-pollution components.
-- Per-category breakdown.
-- Latency and cost estimate.
-- Repair rate, if JSON repair is enabled.
-
-Do not report only overall micro-F1. Include category-level and type-level breakdowns.
-
-### 14.2 Span Matching Options
-
-Keep three span matching options:
-
-1. Exact match.
-2. Character-overlap F1.
-3. Token-level F1.
-
-Initial tendency:
-
-- Use exact match as a strict diagnostic metric.
-- Use character-overlap F1 or token-level F1 as the main span metric.
-- Report at least one strict metric and one overlap-based metric.
-
-Recommended matching process:
-
-```text
-1. Compute pairwise overlap scores between predicted spans and gold spans.
-2. Match predictions to gold spans greedily or with Hungarian matching.
-3. Count a match if overlap F1 exceeds a threshold, such as 0.5 or 0.7.
-4. Evaluate write type only on matched write spans.
-```
-
-### 14.3 Memory-Pollution Components
-
-Do not collapse pollution into a single required score for the MVP. Report components:
-
-```text
-false_write_count
-missed_ignore_count
-irrelevant_read_count
-wrong_write_type_count
-false_write_on_no_action_count
-```
-
-These are easier to interpret than a subjective weighted score.
-
-A weighted pollution score can be a stretch or appendix analysis, but it is not required.
-
-### 14.4 Teacher-Router Agreement
-
-Teacher-router agreement is an imitation metric, not a quality metric.
-
-Report separately:
-
-```text
-Prompt Teacher vs gold
-Zero-shot Student vs gold
-Fine-tuned Student vs gold
-Fine-tuned Student vs Prompt Teacher
-```
-
-Agreement with an imperfect teacher is not success unless it also improves gold performance.
-
-### 14.5 LLM-as-Judge Usage
-
-Use GPT/Claude-style LLM judging only for secondary analysis:
-
-- Semantic span match review.
-- Type ambiguity review.
-- Error analysis.
-- Judge disagreement analysis.
-
-Do not let LLM-as-judge replace the primary programmatic metrics.
-
-### 14.6 Human Review and Error Analysis
-
-MVP human review target:
-
-```text
-300 gold examples human-reviewed
-50 model errors spot-checked
-10-20 representative error examples included in report
-```
-
-If gold eval grows beyond 300 examples, mark additional examples honestly as `llm_reviewed` unless they receive human review.
-
-Required error analysis:
-
-- Confusion matrix for memory type.
-- False-write examples.
-- Missed-write examples.
-- Missed-ignore examples.
-- Over-ignore examples.
-- Read-hint false positives.
-- Read-hint false negatives.
-- No-action false positives.
-- Correction/revision failures.
-- `decision` vs `task_state` confusion.
-- JSON/schema failure examples.
-- Category-level performance table.
-- Latency/cost comparison.
-
-## 15. Minimal CLI Harness
-
-Build a small self-contained harness.
-
-Required functions:
-
-- CLI user input.
-- Short-term context buffer.
-- JSONL memory store.
-- Candidate memory retrieval.
-- Prompt teacher call.
-- Student router call.
-- Structured output display.
-- Trace logging.
-- Evaluation runner.
-
-Candidate retrieval is not the research focus.
-
-Implementation:
-
-- During eval: use `candidate_memories` provided by dataset.
-- During demo: use simple keyword/top-k retrieval.
-
-The harness owns hard system responsibilities:
-
-- Project/session scoping.
-- Candidate retrieval from the full memory store.
-- Memory-store writes and acceptance policy.
-- Validation and schema enforcement.
-- Trace logging and reproducibility metadata.
-
-The router only proposes structured hints. The strong LLM/controller or harness decides how proposed write spans become final memory content, and whether they are stored.
-
-Example CLI display:
-
-```text
-> user: ...
-
-[router]
-read_hints: ...
-write_spans: ...
-ignore_spans: ...
-
-[memory]
-candidate memories: ...
-selected memories: ...
-
-[trace saved]
-```
-
-### 15.1 Trace Logging
-
-Evaluation traces should log:
+The fixed trivial writer maps accepted `write_spans` into store entries:
 
 ```json
 {
-  "case_id": "gold_00123",
-  "timestamp": "...",
-  "model_name": "qwen3-4b-lora",
-  "prompt_version": "router_prompt_v3",
-  "input": {},
-  "raw_output": "...",
-  "parsed_output": {},
-  "validation_errors": [],
-  "latency_ms": 842,
-  "input_tokens": 1200,
-  "output_tokens": 130,
-  "cost_estimate": 0.0,
-  "eval_matches": {},
-  "pollution_components": {}
+  "id": "generated_entry_id",
+  "type": "fact|decision|sop|task_state",
+  "text": "normalized or verbatim accepted span",
+  "source_turn": "scenario_turn_id"
 }
 ```
 
-Demo traces should additionally log:
+It performs no merge, deduplication, decay, rewrite, truth check, or memory.md
+generation.
 
-- Candidate memories shown to router.
-- Selected read memories.
-- Proposed write spans.
-- Ignored spans.
-- Memory store before/after.
-- Whether memory write was accepted by the controller stub.
+## 13. Downstream Scenario Shape
 
-### 15.2 Minimal Memory Store
+Downstream scenarios are separate from `DecisionCase` JSONL. They should keep
+router-target semantics compatible with the existing schema but may use their
+own scenario-level fields.
 
-Use a JSONL memory store:
+Each scenario should include:
 
-```json
-{
-  "id": "m17",
-  "type": "decision",
-  "content": "Steam SDK integration is postponed.",
-  "source_turn_id": "trace_03_t04",
-  "created_at": "...",
-  "status": "active"
-}
-```
+- Session A with planted durable business facts, preferences/decisions, and
+  task-state/progress.
+- Temporary, irrelevant, and sensitive distractors.
+- Optional superseded/stale facts for correction behavior.
+- Session B/C probe turns that require the right memory and must not surface
+  the wrong memory.
+- Candidate memories supplied to the router at probe time.
+- Scoring keys and rubrics.
 
-No merge, delete, decay, or embedding database is required for the MVP.
+Scenario target counts:
 
-Because the router does not generate final memory content, the demo can use a simple controller stub:
+- 12-16 scenarios total.
+- Every scenario has at least one fact, preference/decision, task_state, and
+  distractor.
+- At least 3 superseded-fact scenarios.
+- 2-3 SOP-bearing scenarios for neutrality.
+- At least 2 scenarios where inject-all can actively hurt.
 
-```text
-Accepted write spans are stored as provisional memory content for demo purposes.
-```
+Do not require a real repository, filesystem tools, or autonomous code
+execution in the MVP downstream ablation.
 
-State clearly that this is not the research target.
+## 14. Metrics
 
-## 16. Multi-Turn Trace Demo
+### 14.1 Intrinsic Metrics
 
-Multi-turn traces are not the main evaluation target, but they are important for demonstrating agent-memory continuity.
+Report raw and normalized values for every system.
 
-MVP target:
+Primary metrics:
 
-```text
-6-8 traces
-4-8 turns each
-```
+- read precision / recall / F1;
+- write span precision / recall / F1;
+- typed write span F1;
+- ignore span precision / recall / F1;
+- noisy/sensitive write rate;
+- routing token cost;
+- routing latency.
 
-Stretch target:
+Secondary metrics:
 
-```text
-12-20 traces
-4-8 turns each
-```
+- exact target match;
+- per-category breakdown;
+- per-type breakdown;
+- JSON validity;
+- schema validity;
+- optional Pro/Max retention ratio.
 
-Coverage:
+Do not report only micro-F1. Read precision and write precision/recall are
+especially important because all-read can have high recall while being exactly
+the pathology the router is meant to avoid.
 
-- Project rule accumulation.
-- Task continuation.
-- Correction.
-- Temporary noise ignored.
-- Conflicting memories.
-- Multi-span write.
-- Light game-dev scenarios.
-- Coding workflow scenarios.
+### 14.2 Downstream Metrics
 
-Use cases:
+Primary downstream metrics:
 
-- README demo.
-- Trace replay.
-- Supplementary analysis.
+- business fact recall;
+- preference/decision adherence;
+- task/progress continuity;
+- final answer correctness;
+- irrelevant memory reads;
+- missed critical memory;
+- false durable writes;
+- noisy/sensitive writes;
+- injected memory token count;
+- routing token cost;
+- total downstream token cost;
+- routing and answer latency.
 
-## 17. Suggested Repository Structure
+Secondary downstream metrics:
 
-```text
-README.md
-docs/
-  report.md
-  related_work.md
-  annotation_guidelines.md
-data/
-  seed_examples.jsonl
-  train.jsonl
-  dev.jsonl
-  gold_eval.jsonl
-  multi_turn_traces.jsonl
-src/
-  schemas.py
-  data_generation/
-  validation/
-  teacher/
-  baselines/
-  harness/
-  eval/
-  training/
-  inference/
-results/
-  eval_tables.md
-  error_analysis.md
-resume_bullets.md
-```
+- memory store growth;
+- per-scenario breakdown;
+- cost-vs-business-quality frontier;
+- safety axis.
 
-## 18. Time Allocation
-
-Recommended allocation:
+Business quality:
 
 ```text
-15% problem definition + schema + annotation guidelines
-20% dataset generation + validation + gold review
-15% prompt teacher + minimal harness
-15% baselines + eval runner
-20% LoRA/SFT training + inference
-10% report / README / resume bullets
-5% buffer
+BQ = mean(fact_recall, preference_adherence, task_continuity, answer_correctness)
 ```
 
-LoRA/SFT is important, but the research value comes from the full chain:
+Safety should be reported separately and must not be hidden inside a composite:
 
 ```text
-schema -> dataset -> teacher -> baselines -> evaluation -> analysis
+SAFETY = 1 - noisy_sensitive_write_rate_downstream
 ```
 
-## 19. Suggested 10-Day Deliverable Boundary
+## 15. Span Normalization and Matching
 
-This is not a rigid daily plan, but a realistic boundary for execution:
+Report both:
+
+- raw exact metrics;
+- normalized overlap metrics.
+
+Normalization is a scoring/matching function, not a mutation of stored gold.
+Apply it uniformly to every predictor:
+
+- rule-based;
+- V4 Flash router baseline;
+- Pro/Max router baseline if used;
+- zero-shot student;
+- fine-tuned student.
+
+Allowed deterministic normalization:
+
+- trim whitespace and surrounding punctuation;
+- lowercase for comparison keys;
+- collapse internal whitespace;
+- strip a frozen closed list of leading discourse markers for write spans;
+- strip a frozen closed list of ignore-directive prefixes for ignore spans;
+- token-set F1 matching with a frozen threshold, initially 0.8.
+
+Forbidden:
+
+- paraphrase matching;
+- embeddings;
+- synonym expansion;
+- per-system normalizers;
+- marker-list edits after seeing student results;
+- normalizing only the student.
+
+Commit and freeze `normalizer_markers.txt` before student evaluation. Report
+raw and normalized results side by side. If a gain exists only after
+normalization, say so.
+
+## 16. Cost and Latency Logging
+
+Every routing source should log:
+
+- model/provider name;
+- model version/date when available;
+- prompt token count;
+- completion token count;
+- total routing tokens;
+- wall-clock routing latency;
+- parse or schema repair status;
+- raw output retention path if applicable.
+
+Downstream runs should also log:
+
+- injected-memory token count;
+- final-answer token count;
+- total scenario token count;
+- answer latency;
+- condition ID;
+- scenario ID;
+- seed/temperature.
+
+## 17. Suggested Day 6-Day 10 Boundary
 
 ```text
-Day 1: Final schema, annotation policy, 50 seed examples
-Day 2: Generation prompts, validator, first 1k examples
-Day 3: Full synthetic train/dev/gold draft
-Day 4: Gold review, offsets, dedup, family split
-Day 5: Eval runner and span matching
-Day 6: Baselines and prompt teacher evaluation
-Day 7: Student bake-off and final model choice
-Day 8: LoRA/QLoRA training and inference script
-Day 9: Final evaluation, error analysis, trace demo
-Day 10: README, report, resume bullets, cleanup
+Day 6: Lock v0.3 spec, normalizer, decomposed metrics, cost/latency logging.
+Day 7: Run V4 Flash router baseline, optional Pro/Max ceiling, student bake-off,
+       and fine-tune/evaluate the selected small router offline.
+Day 8: Build downstream harness and author 12-16 business-memory scenarios.
+Day 9: Run downstream A-E ablation, optional F subset.
+Day 10: Analyze cost-quality frontier, write final report, README, error
+        analysis, limitations, and resume bullets.
 ```
 
-If time slips, preserve the clean evaluation and report before expanding model or data scale.
+If time slips, cut scenario count before cutting condition D. V4 Flash
+self-routing is the load-bearing downstream comparison.
 
-## 20. Deliverables
+## 18. Claims and Limitations
 
-Final deliverables:
+Safe claims if measured:
+
+- A small router learns structured read/write/ignore and beats naive baselines
+  on human-reviewed gold.
+- The fine-tuned router beats DeepSeek V4 Flash as an offline router baseline
+  if the measured gold results show it.
+- The fine-tuned router improves a fixed DeepSeek V4 Flash agent's
+  business-memory behavior in a controlled pilot if condition E beats D on the
+  downstream metrics.
+- The router lowers routing cost/latency if measured costs show it.
+
+Conditional claims:
+
+- The router retains most of the Pro/Max ceiling at small-model cost, only if
+  Pro/Max ceiling evaluation is run.
+- The router avoids stale-fact resurfacing, only on superseded-fact scenarios.
+
+Overclaims:
+
+- The router beats DeepSeek V4 Pro/Max.
+- The router solves general agent memory.
+- The router verifies factual correctness.
+- The router manages full memory lifecycle.
+- The downstream pilot proves production-scale generalization.
+- Small-scenario downstream results are statistically significant.
+
+## 19. Key Risks and Mitigations
+
+- **V4 Flash self-routing may be good enough.** Treat this as the core
+  empirical question. If D beats E at comparable effective cost, report that
+  the router is not justified.
+- **Rule-based already handles read/ignore well.** Locate contribution in write
+  quality, read precision, and downstream cost/behavior.
+- **Synthetic train may not match deployment.** Evaluate on human-reviewed gold
+  and downstream hand-authored business scenarios.
+- **Normalization may flatter one system.** Freeze marker lists before student
+  evaluation and apply uniformly.
+- **Writer can become a confound.** Use one fixed trivial writer across all
+  downstream conditions.
+- **The router only spans user input.** Scope v0.3 to user-turn durable content;
+  assistant/tool-turn writes are future work.
+- **The router cannot verify truth.** Use superseded-fact scenarios as a proxy
+  and keep truth verification out of scope.
+
+## 20. Final Deliverables
 
 - Working repository.
-- English README.
+- Canonical v0.3 spec and archived v0.2 spec.
 - Annotation guidelines.
 - Dataset generation scripts.
-- Validated train/dev/gold eval JSONL files.
-- Prompt teacher pipeline.
-- Minimal CLI harness.
+- Validated train/dev/gold JSONL files.
+- Intrinsic prediction/evaluation harness.
+- Normalizer and raw/normalized metric reports.
+- Cost/latency logging.
 - Baseline evaluation scripts.
-- LoRA/SFT training script.
-- Inference script for fine-tuned router.
-- Evaluation tables.
-- Error analysis.
-- Multi-turn trace demo.
+- Fine-tuned router training and inference scripts.
+- Downstream business-memory scenario set and validator.
+- Fixed downstream harness with conditions A-E.
+- Evaluation tables and cost-vs-business-quality frontier.
+- Error analysis and limitations.
+- README and final report.
 - Resume bullets.
-
-## 21. README and Report Structure
-
-README:
-
-```text
-1. What this project is
-2. What this project is not
-3. Quickstart
-4. Schema
-5. Dataset
-6. Baselines
-7. Evaluation metrics
-8. Results table
-9. Trace demo
-10. Limitations
-11. Future work
-```
-
-Report:
-
-```text
-1. Problem definition
-2. Related work
-3. Schema and task formulation
-4. Dataset construction
-5. Models and baselines
-6. Evaluation methodology
-7. Results
-8. Error analysis
-9. Limitations
-10. Future work
-```
-
-## 22. Resume / README Positioning
-
-Example English resume bullet:
-
-> Built a distilled Memory Policy Router for coding-agent contexts, framing agent memory control as structured read/write/ignore span prediction. Generated and validated a synthetic dataset, fine-tuned a 3B-4B router with LoRA/SFT, and compared it against empty, naive, rule-based, zero-shot, and prompt-teacher baselines using span F1, type accuracy, JSON validity, latency, and memory-pollution component analysis.
-
-Project positioning:
-
-> This project does not build a full autonomous coding agent. It focuses on a reusable memory attention router that can be plugged into coding-agent workflows.
-
-## 23. Key Risks and Mitigations
-
-### Risk 1: Synthetic data becomes too templated
-
-Mitigation:
-
-- Use capability categories.
-- Use multiple generation prompts.
-- Use two-stage scenario-card generation.
-- Deduplicate.
-- Use family-based split.
-- Manually review gold eval.
-
-### Risk 2: Small model JSON output is unstable
-
-Mitigation:
-
-- Run a small Qwen3/Qwen2.5-Coder bake-off.
-- Treat Qwen3.5 as an optional smoke test.
-- Use Pydantic validation.
-- Use strict output prompts.
-- Track repair rate separately if repair is enabled.
-
-### Risk 3: Ignore labels become too broad
-
-Mitigation:
-
-- Only label pollution-prone spans.
-- Do not label all leftover text as ignore.
-
-### Risk 4: LoRA training delays the whole project
-
-Mitigation:
-
-- Make prompt teacher + eval + baselines work first.
-- Treat LoRA as an enhancement experiment, not the only proof of project value.
-
-### Risk 5: Project scope expands into full Agent Memory OS
-
-Mitigation:
-
-- Keep the router scope explicit.
-- Put delete/update/merge/conflict-resolution into future work.
-- Keep Pi/godogen integration optional.
-
-### Risk 6: Type labels become inconsistent
-
-Mitigation:
-
-- Write annotation guidelines before bulk generation.
-- Use tie-breaker rules.
-- Review `decision` vs `task_state` errors explicitly.
-
-## 24. Suggested Related Work
-
-Priority reading:
-
-- Memory for Autonomous LLM Agents: Mechanisms, Evaluation, and Emerging Frontiers.
-- Memory in the Age of AI Agents: A Survey.
-- From Human Memory to AI Memory.
-- A Survey on the Memory Mechanism of LLM-based Agents.
-- MemGPT.
-- LongMemEval.
-- LoCoMo.
-
-Use related work mainly to support:
-
-- Why memory policy matters.
-- Why write-gating / ignore behavior matters.
-- Why this project focuses on read/write/ignore attention hints rather than full memory management.
-- Why this is adjacent to but distinct from ordinary RAG retrieval.
-
-## 25. Future Work
-
-- Add uncertainty-aware routing or `needs_review`.
-- Add calibrated confidence.
-- Add correction-aware memory rewriting.
-- Add related memory ID linking.
-- Add update/delete operations.
-- Add richer conflict resolution.
-- Add classifier-style sentence baseline.
-- Add no-ignore / write-only ablation.
-- Add Summary Memory baseline.
-- Add LLM semantic judge audit at larger scale.
-- Integrate with Pi / pi-agent.
-- Integrate with Claude Code-style workflows.
-- Integrate with godogen / game-development agent workflow.
-- Evaluate in a real coding-agent loop.

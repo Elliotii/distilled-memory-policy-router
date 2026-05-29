@@ -1,0 +1,2367 @@
+{
+  "run_id": "gold_deepseek_v4flash_router_repaired",
+  "split": "gold",
+  "gold_path": "data/gold/gold_eval_300.jsonl",
+  "prediction_path": "results/eval/predictions/gold_deepseek_v4flash_router_repaired.predictions.jsonl",
+  "record_counts": {
+    "gold": 300,
+    "predictions": 300,
+    "evaluated": 300
+  },
+  "schema_validity": {
+    "validated_before_scoring": true
+  },
+  "normalization": {
+    "markers_path": "/Users/elliot/new-systems/distilled-memory-policy-router/src/evaluation/normalizer_markers.txt",
+    "markers_sha256": "3e7dc84001b5270cc31d31659fa084855020b5d86232d810a252dddb9b38c70c",
+    "token_f1_threshold": 0.8,
+    "write_leading_markers": [
+      "the important thing is",
+      "please remember that",
+      "the actual update is",
+      "the durable note is",
+      "the real update is",
+      "the actual update",
+      "as a general rule",
+      "the durable note",
+      "quick correction",
+      "please remember",
+      "the real update",
+      "we decided that",
+      "for future work",
+      "we agreed that",
+      "for the record",
+      "remember that",
+      "status update",
+      "we decided to",
+      "going forward",
+      "capture that",
+      "record that",
+      "from now on",
+      "we chose to",
+      "correction",
+      "we decided",
+      "as a rule",
+      "note that",
+      "we agreed",
+      "heads up",
+      "i prefer",
+      "remember",
+      "we chose",
+      "i want",
+      "update"
+    ],
+    "ignore_leading_markers": [
+      "please disregard",
+      "disregard this",
+      "also disregard",
+      "and disregard",
+      "please ignore",
+      "this was just",
+      "please forget",
+      "ignore these",
+      "this is just",
+      "ignore this",
+      "also ignore",
+      "ignore that",
+      "and ignore",
+      "ignore the",
+      "skip this",
+      "disregard",
+      "also skip",
+      "ignore",
+      "forget",
+      "skip"
+    ]
+  },
+  "scoring": {
+    "raw": {
+      "overall": {
+        "total_cases": 300,
+        "parse_errors": 0,
+        "exact_target_matches": 166,
+        "exact_target_match_rate": 0.553333,
+        "read_hints": {
+          "tp": 260,
+          "fp": 8,
+          "fn": 13,
+          "precision": 0.970149,
+          "recall": 0.952381,
+          "f1": 0.961183
+        },
+        "write_spans": {
+          "tp": 118,
+          "fp": 114,
+          "fn": 101,
+          "precision": 0.508621,
+          "recall": 0.538813,
+          "f1": 0.523282
+        },
+        "write_spans_typed": {
+          "tp": 100,
+          "fp": 132,
+          "fn": 119,
+          "precision": 0.431034,
+          "recall": 0.456621,
+          "f1": 0.443459
+        },
+        "ignore_spans": {
+          "tp": 62,
+          "fp": 15,
+          "fn": 5,
+          "precision": 0.805195,
+          "recall": 0.925373,
+          "f1": 0.861111
+        },
+        "write_type_accuracy_on_matched_spans": {
+          "correct": 100,
+          "compared": 118,
+          "accuracy": 0.847458
+        },
+        "memory_pollution": {
+          "false_writes": 114,
+          "missed_writes": 101,
+          "irrelevant_reads": 8,
+          "missed_reads": 13,
+          "false_ignores": 15,
+          "missed_ignores": 5
+        }
+      },
+      "by_category": {
+        "conflicting_memory": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 3,
+          "exact_target_match_rate": 0.1,
+          "read_hints": {
+            "tp": 52,
+            "fp": 0,
+            "fn": 8,
+            "precision": 1.0,
+            "recall": 0.866667,
+            "f1": 0.928571
+          },
+          "write_spans": {
+            "tp": 11,
+            "fp": 21,
+            "fn": 17,
+            "precision": 0.34375,
+            "recall": 0.392857,
+            "f1": 0.366667
+          },
+          "write_spans_typed": {
+            "tp": 11,
+            "fp": 21,
+            "fn": 17,
+            "precision": 0.34375,
+            "recall": 0.392857,
+            "f1": 0.366667
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 10,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 11,
+            "compared": 11,
+            "accuracy": 1.0
+          },
+          "memory_pollution": {
+            "false_writes": 21,
+            "missed_writes": 17,
+            "irrelevant_reads": 0,
+            "missed_reads": 8,
+            "false_ignores": 10,
+            "missed_ignores": 0
+          }
+        },
+        "context_dependent_reference": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 8,
+          "exact_target_match_rate": 0.266667,
+          "read_hints": {
+            "tp": 39,
+            "fp": 0,
+            "fn": 2,
+            "precision": 1.0,
+            "recall": 0.95122,
+            "f1": 0.975
+          },
+          "write_spans": {
+            "tp": 13,
+            "fp": 20,
+            "fn": 19,
+            "precision": 0.393939,
+            "recall": 0.40625,
+            "f1": 0.4
+          },
+          "write_spans_typed": {
+            "tp": 9,
+            "fp": 24,
+            "fn": 23,
+            "precision": 0.272727,
+            "recall": 0.28125,
+            "f1": 0.276923
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 9,
+            "compared": 13,
+            "accuracy": 0.692308
+          },
+          "memory_pollution": {
+            "false_writes": 20,
+            "missed_writes": 19,
+            "irrelevant_reads": 0,
+            "missed_reads": 2,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "correction_or_revision": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 10,
+          "exact_target_match_rate": 0.333333,
+          "read_hints": {
+            "tp": 33,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "write_spans": {
+            "tp": 15,
+            "fp": 22,
+            "fn": 18,
+            "precision": 0.405405,
+            "recall": 0.454545,
+            "f1": 0.428571
+          },
+          "write_spans_typed": {
+            "tp": 12,
+            "fp": 25,
+            "fn": 21,
+            "precision": 0.324324,
+            "recall": 0.363636,
+            "f1": 0.342857
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 12,
+            "compared": 15,
+            "accuracy": 0.8
+          },
+          "memory_pollution": {
+            "false_writes": 22,
+            "missed_writes": 18,
+            "irrelevant_reads": 0,
+            "missed_reads": 0,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "distractor_memory_selection": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 28,
+          "exact_target_match_rate": 0.933333,
+          "read_hints": {
+            "tp": 80,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0.987654,
+            "recall": 0.97561,
+            "f1": 0.981595
+          },
+          "write_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans_typed": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 0,
+            "compared": 0,
+            "accuracy": 0.0
+          },
+          "memory_pollution": {
+            "false_writes": 0,
+            "missed_writes": 0,
+            "irrelevant_reads": 1,
+            "missed_reads": 2,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "ignore_noise": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 26,
+          "exact_target_match_rate": 0.866667,
+          "read_hints": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans_typed": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ignore_spans": {
+            "tp": 33,
+            "fp": 4,
+            "fn": 4,
+            "precision": 0.891892,
+            "recall": 0.891892,
+            "f1": 0.891892
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 0,
+            "compared": 0,
+            "accuracy": 0.0
+          },
+          "memory_pollution": {
+            "false_writes": 0,
+            "missed_writes": 0,
+            "irrelevant_reads": 0,
+            "missed_reads": 0,
+            "false_ignores": 4,
+            "missed_ignores": 4
+          }
+        },
+        "mixed_write_and_ignore": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 12,
+          "exact_target_match_rate": 0.4,
+          "read_hints": {
+            "tp": 12,
+            "fp": 2,
+            "fn": 0,
+            "precision": 0.857143,
+            "recall": 1.0,
+            "f1": 0.923077
+          },
+          "write_spans": {
+            "tp": 22,
+            "fp": 12,
+            "fn": 12,
+            "precision": 0.647059,
+            "recall": 0.647059,
+            "f1": 0.647059
+          },
+          "write_spans_typed": {
+            "tp": 18,
+            "fp": 16,
+            "fn": 16,
+            "precision": 0.529412,
+            "recall": 0.529412,
+            "f1": 0.529412
+          },
+          "ignore_spans": {
+            "tp": 29,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.966667,
+            "recall": 0.966667,
+            "f1": 0.966667
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 18,
+            "compared": 22,
+            "accuracy": 0.818182
+          },
+          "memory_pollution": {
+            "false_writes": 12,
+            "missed_writes": 12,
+            "irrelevant_reads": 2,
+            "missed_reads": 0,
+            "false_ignores": 1,
+            "missed_ignores": 1
+          }
+        },
+        "multi_write": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 8,
+          "exact_target_match_rate": 0.266667,
+          "read_hints": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans": {
+            "tp": 40,
+            "fp": 20,
+            "fn": 22,
+            "precision": 0.666667,
+            "recall": 0.645161,
+            "f1": 0.655738
+          },
+          "write_spans_typed": {
+            "tp": 33,
+            "fp": 27,
+            "fn": 29,
+            "precision": 0.55,
+            "recall": 0.532258,
+            "f1": 0.540984
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 33,
+            "compared": 40,
+            "accuracy": 0.825
+          },
+          "memory_pollution": {
+            "false_writes": 20,
+            "missed_writes": 22,
+            "irrelevant_reads": 1,
+            "missed_reads": 0,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "no_action_needed": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 30,
+          "exact_target_match_rate": 1.0,
+          "read_hints": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans_typed": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 0,
+            "compared": 0,
+            "accuracy": 0.0
+          },
+          "memory_pollution": {
+            "false_writes": 0,
+            "missed_writes": 0,
+            "irrelevant_reads": 0,
+            "missed_reads": 0,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "read_relevant_memory": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 26,
+          "exact_target_match_rate": 0.866667,
+          "read_hints": {
+            "tp": 44,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.977778,
+            "recall": 0.977778,
+            "f1": 0.977778
+          },
+          "write_spans": {
+            "tp": 0,
+            "fp": 5,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans_typed": {
+            "tp": 0,
+            "fp": 5,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 0,
+            "compared": 0,
+            "accuracy": 0.0
+          },
+          "memory_pollution": {
+            "false_writes": 5,
+            "missed_writes": 0,
+            "irrelevant_reads": 1,
+            "missed_reads": 1,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "simple_write": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 15,
+          "exact_target_match_rate": 0.5,
+          "read_hints": {
+            "tp": 0,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans": {
+            "tp": 17,
+            "fp": 14,
+            "fn": 13,
+            "precision": 0.548387,
+            "recall": 0.566667,
+            "f1": 0.557377
+          },
+          "write_spans_typed": {
+            "tp": 17,
+            "fp": 14,
+            "fn": 13,
+            "precision": 0.548387,
+            "recall": 0.566667,
+            "f1": 0.557377
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 17,
+            "compared": 17,
+            "accuracy": 1.0
+          },
+          "memory_pollution": {
+            "false_writes": 14,
+            "missed_writes": 13,
+            "irrelevant_reads": 3,
+            "missed_reads": 0,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        }
+      },
+      "memory_pollution": {
+        "false_writes": 114,
+        "missed_writes": 101,
+        "irrelevant_reads": 8,
+        "missed_reads": 13,
+        "false_ignores": 15,
+        "missed_ignores": 5
+      }
+    },
+    "normalized": {
+      "overall": {
+        "total_cases": 300,
+        "parse_errors": 0,
+        "exact_target_matches": 221,
+        "exact_target_match_rate": 0.736667,
+        "read_hints": {
+          "tp": 260,
+          "fp": 8,
+          "fn": 13,
+          "precision": 0.970149,
+          "recall": 0.952381,
+          "f1": 0.961183
+        },
+        "write_spans": {
+          "tp": 196,
+          "fp": 36,
+          "fn": 23,
+          "precision": 0.844828,
+          "recall": 0.894977,
+          "f1": 0.86918
+        },
+        "write_spans_typed": {
+          "tp": 162,
+          "fp": 70,
+          "fn": 57,
+          "precision": 0.698276,
+          "recall": 0.739726,
+          "f1": 0.718404
+        },
+        "ignore_spans": {
+          "tp": 67,
+          "fp": 10,
+          "fn": 0,
+          "precision": 0.87013,
+          "recall": 1.0,
+          "f1": 0.930556
+        },
+        "write_type_accuracy_on_matched_spans": {
+          "correct": 162,
+          "compared": 196,
+          "accuracy": 0.826531
+        },
+        "memory_pollution": {
+          "false_writes": 36,
+          "missed_writes": 23,
+          "irrelevant_reads": 8,
+          "missed_reads": 13,
+          "false_ignores": 10,
+          "missed_ignores": 0
+        }
+      },
+      "by_category": {
+        "conflicting_memory": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 7,
+          "exact_target_match_rate": 0.233333,
+          "read_hints": {
+            "tp": 52,
+            "fp": 0,
+            "fn": 8,
+            "precision": 1.0,
+            "recall": 0.866667,
+            "f1": 0.928571
+          },
+          "write_spans": {
+            "tp": 22,
+            "fp": 10,
+            "fn": 6,
+            "precision": 0.6875,
+            "recall": 0.785714,
+            "f1": 0.733333
+          },
+          "write_spans_typed": {
+            "tp": 21,
+            "fp": 11,
+            "fn": 7,
+            "precision": 0.65625,
+            "recall": 0.75,
+            "f1": 0.7
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 10,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 21,
+            "compared": 22,
+            "accuracy": 0.954545
+          },
+          "memory_pollution": {
+            "false_writes": 10,
+            "missed_writes": 6,
+            "irrelevant_reads": 0,
+            "missed_reads": 8,
+            "false_ignores": 10,
+            "missed_ignores": 0
+          }
+        },
+        "context_dependent_reference": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 19,
+          "exact_target_match_rate": 0.633333,
+          "read_hints": {
+            "tp": 39,
+            "fp": 0,
+            "fn": 2,
+            "precision": 1.0,
+            "recall": 0.95122,
+            "f1": 0.975
+          },
+          "write_spans": {
+            "tp": 31,
+            "fp": 2,
+            "fn": 1,
+            "precision": 0.939394,
+            "recall": 0.96875,
+            "f1": 0.953846
+          },
+          "write_spans_typed": {
+            "tp": 20,
+            "fp": 13,
+            "fn": 12,
+            "precision": 0.606061,
+            "recall": 0.625,
+            "f1": 0.615385
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 20,
+            "compared": 31,
+            "accuracy": 0.645161
+          },
+          "memory_pollution": {
+            "false_writes": 2,
+            "missed_writes": 1,
+            "irrelevant_reads": 0,
+            "missed_reads": 2,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "correction_or_revision": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 17,
+          "exact_target_match_rate": 0.566667,
+          "read_hints": {
+            "tp": 33,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "write_spans": {
+            "tp": 25,
+            "fp": 12,
+            "fn": 8,
+            "precision": 0.675676,
+            "recall": 0.757576,
+            "f1": 0.714286
+          },
+          "write_spans_typed": {
+            "tp": 19,
+            "fp": 18,
+            "fn": 14,
+            "precision": 0.513514,
+            "recall": 0.575758,
+            "f1": 0.542857
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 19,
+            "compared": 25,
+            "accuracy": 0.76
+          },
+          "memory_pollution": {
+            "false_writes": 12,
+            "missed_writes": 8,
+            "irrelevant_reads": 0,
+            "missed_reads": 0,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "distractor_memory_selection": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 28,
+          "exact_target_match_rate": 0.933333,
+          "read_hints": {
+            "tp": 80,
+            "fp": 1,
+            "fn": 2,
+            "precision": 0.987654,
+            "recall": 0.97561,
+            "f1": 0.981595
+          },
+          "write_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans_typed": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 0,
+            "compared": 0,
+            "accuracy": 0.0
+          },
+          "memory_pollution": {
+            "false_writes": 0,
+            "missed_writes": 0,
+            "irrelevant_reads": 1,
+            "missed_reads": 2,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "ignore_noise": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 30,
+          "exact_target_match_rate": 1.0,
+          "read_hints": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans_typed": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ignore_spans": {
+            "tp": 37,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 0,
+            "compared": 0,
+            "accuracy": 0.0
+          },
+          "memory_pollution": {
+            "false_writes": 0,
+            "missed_writes": 0,
+            "irrelevant_reads": 0,
+            "missed_reads": 0,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "mixed_write_and_ignore": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 21,
+          "exact_target_match_rate": 0.7,
+          "read_hints": {
+            "tp": 12,
+            "fp": 2,
+            "fn": 0,
+            "precision": 0.857143,
+            "recall": 1.0,
+            "f1": 0.923077
+          },
+          "write_spans": {
+            "tp": 33,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.970588,
+            "recall": 0.970588,
+            "f1": 0.970588
+          },
+          "write_spans_typed": {
+            "tp": 27,
+            "fp": 7,
+            "fn": 7,
+            "precision": 0.794118,
+            "recall": 0.794118,
+            "f1": 0.794118
+          },
+          "ignore_spans": {
+            "tp": 30,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 27,
+            "compared": 33,
+            "accuracy": 0.818182
+          },
+          "memory_pollution": {
+            "false_writes": 1,
+            "missed_writes": 1,
+            "irrelevant_reads": 2,
+            "missed_reads": 0,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "multi_write": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 18,
+          "exact_target_match_rate": 0.6,
+          "read_hints": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans": {
+            "tp": 57,
+            "fp": 3,
+            "fn": 5,
+            "precision": 0.95,
+            "recall": 0.919355,
+            "f1": 0.934426
+          },
+          "write_spans_typed": {
+            "tp": 48,
+            "fp": 12,
+            "fn": 14,
+            "precision": 0.8,
+            "recall": 0.774194,
+            "f1": 0.786885
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 48,
+            "compared": 57,
+            "accuracy": 0.842105
+          },
+          "memory_pollution": {
+            "false_writes": 3,
+            "missed_writes": 5,
+            "irrelevant_reads": 1,
+            "missed_reads": 0,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "no_action_needed": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 30,
+          "exact_target_match_rate": 1.0,
+          "read_hints": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans_typed": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 0,
+            "compared": 0,
+            "accuracy": 0.0
+          },
+          "memory_pollution": {
+            "false_writes": 0,
+            "missed_writes": 0,
+            "irrelevant_reads": 0,
+            "missed_reads": 0,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "read_relevant_memory": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 26,
+          "exact_target_match_rate": 0.866667,
+          "read_hints": {
+            "tp": 44,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.977778,
+            "recall": 0.977778,
+            "f1": 0.977778
+          },
+          "write_spans": {
+            "tp": 0,
+            "fp": 5,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans_typed": {
+            "tp": 0,
+            "fp": 5,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 0,
+            "compared": 0,
+            "accuracy": 0.0
+          },
+          "memory_pollution": {
+            "false_writes": 5,
+            "missed_writes": 0,
+            "irrelevant_reads": 1,
+            "missed_reads": 1,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        },
+        "simple_write": {
+          "total_cases": 30,
+          "parse_errors": 0,
+          "exact_target_matches": 25,
+          "exact_target_match_rate": 0.833333,
+          "read_hints": {
+            "tp": 0,
+            "fp": 3,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_spans": {
+            "tp": 28,
+            "fp": 3,
+            "fn": 2,
+            "precision": 0.903226,
+            "recall": 0.933333,
+            "f1": 0.918033
+          },
+          "write_spans_typed": {
+            "tp": 27,
+            "fp": 4,
+            "fn": 3,
+            "precision": 0.870968,
+            "recall": 0.9,
+            "f1": 0.885246
+          },
+          "ignore_spans": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "write_type_accuracy_on_matched_spans": {
+            "correct": 27,
+            "compared": 28,
+            "accuracy": 0.964286
+          },
+          "memory_pollution": {
+            "false_writes": 3,
+            "missed_writes": 2,
+            "irrelevant_reads": 3,
+            "missed_reads": 0,
+            "false_ignores": 0,
+            "missed_ignores": 0
+          }
+        }
+      },
+      "memory_pollution": {
+        "false_writes": 36,
+        "missed_writes": 23,
+        "irrelevant_reads": 8,
+        "missed_reads": 13,
+        "false_ignores": 10,
+        "missed_ignores": 0
+      }
+    }
+  },
+  "overall": {
+    "total_cases": 300,
+    "parse_errors": 0,
+    "exact_target_matches": 166,
+    "exact_target_match_rate": 0.553333,
+    "read_hints": {
+      "tp": 260,
+      "fp": 8,
+      "fn": 13,
+      "precision": 0.970149,
+      "recall": 0.952381,
+      "f1": 0.961183
+    },
+    "write_spans": {
+      "tp": 118,
+      "fp": 114,
+      "fn": 101,
+      "precision": 0.508621,
+      "recall": 0.538813,
+      "f1": 0.523282
+    },
+    "write_spans_typed": {
+      "tp": 100,
+      "fp": 132,
+      "fn": 119,
+      "precision": 0.431034,
+      "recall": 0.456621,
+      "f1": 0.443459
+    },
+    "ignore_spans": {
+      "tp": 62,
+      "fp": 15,
+      "fn": 5,
+      "precision": 0.805195,
+      "recall": 0.925373,
+      "f1": 0.861111
+    },
+    "write_type_accuracy_on_matched_spans": {
+      "correct": 100,
+      "compared": 118,
+      "accuracy": 0.847458
+    },
+    "memory_pollution": {
+      "false_writes": 114,
+      "missed_writes": 101,
+      "irrelevant_reads": 8,
+      "missed_reads": 13,
+      "false_ignores": 15,
+      "missed_ignores": 5
+    }
+  },
+  "by_category": {
+    "conflicting_memory": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 3,
+      "exact_target_match_rate": 0.1,
+      "read_hints": {
+        "tp": 52,
+        "fp": 0,
+        "fn": 8,
+        "precision": 1.0,
+        "recall": 0.866667,
+        "f1": 0.928571
+      },
+      "write_spans": {
+        "tp": 11,
+        "fp": 21,
+        "fn": 17,
+        "precision": 0.34375,
+        "recall": 0.392857,
+        "f1": 0.366667
+      },
+      "write_spans_typed": {
+        "tp": 11,
+        "fp": 21,
+        "fn": 17,
+        "precision": 0.34375,
+        "recall": 0.392857,
+        "f1": 0.366667
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 10,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 11,
+        "compared": 11,
+        "accuracy": 1.0
+      },
+      "memory_pollution": {
+        "false_writes": 21,
+        "missed_writes": 17,
+        "irrelevant_reads": 0,
+        "missed_reads": 8,
+        "false_ignores": 10,
+        "missed_ignores": 0
+      }
+    },
+    "context_dependent_reference": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 8,
+      "exact_target_match_rate": 0.266667,
+      "read_hints": {
+        "tp": 39,
+        "fp": 0,
+        "fn": 2,
+        "precision": 1.0,
+        "recall": 0.95122,
+        "f1": 0.975
+      },
+      "write_spans": {
+        "tp": 13,
+        "fp": 20,
+        "fn": 19,
+        "precision": 0.393939,
+        "recall": 0.40625,
+        "f1": 0.4
+      },
+      "write_spans_typed": {
+        "tp": 9,
+        "fp": 24,
+        "fn": 23,
+        "precision": 0.272727,
+        "recall": 0.28125,
+        "f1": 0.276923
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 9,
+        "compared": 13,
+        "accuracy": 0.692308
+      },
+      "memory_pollution": {
+        "false_writes": 20,
+        "missed_writes": 19,
+        "irrelevant_reads": 0,
+        "missed_reads": 2,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "correction_or_revision": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 10,
+      "exact_target_match_rate": 0.333333,
+      "read_hints": {
+        "tp": 33,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "write_spans": {
+        "tp": 15,
+        "fp": 22,
+        "fn": 18,
+        "precision": 0.405405,
+        "recall": 0.454545,
+        "f1": 0.428571
+      },
+      "write_spans_typed": {
+        "tp": 12,
+        "fp": 25,
+        "fn": 21,
+        "precision": 0.324324,
+        "recall": 0.363636,
+        "f1": 0.342857
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 12,
+        "compared": 15,
+        "accuracy": 0.8
+      },
+      "memory_pollution": {
+        "false_writes": 22,
+        "missed_writes": 18,
+        "irrelevant_reads": 0,
+        "missed_reads": 0,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "distractor_memory_selection": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 28,
+      "exact_target_match_rate": 0.933333,
+      "read_hints": {
+        "tp": 80,
+        "fp": 1,
+        "fn": 2,
+        "precision": 0.987654,
+        "recall": 0.97561,
+        "f1": 0.981595
+      },
+      "write_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans_typed": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 0,
+        "compared": 0,
+        "accuracy": 0.0
+      },
+      "memory_pollution": {
+        "false_writes": 0,
+        "missed_writes": 0,
+        "irrelevant_reads": 1,
+        "missed_reads": 2,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "ignore_noise": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 26,
+      "exact_target_match_rate": 0.866667,
+      "read_hints": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans_typed": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "ignore_spans": {
+        "tp": 33,
+        "fp": 4,
+        "fn": 4,
+        "precision": 0.891892,
+        "recall": 0.891892,
+        "f1": 0.891892
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 0,
+        "compared": 0,
+        "accuracy": 0.0
+      },
+      "memory_pollution": {
+        "false_writes": 0,
+        "missed_writes": 0,
+        "irrelevant_reads": 0,
+        "missed_reads": 0,
+        "false_ignores": 4,
+        "missed_ignores": 4
+      }
+    },
+    "mixed_write_and_ignore": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 12,
+      "exact_target_match_rate": 0.4,
+      "read_hints": {
+        "tp": 12,
+        "fp": 2,
+        "fn": 0,
+        "precision": 0.857143,
+        "recall": 1.0,
+        "f1": 0.923077
+      },
+      "write_spans": {
+        "tp": 22,
+        "fp": 12,
+        "fn": 12,
+        "precision": 0.647059,
+        "recall": 0.647059,
+        "f1": 0.647059
+      },
+      "write_spans_typed": {
+        "tp": 18,
+        "fp": 16,
+        "fn": 16,
+        "precision": 0.529412,
+        "recall": 0.529412,
+        "f1": 0.529412
+      },
+      "ignore_spans": {
+        "tp": 29,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.966667,
+        "recall": 0.966667,
+        "f1": 0.966667
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 18,
+        "compared": 22,
+        "accuracy": 0.818182
+      },
+      "memory_pollution": {
+        "false_writes": 12,
+        "missed_writes": 12,
+        "irrelevant_reads": 2,
+        "missed_reads": 0,
+        "false_ignores": 1,
+        "missed_ignores": 1
+      }
+    },
+    "multi_write": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 8,
+      "exact_target_match_rate": 0.266667,
+      "read_hints": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans": {
+        "tp": 40,
+        "fp": 20,
+        "fn": 22,
+        "precision": 0.666667,
+        "recall": 0.645161,
+        "f1": 0.655738
+      },
+      "write_spans_typed": {
+        "tp": 33,
+        "fp": 27,
+        "fn": 29,
+        "precision": 0.55,
+        "recall": 0.532258,
+        "f1": 0.540984
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 33,
+        "compared": 40,
+        "accuracy": 0.825
+      },
+      "memory_pollution": {
+        "false_writes": 20,
+        "missed_writes": 22,
+        "irrelevant_reads": 1,
+        "missed_reads": 0,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "no_action_needed": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 30,
+      "exact_target_match_rate": 1.0,
+      "read_hints": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans_typed": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 0,
+        "compared": 0,
+        "accuracy": 0.0
+      },
+      "memory_pollution": {
+        "false_writes": 0,
+        "missed_writes": 0,
+        "irrelevant_reads": 0,
+        "missed_reads": 0,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "read_relevant_memory": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 26,
+      "exact_target_match_rate": 0.866667,
+      "read_hints": {
+        "tp": 44,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.977778,
+        "recall": 0.977778,
+        "f1": 0.977778
+      },
+      "write_spans": {
+        "tp": 0,
+        "fp": 5,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans_typed": {
+        "tp": 0,
+        "fp": 5,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 0,
+        "compared": 0,
+        "accuracy": 0.0
+      },
+      "memory_pollution": {
+        "false_writes": 5,
+        "missed_writes": 0,
+        "irrelevant_reads": 1,
+        "missed_reads": 1,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "simple_write": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 15,
+      "exact_target_match_rate": 0.5,
+      "read_hints": {
+        "tp": 0,
+        "fp": 3,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans": {
+        "tp": 17,
+        "fp": 14,
+        "fn": 13,
+        "precision": 0.548387,
+        "recall": 0.566667,
+        "f1": 0.557377
+      },
+      "write_spans_typed": {
+        "tp": 17,
+        "fp": 14,
+        "fn": 13,
+        "precision": 0.548387,
+        "recall": 0.566667,
+        "f1": 0.557377
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 17,
+        "compared": 17,
+        "accuracy": 1.0
+      },
+      "memory_pollution": {
+        "false_writes": 14,
+        "missed_writes": 13,
+        "irrelevant_reads": 3,
+        "missed_reads": 0,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    }
+  },
+  "memory_pollution": {
+    "false_writes": 114,
+    "missed_writes": 101,
+    "irrelevant_reads": 8,
+    "missed_reads": 13,
+    "false_ignores": 15,
+    "missed_ignores": 5
+  },
+  "normalized_overall": {
+    "total_cases": 300,
+    "parse_errors": 0,
+    "exact_target_matches": 221,
+    "exact_target_match_rate": 0.736667,
+    "read_hints": {
+      "tp": 260,
+      "fp": 8,
+      "fn": 13,
+      "precision": 0.970149,
+      "recall": 0.952381,
+      "f1": 0.961183
+    },
+    "write_spans": {
+      "tp": 196,
+      "fp": 36,
+      "fn": 23,
+      "precision": 0.844828,
+      "recall": 0.894977,
+      "f1": 0.86918
+    },
+    "write_spans_typed": {
+      "tp": 162,
+      "fp": 70,
+      "fn": 57,
+      "precision": 0.698276,
+      "recall": 0.739726,
+      "f1": 0.718404
+    },
+    "ignore_spans": {
+      "tp": 67,
+      "fp": 10,
+      "fn": 0,
+      "precision": 0.87013,
+      "recall": 1.0,
+      "f1": 0.930556
+    },
+    "write_type_accuracy_on_matched_spans": {
+      "correct": 162,
+      "compared": 196,
+      "accuracy": 0.826531
+    },
+    "memory_pollution": {
+      "false_writes": 36,
+      "missed_writes": 23,
+      "irrelevant_reads": 8,
+      "missed_reads": 13,
+      "false_ignores": 10,
+      "missed_ignores": 0
+    }
+  },
+  "normalized_by_category": {
+    "conflicting_memory": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 7,
+      "exact_target_match_rate": 0.233333,
+      "read_hints": {
+        "tp": 52,
+        "fp": 0,
+        "fn": 8,
+        "precision": 1.0,
+        "recall": 0.866667,
+        "f1": 0.928571
+      },
+      "write_spans": {
+        "tp": 22,
+        "fp": 10,
+        "fn": 6,
+        "precision": 0.6875,
+        "recall": 0.785714,
+        "f1": 0.733333
+      },
+      "write_spans_typed": {
+        "tp": 21,
+        "fp": 11,
+        "fn": 7,
+        "precision": 0.65625,
+        "recall": 0.75,
+        "f1": 0.7
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 10,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 21,
+        "compared": 22,
+        "accuracy": 0.954545
+      },
+      "memory_pollution": {
+        "false_writes": 10,
+        "missed_writes": 6,
+        "irrelevant_reads": 0,
+        "missed_reads": 8,
+        "false_ignores": 10,
+        "missed_ignores": 0
+      }
+    },
+    "context_dependent_reference": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 19,
+      "exact_target_match_rate": 0.633333,
+      "read_hints": {
+        "tp": 39,
+        "fp": 0,
+        "fn": 2,
+        "precision": 1.0,
+        "recall": 0.95122,
+        "f1": 0.975
+      },
+      "write_spans": {
+        "tp": 31,
+        "fp": 2,
+        "fn": 1,
+        "precision": 0.939394,
+        "recall": 0.96875,
+        "f1": 0.953846
+      },
+      "write_spans_typed": {
+        "tp": 20,
+        "fp": 13,
+        "fn": 12,
+        "precision": 0.606061,
+        "recall": 0.625,
+        "f1": 0.615385
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 20,
+        "compared": 31,
+        "accuracy": 0.645161
+      },
+      "memory_pollution": {
+        "false_writes": 2,
+        "missed_writes": 1,
+        "irrelevant_reads": 0,
+        "missed_reads": 2,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "correction_or_revision": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 17,
+      "exact_target_match_rate": 0.566667,
+      "read_hints": {
+        "tp": 33,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "write_spans": {
+        "tp": 25,
+        "fp": 12,
+        "fn": 8,
+        "precision": 0.675676,
+        "recall": 0.757576,
+        "f1": 0.714286
+      },
+      "write_spans_typed": {
+        "tp": 19,
+        "fp": 18,
+        "fn": 14,
+        "precision": 0.513514,
+        "recall": 0.575758,
+        "f1": 0.542857
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 19,
+        "compared": 25,
+        "accuracy": 0.76
+      },
+      "memory_pollution": {
+        "false_writes": 12,
+        "missed_writes": 8,
+        "irrelevant_reads": 0,
+        "missed_reads": 0,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "distractor_memory_selection": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 28,
+      "exact_target_match_rate": 0.933333,
+      "read_hints": {
+        "tp": 80,
+        "fp": 1,
+        "fn": 2,
+        "precision": 0.987654,
+        "recall": 0.97561,
+        "f1": 0.981595
+      },
+      "write_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans_typed": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 0,
+        "compared": 0,
+        "accuracy": 0.0
+      },
+      "memory_pollution": {
+        "false_writes": 0,
+        "missed_writes": 0,
+        "irrelevant_reads": 1,
+        "missed_reads": 2,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "ignore_noise": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 30,
+      "exact_target_match_rate": 1.0,
+      "read_hints": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans_typed": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "ignore_spans": {
+        "tp": 37,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 0,
+        "compared": 0,
+        "accuracy": 0.0
+      },
+      "memory_pollution": {
+        "false_writes": 0,
+        "missed_writes": 0,
+        "irrelevant_reads": 0,
+        "missed_reads": 0,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "mixed_write_and_ignore": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 21,
+      "exact_target_match_rate": 0.7,
+      "read_hints": {
+        "tp": 12,
+        "fp": 2,
+        "fn": 0,
+        "precision": 0.857143,
+        "recall": 1.0,
+        "f1": 0.923077
+      },
+      "write_spans": {
+        "tp": 33,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.970588,
+        "recall": 0.970588,
+        "f1": 0.970588
+      },
+      "write_spans_typed": {
+        "tp": 27,
+        "fp": 7,
+        "fn": 7,
+        "precision": 0.794118,
+        "recall": 0.794118,
+        "f1": 0.794118
+      },
+      "ignore_spans": {
+        "tp": 30,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 27,
+        "compared": 33,
+        "accuracy": 0.818182
+      },
+      "memory_pollution": {
+        "false_writes": 1,
+        "missed_writes": 1,
+        "irrelevant_reads": 2,
+        "missed_reads": 0,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "multi_write": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 18,
+      "exact_target_match_rate": 0.6,
+      "read_hints": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans": {
+        "tp": 57,
+        "fp": 3,
+        "fn": 5,
+        "precision": 0.95,
+        "recall": 0.919355,
+        "f1": 0.934426
+      },
+      "write_spans_typed": {
+        "tp": 48,
+        "fp": 12,
+        "fn": 14,
+        "precision": 0.8,
+        "recall": 0.774194,
+        "f1": 0.786885
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 48,
+        "compared": 57,
+        "accuracy": 0.842105
+      },
+      "memory_pollution": {
+        "false_writes": 3,
+        "missed_writes": 5,
+        "irrelevant_reads": 1,
+        "missed_reads": 0,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "no_action_needed": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 30,
+      "exact_target_match_rate": 1.0,
+      "read_hints": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans_typed": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 0,
+        "compared": 0,
+        "accuracy": 0.0
+      },
+      "memory_pollution": {
+        "false_writes": 0,
+        "missed_writes": 0,
+        "irrelevant_reads": 0,
+        "missed_reads": 0,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "read_relevant_memory": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 26,
+      "exact_target_match_rate": 0.866667,
+      "read_hints": {
+        "tp": 44,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.977778,
+        "recall": 0.977778,
+        "f1": 0.977778
+      },
+      "write_spans": {
+        "tp": 0,
+        "fp": 5,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans_typed": {
+        "tp": 0,
+        "fp": 5,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 0,
+        "compared": 0,
+        "accuracy": 0.0
+      },
+      "memory_pollution": {
+        "false_writes": 5,
+        "missed_writes": 0,
+        "irrelevant_reads": 1,
+        "missed_reads": 1,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    },
+    "simple_write": {
+      "total_cases": 30,
+      "parse_errors": 0,
+      "exact_target_matches": 25,
+      "exact_target_match_rate": 0.833333,
+      "read_hints": {
+        "tp": 0,
+        "fp": 3,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_spans": {
+        "tp": 28,
+        "fp": 3,
+        "fn": 2,
+        "precision": 0.903226,
+        "recall": 0.933333,
+        "f1": 0.918033
+      },
+      "write_spans_typed": {
+        "tp": 27,
+        "fp": 4,
+        "fn": 3,
+        "precision": 0.870968,
+        "recall": 0.9,
+        "f1": 0.885246
+      },
+      "ignore_spans": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "write_type_accuracy_on_matched_spans": {
+        "correct": 27,
+        "compared": 28,
+        "accuracy": 0.964286
+      },
+      "memory_pollution": {
+        "false_writes": 3,
+        "missed_writes": 2,
+        "irrelevant_reads": 3,
+        "missed_reads": 0,
+        "false_ignores": 0,
+        "missed_ignores": 0
+      }
+    }
+  },
+  "normalized_memory_pollution": {
+    "false_writes": 36,
+    "missed_writes": 23,
+    "irrelevant_reads": 8,
+    "missed_reads": 13,
+    "false_ignores": 10,
+    "missed_ignores": 0
+  }
+}
