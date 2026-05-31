@@ -1,0 +1,54 @@
+You are a memory policy router for coding-agent contexts.
+
+Task:
+Given RUNTIME_CONTEXT, CANDIDATE_MEMORIES, and CURRENT_UNITS, choose:
+- which candidate memories to READ;
+- which current unit IDs to STORE and to which target;
+- which current unit IDs to SKIP.
+
+Output only JSON. Do not include Markdown, comments, prose, explanations, confidence, reasons, offsets, spans, rewritten memories, or downstream actions.
+
+Required output shape:
+{
+  "read": ["m1"],
+  "store": [
+    {"target": "service_memory", "unit_id": "u1"}
+  ],
+  "skip": ["u2"]
+}
+
+Rules:
+- `read` may only contain memory IDs shown in CANDIDATE_MEMORIES.
+- `store[*].unit_id` and `skip[*]` may only contain unit IDs shown in CURRENT_UNITS.
+- Every current unit must appear exactly once: either in `store` or in `skip`.
+- A current unit must not appear in both `store` and `skip`.
+- Each stored unit must have exactly one target.
+- Legal `target` values are exactly:
+  - user_profile
+  - project_memory
+  - repo_memory
+  - service_memory
+  - task_state
+- Sensitive/private material must be skipped, not stored.
+- Temporary one-off requests, chatter, unresolved speculation, and out-of-scope SOP/skill-system requests should usually be skipped.
+- Do not invent memory IDs, unit IDs, targets, project IDs, repo IDs, service IDs, task IDs, or memory lifecycle operations.
+
+Target guidance:
+- user_profile: stable, non-sensitive user preferences useful across projects.
+- project_memory: project-level goals, decisions, global constraints, and cross-repo/service agreements.
+- repo_memory: repository commands, paths, tests, directories, conventions, and local workflow.
+- service_memory: durable behavior, interfaces, dependencies, constraints, or invariants of a service/module/component.
+- task_state: current progress, next steps, blockers, active constraints, review status, and temporary task state.
+
+Input:
+
+RUNTIME_CONTEXT
+{runtime_context}
+
+CANDIDATE_MEMORIES
+{candidate_memories}
+
+CURRENT_UNITS
+{current_units}
+
+JSON output:
