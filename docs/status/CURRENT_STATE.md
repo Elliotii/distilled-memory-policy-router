@@ -4,11 +4,150 @@
 2026-06-02  CST
 
 ## Current Milestone
-P5.18-A: v0.5 README and portfolio packaging
+P5.21-A: v0.5b final report consolidation and snapshot readiness
 
 ## Completed
 
-### P5.18-A (This Context)
+### P5.21-A (This Context)
+- Created v0.5b final consolidated reports:
+  - `reports/v05b/v05b_final_project_report.md` — Executive summary + full results
+  - `reports/v05b/v05b_final_experiment_summary.md` — Concise tables
+  - `reports/v05b/v05b_final_claims_and_limitations.md` — Allowed/forbidden claims
+  - `reports/v05b/v05b_final_error_analysis.md` — What JSON fixed/didn't fix
+  - `reports/v05b/v05b_final_artifact_manifest.md` — What to commit
+  - `reports/v05b/v05b_v05c_safety_ablation_plan.md` — v0.5c plan (not run)
+  - `reports/v05b/v05b_git_handoff_checklist.md` — Commit commands
+  - `reports/v05b/v05b_final_report_consistency_check.md` — Cross-report audit
+- Created v0.5b docs:
+  - `docs/v05b/V05B_FINAL_RESULTS.md` — Concise results page
+  - `docs/v05b/V05B_PROJECT_NARRATIVE.md` — Story of the experiment
+  - `docs/v05b/V05C_SAFETY_ABLATION_PLAN.md` — Mirror of safety plan
+- **Final consistency check: All 34 reports present, gold hash unchanged, no forbidden claims**
+- Large file scan: only .venv (virtual env), no project files >50MB
+- Secret scan: docs/reports/prompts/configs/src clean (no real secrets)
+- Gold hash unchanged: `56e16078...`
+- Unit tests: 77/77 OK
+- **v0.5b ready for manual review and git snapshot**
+
+### P5.20-A (Previous)
+- Verified gold hash before and after: `56e16078...` unchanged
+- Evaluated Qwen3-4B Unit JSON LoRA 500 on locked gold (100 cases)
+  - 100 predictions generated, 100% JSON valid, 0 structural errors
+- **JSON LoRA 500 gold metrics:**
+  - Parse success: **100.0%** (400/400 across all predictions)
+  - Exact: **31.0%** (↑15pp vs DSL 500, ↑5pp vs Qwen3-4B JSON fs)
+  - READ F1: **0.919**
+  - STORE F1: **0.941** (vs DSL 500 0.946, within 0.005)
+  - Target accuracy: **67.3%** (↑19.8pp vs DSL 500, ↑9.8pp vs Qwen3-4B JSON fs)
+  - SKIP F1: 0.706 (vs DSL 500 0.718)
+  - Sensitive store: 6 genuine failures (credit card, 2 tokens, 2 phones, 1 address)
+    - Tied with DSL 500 (also 6 failures)
+    - Qwen3.5 JSON fs: 0 failures — safety gap remains
+- **Gold baseline comparison:**
+  - JSON 500 ranks #3 overall behind Qwen3.5 JSON fs (#1) and Qwen3.5 DSL fs (#2)
+  - JSON 500 beats DSL 500 on exact (+15pp), target acc (+19.8pp)
+  - JSON 500 beats Qwen3-4B JSON fs on exact (+5pp), STORE F1 (+0.018), target acc (+9.8pp)
+- **Dev→gold delta:** target acc -1.2pp (excellent generalization), exact -3pp
+- **Target confusion audit:** service_memory 70% on gold (DSL: ~25%), repo_memory weakest (50%)
+- **Sensitive store audit:** 6/10 failures catalogued with case-level detail
+- Created 9 reports: gold eval, error analysis, baseline comparison, dev vs gold delta, sensitive store audit, target confusion audit, final learning curve, final result decision, ablation summary
+- **Final v0.5b decision: Result B — Unit JSON LoRA improves target routing but still trails Qwen3.5 prompting**
+  - JSON > DSL confirmed (+19.8pp target acc on gold)
+  - JSON SFT > JSON prompting confirmed (beats teacher on exact + STORE + target)
+  - Qwen3.5 JSON fs remains strongest overall
+  - Safety not solved (6 failures, same as DSL)
+- **Recommended next:** safety-focused training, target-balanced training, Qwen3.5 JSON LoRA
+- **Unit JSON is now the preferred training interface** for all future work
+- Gold hash unchanged, 77/77 tests pass
+- **v0.5b Unit JSON LoRA ablation complete**
+
+### P5.19-D (Previous)
+- Preflight passed: all checks OK
+- Trained Qwen3-4B Unit JSON QLoRA on 500 JSON SFT cases
+  - Duration: 842s (14m 2s), no OOM/NaN
+  - Eval loss: 0.611 → 0.548 → **0.544** (lowest of all LoRA variants)
+  - Mean token accuracy: 86.5% → 87.1% → **87.2%**
+  - Adapter saved to `results/v05b_lora/qwen3_4b_json_500/adapter/`
+- Evaluated on dev: 100 predictions, 100% JSON valid
+- **JSON 500 dev metrics:**
+  - Parse success: **100.0%** (300/300 across all sizes)
+  - Exact: **34.0%** (↑23pp from 125, ↑10pp vs DSL 500)
+  - READ F1: **0.902**
+  - STORE F1: **0.958** (within 0.003 of JSON fs 0.961)
+  - Target accuracy: **68.5%** (↑12.8pp from 125, **↑14.4pp vs DSL 500**)
+  - SKIP F1: **0.753** (↑0.218 from 125)
+  - Sensitive store: 66.7% eval; genuine audit: 1/4 = 25% (1 phone number as user_profile)
+- **JSON 500 beats Qwen3-4B JSON few-shot on exact (+11pp) and target accuracy (+1.4pp)**
+- **JSON 500 beats DSL 500 on target accuracy by 14.4pp**
+- **target confusion audit:** service_memory 91.5% accurate (↑from 55% at 125); service→task_state confusion reduced from 42% to 4%
+- **Learning curve confirmed:** all metrics improve 125→250→500 except sensitive store
+- Created 8 reports: train, dev eval, error analysis, learning curve, vs DSL 500, sensitive store audit, target confusion audit, gold readiness
+- **Gold readiness decision: Option A — Ready for locked-gold final evaluation**
+- Gold hash unchanged: `56e16078...`
+- Unit tests: 77/77 OK
+- **v0.5b Unit JSON LoRA learning curve complete — JSON is a clear winner over DSL for SFT**
+
+### P5.19-C (Previous)
+- Preflight passed: all checks OK
+- Trained Qwen3-4B Unit JSON QLoRA on 250 JSON SFT cases
+  - Duration: 367s, no OOM/NaN
+  - Eval loss: 1.326 → 0.659 → **0.608** (very strong convergence)
+  - Mean token accuracy: 72.7% → 85.5% → **86.5%**
+  - Adapter saved to `results/v05b_lora/qwen3_4b_json_250/adapter/`
+- Evaluated on dev: 100 predictions, 100% JSON valid, 0 structural errors
+- **JSON 250 dev metrics:**
+  - Parse success: 100% (maintained)
+  - Exact: **20.0%** (↑9pp from JSON 125, ↑6pp vs DSL 250)
+  - STORE F1: **0.947** (↑0.037 from 125, exceeds DSL 250's 0.944)
+  - Target accuracy: **63.8%** (↑8.1pp from 125, ↓ vs JSON fs 67.1%)
+  - SKIP F1: **0.747** (↑0.212 from 125 — dramatic improvement)
+  - Sensitive store: 66.7% (↑33.4pp — matches DSL 250; inherent data limitation)
+- **Critical finding: JSON target accuracy INCREASES with data (55.7%→63.8%) while DSL DECREASES (60.0%→55.7%→54.1%).**
+  - JSON 250 (63.8%) already exceeds DSL 500 (54.1%) by 9.7pp on target accuracy
+- JSON 250 dominates DSL 250 on 5 of 5 primary metrics
+- Created 6 reports: train, dev eval, error analysis, vs JSON 125, vs DSL, smoke decision
+- Smoke decision: **Option A — Proceed to JSON LoRA 500 unchanged**
+- Gold hash unchanged: `56e16078...`
+- Unit tests: 77/77 OK
+- **JSON format is a clear winner over DSL for SFT training — target classification is the killer differentiator**
+
+### P5.19-B (Previous)
+- Preflight passed: all 12 checks OK (config, data, CUDA, gold hash)
+- Trained Qwen3-4B Unit JSON QLoRA on 125 JSON SFT cases
+  - Duration: 217s, no OOM/NaN
+  - Eval loss: 1.919 → 1.424 → 1.300 (strong convergence)
+  - Adapter saved to `results/v05b_lora/qwen3_4b_json_125/adapter/`
+- Evaluated on dev: 100 predictions, 100% JSON valid, 0 structural errors
+- JSON parse success: **100%** vs DSL LoRA 125 86% (+14pp)
+- STORE F1: **0.910** vs DSL LoRA 125 0.867 (+0.043)
+- READ F1: **0.889** vs DSL LoRA 125 0.822 (+0.067)
+- SKIP F1: **0.535** vs DSL LoRA 125 0.492 (+0.043)
+- Target accuracy: 55.7% vs DSL LoRA 125 60.0% (-4.3pp, small-N effect)
+- Sensitive store: 33.3% unchanged (inherent data limitation)
+- 0 invalid IDs, 0 invalid targets, 0 markdown, 0 empty outputs
+- Created 5 reports: train, dev eval, error analysis, vs DSL 125, smoke decision
+- Smoke decision: **Option A — Proceed to JSON LoRA 250 unchanged**
+- Gold hash unchanged: `56e16078...`
+- Unit tests: 77/77 OK
+- **v0.5b Unit JSON LoRA 125 smoke complete — JSON format is a clean structural win**
+
+### P5.19-A (Previous)
+- Created v0.5b experiment definition: Unit JSON LoRA ablation
+- Created `src/v05/render_json_sft_messages.py` — JSON SFT rendering script
+- Rendered 4 JSON SFT files: 125, 250, 500 train + dev (975 total rows)
+- All validations pass: JSON parse 100%, canonical consistency 0 mismatches, unit coverage 100%, 0 illegal targets, 0 markdown/prose
+- Created 3 v0.5b JSON LoRA configs (125/250/500) based on v0.5 DSL configs
+- Updated `eval_lora_router.py` with `--interface` parameterization (unit_dsl / unit_json)
+- Updated `train_lora_router.py` preflight with interface-aware logging
+- Script compatibility audit complete: train/eval/eval_runner all support unit_json
+- Created 6 v0.5b reports: plan, SFT rendering, SFT validation, config, usage policy, readiness
+- Updated `docs/v05b/V05B_UNIT_JSON_LORA_PLAN.md`
+- Gold hash unchanged: `56e160782c3cd8b18a369227c422a67c43050ef226017adaa2ab7fbbfd52173d`
+- Unit tests: 77/77 OK
+- **No training, no inference, no gold use — readiness only**
+- **v0.5b Unit JSON LoRA ready for 125-case smoke training**
+
+### P5.18-A (Previous)
 - Created README_v05.md — public-facing project summary
 - Created docs/v05/V05_FINAL_RESULTS.md — concise results page
 - Created docs/v05/V05_REPRODUCIBILITY_GUIDE.md — commands and splits
@@ -514,17 +653,15 @@ python3 -m src.v05.check_leakage \
 
 ## Recommended Next Step
 
-**Context 5.5-A: LoRA training data subset preparation and training pipeline readiness**
+**User action required:**
+1. **Manual review:** Review the v0.5b final reports and claims.
+2. **Manual git snapshot:** Stage and commit v0.5b files, tag `v0.5b-unit-json-lora-complete`.
+   - See `reports/v05b/v05b_git_handoff_checklist.md` for exact commands.
+3. **Future: v0.5c safety-focused training**
+   - See `reports/v05b/v05b_v05c_safety_ablation_plan.md`.
+   - Train only after v0.5b is committed/tagged.
 
-Prepare for Qwen3-4B LoRA training:
-1. Create nested train subsets (125 ⊂ 250 ⊂ 500) from train-pool
-2. Verify PEFT/TRL/accelerate/bitsandbytes availability
-3. Set up SFT training config (LoRA rank 8, alpha 16, 3 epochs)
-4. Create training pipeline script
-5. Target: Beat Qwen3.5 JSON fs on gold (42% exact, 0.963 STORE F1)
-6. Hard gates: parse ≥ 96%, sensitive = 0, improvement over few-shot
-
-Do NOT train yet. Do NOT use gold during training.
+Do NOT train v0.5c from this context. This context is consolidation only.
 
 ## Files Changed (P5.12-D)
 

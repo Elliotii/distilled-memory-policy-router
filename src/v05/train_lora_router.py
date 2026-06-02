@@ -58,20 +58,21 @@ def preflight(cfg: dict[str, Any]) -> bool:
     print(f"✅ train rows: {len(train_rows)}")
     print(f"✅ eval rows: {len(eval_rows)}")
 
-    # Validate assistant DSL
+    # Validate assistant format (markdown-free, interface-agnostic)
+    interface_label = cfg.get("interface", "unit_dsl")
     bad = sum(1 for r in train_rows if "```" in r["messages"][2]["content"])
     if bad:
         print(f"❌ {bad} train rows have markdown in assistant")
         ok = False
     else:
-        print("✅ No markdown in train assistant")
+        print(f"✅ No markdown in train assistant ({interface_label})")
 
     bad = sum(1 for r in eval_rows if "```" in r["messages"][2]["content"])
     if bad:
         print(f"❌ {bad} eval rows have markdown in assistant")
         ok = False
     else:
-        print("✅ No markdown in eval assistant")
+        print(f"✅ No markdown in eval assistant ({interface_label})")
 
     # No gold in config
     cfg_text = json.dumps(cfg)

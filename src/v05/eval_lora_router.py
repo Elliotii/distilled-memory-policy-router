@@ -1,11 +1,21 @@
 """Evaluate trained LoRA adapter on dev cases.
 
-Usage:
+Supports --interface unit_dsl (default) and unit_json.
+
+Usage (DSL):
   python src/v05/eval_lora_router.py \
     --base-model /home/abc16/hf_models/Qwen3-4B-Instruct-2507 \
     --adapter results/v05_lora/qwen3_4b_dsl_125/adapter \
     --cases data/v05/dev/v05_dev_cases.jsonl \
     --out data/v05/model_predictions/qwen3_4b_lora_125_dev_predictions.jsonl
+
+Usage (JSON):
+  python src/v05/eval_lora_router.py \
+    --interface unit_json \
+    --base-model /home/abc16/hf_models/Qwen3-4B-Instruct-2507 \
+    --adapter results/v05b_lora/qwen3_4b_json_125/adapter \
+    --cases data/v05/dev/v05_dev_cases.jsonl \
+    --out data/v05b/model_predictions/qwen3_4b_lora_json_125_dev_predictions.jsonl
 """
 
 from __future__ import annotations
@@ -27,7 +37,8 @@ if str(ROOT) not in sys.path:
 from src.v04.model_output_runner import load_cases, write_jsonl
 
 
-from src.v05.render_sft_messages import SYSTEM_PROMPT, render_user_input
+from src.v05.render_sft_messages import SYSTEM_PROMPT as DSL_SYSTEM_PROMPT, render_user_input
+from src.v05.render_json_sft_messages import JSON_SYSTEM_PROMPT
 
 
 def load_model_adapter(base_model: str, adapter: str):
@@ -52,21 +63,34 @@ def main() -> int:
     ap.add_argument("--adapter", required=True)
     ap.add_argument("--cases", required=True)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--system", default="qwen3_4b_lora_125_unit_dsl")
+    ap.add_argument("--interface", choices=["unit_dsl", "unit_json"], default="unit_dsl",
+                    help="Output interface (default: unit_dsl)")
+    ap.add_argument("--system", default=None,
+                    help="System name (auto-generated if not provided)")
     ap.add_argument("--split", default="dev")
     ap.add_argument("--max-new-tokens", type=int, default=512)
     args = ap.parse_args()
 
+    # Resolve interface-specific prompts and defaults
+    if args.interface == "unit_json":
+        system_prompt = JSON_SYSTEM_PROMPT
+        if args.system is None:
+            args.system = "qwen3_4b_lora_json_125_unit_json"
+    else:
+        system_prompt = DSL_SYSTEM_PROMPT
+        if args.system is None:
+            args.system = "qwen3_4b_lora_125_unit_dsl"
+
     cases = load_cases(Path(args.cases))
-    print(f"Cases: {len(cases)}")
+    print(f"Cases: {len(cases)}  |  Interface: {args.interface}  |  System: {args.system}")
     model, tokenizer = load_model_adapter(args.base_model, args.adapter)
 
     import torch
-    sys_hash = hashlib.sha256(SYSTEM_PROMPT.encode()).hexdigest()
+    sys_hash = hashlib.sha256(system_prompt.encode()).hexdigest()
     preds = []
     for case in cases:
         messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": render_user_input(case)},
         ]
         text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
@@ -77,7 +101,7 @@ def main() -> int:
         latency = (time.perf_counter() - t0) * 1000
         raw = tokenizer.decode(out_ids[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True).strip()
         preds.append({
-            "case_id": case["case_id"], "interface": "unit_dsl", "system": args.system,
+            "case_id": case["case_id"], "interface": args.interface, "system": args.system,
             "model_id": "qwen3_4b_lora_125", "adapter_path": args.adapter,
             "split": args.split, "raw_output": raw, "error": None,
             "latency_ms": round(latency, 1), "output_chars": len(raw),
