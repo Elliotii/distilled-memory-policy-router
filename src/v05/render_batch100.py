@@ -1,0 +1,1482 @@
+"""Generate v0.5 batch100: corrected batch50 + 50 new = 100 total.
+
+Step A: Apply batch50 corrections (0007, 0024).
+Step B: Generate 50 new cases across 3+ new domains.
+Output: batch100 cases + SFT messages.
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+from collections import Counter
+from typing import Any
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.v05.render_sft_messages import SYSTEM_PROMPT, render_user_input
+
+
+# ═══════════════════════════════════════════════════════════════════
+# STEP A: Load batch50 and apply corrections
+# ═══════════════════════════════════════════════════════════════════
+
+def load_and_correct_batch50() -> list[dict[str, Any]]:
+    batch50_path = ROOT / "data/v05/batches/v05_batch50_cases.jsonl"
+    cases = []
+    with batch50_path.open() as f:
+        for line in f:
+            if line.strip():
+                cases.append(json.loads(line))
+
+    corrections = 0
+    for c in cases:
+        if c["case_id"] == "v05_batch50_0007":
+            # u3: project_memory -> task_state
+            c["gold"]["store"] = [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "task_state", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ]
+            c["gold"]["dsl"] = "READ NONE\nSTORE service_memory u1\nSTORE task_state u2\nSTORE task_state u3\nSKIP NONE"
+            c["notes"] = "STORE/SKIP-only with project_memory boundary. u1 is durable eval_runner capability → service_memory. u2 is current feature request → task_state. u3 describes current v0.5 training configuration (Qwen3-4B + LoRA) → task_state — this is a version-scoped, model-specific training plan, not a permanent project decision."
+            corrections += 1
+        elif c["case_id"] == "v05_batch50_0024":
+            # u1: project_memory -> service_memory
+            c["gold"]["store"] = [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "project_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ]
+            c["gold"]["dsl"] = "READ NONE\nSTORE service_memory u1\nSTORE project_memory u2\nSTORE task_state u3\nSKIP NONE"
+            c["notes"] = "STORE/SKIP-only with service vs project boundary. u1 is an export-specific PII rule → service_memory (the text names 'The export service'). u2 is an explicitly cross-service rule → project_memory ('All data-platform services'). u3 is current task → task_state. Shows the contrast: service-named rules are service_memory; cross-service rules are project_memory."
+            corrections += 1
+        # v05_batch50_0017: no change
+
+    print(f"Applied {corrections} correction(s) to batch50")
+    return cases
+
+
+# ═══════════════════════════════════════════════════════════════════
+# STEP B: 50 NEW BATCH100 CASES
+# ═══════════════════════════════════════════════════════════════════
+
+NEW50_CASES: list[dict[str, Any]] = [
+    # ── READ-only (10) ──
+    {
+        "case_id": "v05_batch100_0001",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "indexer",
+            "task": "investigate slow search queries",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The indexer builds an inverted index over all markdown files and caches it in Redis with a 1-hour TTL."},
+            {"memory_id": "m2", "target": "service_memory", "content": "The old v1 indexer used Elasticsearch with a refresh interval of 30 seconds."},
+            {"memory_id": "m3", "target": "repo_memory", "content": "Indexer configuration lives in config/indexer.yaml with cache_size and batch_size parameters."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Why are search queries taking over 2 seconds on the staging environment?"},
+        ],
+        "gold": {"read": ["m1", "m3"], "store": [], "skip": ["u1"], "dsl": "READ m1,m3\nSTORE NONE\nSKIP u1"},
+        "tags": ["read_only", "stale_memory", "temporary_request"],
+        "notes": "READ-only: u1 is a debugging query. m1 (current indexer behavior) and m3 (config) help answer. m2 is stale legacy Elasticsearch reference.",
+    },
+    {
+        "case_id": "v05_batch100_0002",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "aggregator",
+            "task": "understand aggregation window logic",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The aggregator computes daily sums over a 24h sliding window aligned to UTC midnight."},
+            {"memory_id": "m2", "target": "service_memory", "content": "The weekly report generator is a separate service that reads aggregated data every Monday at 06:00."},
+            {"memory_id": "m3", "target": "repo_memory", "content": "Aggregation window parameters are in config/aggregator/windows.yaml."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Does the aggregation window include transactions that happened exactly at midnight UTC?"},
+        ],
+        "gold": {"read": ["m1", "m3"], "store": [], "skip": ["u1"], "dsl": "READ m1,m3\nSTORE NONE\nSKIP u1"},
+        "tags": ["read_only", "related_but_useless", "temporary_request"],
+        "notes": "READ-only: u1 is a factual boundary question. m1 (window logic) and m3 (config) answer it. m2 is related (also reads aggregated data) but not useful for this question.",
+    },
+    {
+        "case_id": "v05_batch100_0003",
+        "runtime_context": {
+            "project": "travel-planner", "repo": "voyager", "service": "pricing",
+            "task": "check pricing cache behavior",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The pricing service caches flight prices in Memcached with a 5-minute TTL per route."},
+            {"memory_id": "m2", "target": "service_memory", "content": "The old v2 pricing service used Redis with a 15-minute TTL and was decommissioned in 2025."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "What is the cache TTL for the LAX-JFK route?"},
+        ],
+        "gold": {"read": ["m1"], "store": [], "skip": ["u1"], "dsl": "READ m1\nSTORE NONE\nSKIP u1"},
+        "tags": ["read_only", "stale_memory", "temporary_request"],
+        "notes": "READ-only: u1 is a specific lookup question. m1 answers it. m2 is stale legacy pricing cache.",
+    },
+    {
+        "case_id": "v05_batch100_0004",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "search",
+            "task": "troubleshoot search ranking",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The search service ranks results by TF-IDF score with a boost factor of 2.0 for title matches."},
+            {"memory_id": "m2", "target": "task_state", "content": "Last week's A/B test showed that title boosting improved click-through rate by 12%."},
+            {"memory_id": "m3", "target": "repo_memory", "content": "Search ranking weights are configured in config/search/ranking_weights.json."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Show me the current ranking weights configuration."},
+        ],
+        "gold": {"read": ["m3"], "store": [], "skip": ["u1"], "dsl": "READ m3\nSTORE NONE\nSKIP u1"},
+        "tags": ["read_only", "stale_memory", "related_but_useless", "temporary_request"],
+        "notes": "READ-only: u1 asks for config values. m3 contains them. m1 describes ranking behavior generally (related). m2 is stale A/B test result from last week.",
+    },
+    {
+        "case_id": "v05_batch100_0005",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "visualizer",
+            "task": "debug missing chart data",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The visualizer fetches aggregated data from the aggregator service and renders charts using D3.js."},
+            {"memory_id": "m2", "target": "service_memory", "content": "The billing dashboard is a separate view that queries the invoice export service, not the aggregator."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "The revenue chart shows zero for today — is this an aggregator issue or a visualizer bug?"},
+        ],
+        "gold": {"read": ["m1"], "store": [], "skip": ["u1"], "dsl": "READ m1\nSTORE NONE\nSKIP u1"},
+        "tags": ["read_only", "related_but_useless", "temporary_request"],
+        "notes": "READ-only: u1 is a debugging question. m1 explains the data flow. m2 is about a different dashboard (billing), not relevant to revenue chart.",
+    },
+    {
+        "case_id": "v05_batch100_0006",
+        "runtime_context": {
+            "project": "travel-planner", "repo": "voyager", "service": "booking",
+            "task": "verify booking confirmation flow",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The booking service sends confirmation emails via SendGrid with a template ID conf-tmpl-v3."},
+            {"memory_id": "m2", "target": "service_memory", "content": "Confirmation emails include a PDF attachment generated by the itinerary service."},
+            {"memory_id": "m3", "target": "task_state", "content": "The SendGrid template was updated last month to include the new cancellation policy link."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Which template ID does the booking confirmation use?"},
+        ],
+        "gold": {"read": ["m1"], "store": [], "skip": ["u1"], "dsl": "READ m1\nSTORE NONE\nSKIP u1"},
+        "tags": ["read_only", "related_but_useless", "temporary_request"],
+        "notes": "READ-only: u1 is a factual question. m1 has the template ID. m2 describes PDF attachment (related but not about template ID). m3 is stale task state from last month's update.",
+    },
+    {
+        "case_id": "v05_batch100_0007",
+        "runtime_context": {
+            "project": "education-platform", "repo": "learnhub", "service": "grading",
+            "task": "investigate grade calculation discrepancy",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The grading service computes final grades as a weighted average: assignments 40%, quizzes 30%, final exam 30%."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Grade weight configuration is in config/grading/weights.yaml and can be overridden per course."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "A student's calculated grade shows 85% but I expected 78%. What weights are being used?"},
+        ],
+        "gold": {"read": ["m1", "m2"], "store": [], "skip": ["u1"], "dsl": "READ m1,m2\nSTORE NONE\nSKIP u1"},
+        "tags": ["read_only", "temporary_request"],
+        "notes": "READ-only: u1 is a specific debugging question. Both m1 (formula) and m2 (config) are needed to diagnose. New domain: education-platform.",
+    },
+    {
+        "case_id": "v05_batch100_0008",
+        "runtime_context": {
+            "project": "game-studio", "repo": "dungeon-tools", "service": "asset-pipeline",
+            "task": "check asset build performance",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The asset pipeline compresses textures using ASTC 6x6 block compression with a quality setting of 90%."},
+            {"memory_id": "m2", "target": "service_memory", "content": "The old pipeline used ETC2 compression which was 40% slower on the target hardware."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "How long does it take to build all character textures for the latest release branch?"},
+        ],
+        "gold": {"read": ["m1"], "store": [], "skip": ["u1"], "dsl": "READ m1\nSTORE NONE\nSKIP u1"},
+        "tags": ["read_only", "stale_memory", "temporary_request"],
+        "notes": "READ-only: u1 is a build-time question. m1 describes current pipeline. m2 is stale legacy ETC2 reference. New domain: game-studio.",
+    },
+    {
+        "case_id": "v05_batch100_0009",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "summarizer",
+            "task": "review summary quality",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The summarizer uses extractive summarization with a maximum of 5 sentences per summary."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Summarizer prompts and parameters are in config/summarizer/defaults.json."},
+            {"memory_id": "m3", "target": "service_memory", "content": "The v0 summarizer used abstractive summarization but was replaced due to hallucination issues."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "What is the maximum sentence count for summaries?"},
+        ],
+        "gold": {"read": ["m1"], "store": [], "skip": ["u1"], "dsl": "READ m1\nSTORE NONE\nSKIP u1"},
+        "tags": ["read_only", "stale_memory", "temporary_request"],
+        "notes": "READ-only: u1 is a factual question. m1 answers it directly. m2 has config but m1 already provides the answer. m3 is stale legacy.",
+    },
+    {
+        "case_id": "v05_batch100_0010",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "alerts",
+            "task": "check alert threshold configuration",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The alerts service triggers a warning when daily revenue drops below 80% of the 30-day moving average."},
+            {"memory_id": "m2", "target": "service_memory", "content": "Critical alerts fire when revenue drops below 50% and automatically notify the CFO via PagerDuty."},
+            {"memory_id": "m3", "target": "repo_memory", "content": "Alert thresholds per dashboard are in config/alerts/thresholds.yaml with per-widget overrides."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "At what threshold does the CFO get automatically notified?"},
+        ],
+        "gold": {"read": ["m2"], "store": [], "skip": ["u1"], "dsl": "READ m2\nSTORE NONE\nSKIP u1"},
+        "tags": ["read_only", "related_but_useless", "temporary_request"],
+        "notes": "READ-only: u1 asks about CFO notification threshold. m2 has the exact answer (50%). m1 is related (warning threshold) but not about CFO notification. m3 has config but m2 is sufficient.",
+    },
+
+    # ── STORE/SKIP-only (15) ──
+    {
+        "case_id": "v05_batch100_0011",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "indexer",
+            "task": "record indexer performance rules",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The indexer must complete a full reindex within 10 minutes for repositories under 5000 documents."},
+            {"unit_id": "u2", "text": "The docs-assistant project scope does not include real-time collaboration features."},
+            {"unit_id": "u3", "text": "Run the reindex benchmark after the next configuration change."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "project_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE project_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "project_vs_repo", "target_boundary"],
+        "notes": "STORE/SKIP-only with project_memory. u1 is an indexer performance SLO → service_memory. u2 explicitly excludes a feature from project scope → project_memory (durable scope boundary). u3 is current next step → task_state. New domain: docs-assistant. target_boundary case: project scope exclusion vs service performance SLO.",
+    },
+    {
+        "case_id": "v05_batch100_0012",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "aggregator",
+            "task": "record aggregator data quality rules",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The aggregator must reject any input row where the transaction amount is negative and not flagged as a refund."},
+            {"unit_id": "u2", "text": "The aggregator currently processes data in hourly batches but does not yet handle late-arriving data."},
+            {"unit_id": "u3", "text": "The finance-dashboard project must comply with SOC 2 data integrity requirements for all financial reports."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "task_state", "unit_id": "u2"},
+                {"target": "project_memory", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE task_state u2\nSTORE project_memory u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "project_vs_repo", "service_vs_task_state", "target_boundary"],
+        "notes": "STORE/SKIP-only with project_memory and service_vs_task. u1 defines a data validation rule → service_memory (WHAT aggregator enforces). u2 describes current limitation → task_state. u3 is a project-level compliance requirement → project_memory (SOC 2 applies across the entire project).",
+    },
+    {
+        "case_id": "v05_batch100_0013",
+        "runtime_context": {
+            "project": "travel-planner", "repo": "voyager", "service": "pricing",
+            "task": "record pricing cache invalidation rules",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The pricing cache must be invalidated within 60 seconds of any fare rule update from the airline API."},
+            {"unit_id": "u2", "text": "The cache invalidation logic lives in src/pricing/cache_invalidator.py and uses Redis pub/sub."},
+            {"unit_id": "u3", "text": "I prefer flight search results sorted by total price including taxes, not base fare."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+                {"target": "user_profile", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE repo_memory u2\nSTORE user_profile u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "repo_vs_service", "user_profile_boundary"],
+        "notes": "STORE/SKIP-only with user_profile. u1 is durable cache invalidation behavior → service_memory. u2 is repo source path → repo_memory. u3 is a stable, non-sensitive user preference about search result ordering → user_profile. Shows user_profile for a new domain (travel-planner).",
+    },
+    {
+        "case_id": "v05_batch100_0014",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "search",
+            "task": "record user search preferences",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "I prefer search results to be grouped by document section, not just ranked by relevance score."},
+            {"unit_id": "u2", "text": "The search service should always exclude archived documents from results unless the user explicitly includes them."},
+            {"unit_id": "u3", "text": "My personal API token for the docs-bot admin panel is dba-token-xxxxxxxxxxxx."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "user_profile", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+            ], "skip": ["u3"],
+            "dsl": "READ NONE\nSTORE user_profile u1\nSTORE service_memory u2\nSKIP u3",
+        },
+        "tags": ["store_skip_only", "user_profile_boundary", "sensitive_boundary"],
+        "notes": "STORE/SKIP-only with user_profile and sensitive. u1 is a stable, non-sensitive search preference → user_profile. u2 is a durable search behavior rule → service_memory. u3 contains an API token → must SKIP. Shows user_profile vs sensitive: preferences are OK, tokens are not.",
+    },
+    {
+        "case_id": "v05_batch100_0015",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "visualizer",
+            "task": "record cross-service data policy",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "All finboard services must use TLS 1.3 for inter-service communication."},
+            {"unit_id": "u2", "text": "The visualizer service must render all currency values with the ISO 4217 currency code suffix."},
+            {"unit_id": "u3", "text": "Update the visualizer to use the new currency formatting library."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "project_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE project_memory u1\nSTORE service_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "project_vs_repo", "target_boundary"],
+        "notes": "STORE/SKIP-only with project vs service contrast. u1 is a cross-service infrastructure rule ('All finboard services') → project_memory. u2 is a visualizer-specific formatting rule → service_memory. u3 is current task → task_state. Clean contrast: 'all services' = project; 'the visualizer' = service.",
+    },
+    {
+        "case_id": "v05_batch100_0016",
+        "runtime_context": {
+            "project": "travel-planner", "repo": "voyager", "service": "booking",
+            "task": "record booking idempotency rules",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The booking service must use idempotency keys for all payment attempts to prevent double-charging."},
+            {"unit_id": "u2", "text": "Booking-related database migrations live under db/migrations/booking/ and must be reviewed before applying."},
+            {"unit_id": "u3", "text": "My test credit card number for the staging environment is 4111-1111-1111-1111."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+            ], "skip": ["u3"],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE repo_memory u2\nSKIP u3",
+        },
+        "tags": ["store_skip_only", "repo_vs_service", "sensitive_boundary", "target_boundary"],
+        "notes": "STORE/SKIP-only with sensitive. u1 is durable idempotency behavior → service_memory. u2 is repo migration path/convention → repo_memory. u3 is a test credit card number → must SKIP as sensitive. Even synthetic payment info should be SKIPped. target_boundary: repo path vs service behavior distinction.",
+    },
+    {
+        "case_id": "v05_batch100_0017",
+        "runtime_context": {
+            "project": "education-platform", "repo": "learnhub", "service": "grading",
+            "task": "record grading policy decisions",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "Late submissions are penalized 10% per day up to a maximum of 5 days, after which the submission receives zero."},
+            {"unit_id": "u2", "text": "The learnhub project does not implement proctoring or identity verification."},
+            {"unit_id": "u3", "text": "Add the late penalty calculation to the grading service before the fall semester starts."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "project_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE project_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "project_vs_repo", "target_boundary"],
+        "notes": "STORE/SKIP-only with project_memory. u1 is a durable grading policy → service_memory. u2 defines what the project does NOT include (proctoring) → project_memory (scope exclusion). u3 is implementation task → task_state. New domain: education-platform.",
+    },
+    {
+        "case_id": "v05_batch100_0018",
+        "runtime_context": {
+            "project": "game-studio", "repo": "dungeon-tools", "service": "asset-pipeline",
+            "task": "record asset validation rules",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The asset pipeline must reject any texture that exceeds 4096x4096 pixels for mobile target platforms."},
+            {"unit_id": "u2", "text": "Asset validation rules are defined in config/asset_pipeline/validation_rules.json."},
+            {"unit_id": "u3", "text": "Run the full asset validation suite before the next release build."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE repo_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "repo_vs_service", "task_progress"],
+        "notes": "STORE/SKIP-only. u1 defines a texture validation rule → service_memory. u2 is repo config path → repo_memory. u3 is current next step → task_state. New domain: game-studio.",
+    },
+    {
+        "case_id": "v05_batch100_0019",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "summarizer",
+            "task": "record summarizer design constraints",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The summarizer must never include code blocks in summaries — code should be referenced by file path only."},
+            {"unit_id": "u2", "text": "Summaries should be cached with the document version hash as the cache key."},
+            {"unit_id": "u3", "text": "The docs-assistant project decided to use OpenAI-compatible APIs only, not vendor-specific SDKs."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "project_memory", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE service_memory u2\nSTORE project_memory u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "service_invariant", "project_vs_repo", "target_boundary"],
+        "notes": "STORE/SKIP-only with dual service_memory + project_memory. u1 (no code in summaries) and u2 (version-hash caching) are durability summarizer behaviors → service_memory. u3 is a project-level API strategy decision → project_memory (affects all services, not just summarizer).",
+    },
+    {
+        "case_id": "v05_batch100_0020",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "alerts",
+            "task": "record alert routing rules",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "Revenue alerts above warning level go to #fin-alerts Slack channel; critical alerts also trigger PagerDuty."},
+            {"unit_id": "u2", "text": "The alerts service routing configuration is in config/alerts/routing.yaml with per-severity channel mappings."},
+            {"unit_id": "u3", "text": "Add a weekly alert summary email to the CFO every Monday at 08:00."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE repo_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "repo_vs_service", "task_progress"],
+        "notes": "STORE/SKIP-only. u1 defines alert routing behavior → service_memory. u2 is repo config path → repo_memory. u3 is a new feature request → task_state.",
+    },
+    {
+        "case_id": "v05_batch100_0021",
+        "runtime_context": {
+            "project": "travel-planner", "repo": "voyager", "service": "pricing",
+            "task": "record fare calculation rules",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The pricing service must include all mandatory taxes and fees in the displayed price, not just the base fare."},
+            {"unit_id": "u2", "text": "The pricing service currently sources fares from 3 airline APIs but the fourth (SkyConnect) is still pending integration."},
+            {"unit_id": "u3", "text": "All voyager services must log pricing decisions for audit purposes with a retention period of 7 years."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "task_state", "unit_id": "u2"},
+                {"target": "project_memory", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE task_state u2\nSTORE project_memory u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "service_vs_task_state", "project_vs_repo", "target_boundary"],
+        "notes": "STORE/SKIP-only. u1 is durable fare display rule → service_memory. u2 describes current integration state (3 of 4 APIs live) → task_state. u3 is a cross-service audit logging requirement ('All voyager services') → project_memory.",
+    },
+    {
+        "case_id": "v05_batch100_0022",
+        "runtime_context": {
+            "project": "education-platform", "repo": "learnhub", "service": "enrollment",
+            "task": "record enrollment validation rules",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The enrollment service must check prerequisites before allowing a student to enroll in any course."},
+            {"unit_id": "u2", "text": "Prerequisite data is stored in the courses table with a JSON array column named prerequisites."},
+            {"unit_id": "u3", "text": "I prefer course materials organized by week with clear learning objectives at the top of each module."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+                {"target": "user_profile", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE repo_memory u2\nSTORE user_profile u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "repo_vs_service", "user_profile_boundary"],
+        "notes": "STORE/SKIP-only with user_profile. u1 is enrollment validation behavior → service_memory. u2 is database schema info → repo_memory. u3 is a stable cross-course user preference for materials organization → user_profile.",
+    },
+    {
+        "case_id": "v05_batch100_0023",
+        "runtime_context": {
+            "project": "game-studio", "repo": "dungeon-tools", "service": "build-system",
+            "task": "record build system conventions",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "All game builds must pass the asset validation suite before the build is considered complete."},
+            {"unit_id": "u2", "text": "Build artifacts are stored under builds/YYYY-MM-DD/ with a manifest.json listing all included assets."},
+            {"unit_id": "u3", "text": "Remember to clean the build cache before the next release candidate."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "repo_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+            ], "skip": ["u3"],
+            "dsl": "READ NONE\nSTORE repo_memory u1\nSTORE repo_memory u2\nSKIP u3",
+        },
+        "tags": ["store_skip_only", "repo_convention", "temporary_request"],
+        "notes": "STORE/SKIP-only with dual repo_memory. u1 is a build convention → repo_memory. u2 is artifact storage path → repo_memory. u3 is a one-off reminder → SKIP.",
+    },
+    {
+        "case_id": "v05_batch100_0024",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "indexer",
+            "task": "record indexer storage conventions",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The indexer stores its inverted index in Redis with keys prefixed by idx:v2: for the current schema version."},
+            {"unit_id": "u2", "text": "Redis connection parameters are configured via environment variables REDIS_HOST and REDIS_PORT."},
+            {"unit_id": "u3", "text": "The docs-assistant project only supports English-language documentation in the current scope."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+                {"target": "project_memory", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE repo_memory u2\nSTORE project_memory u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "repo_vs_service", "project_vs_repo", "target_boundary"],
+        "notes": "STORE/SKIP-only. u1 is indexer storage behavior → service_memory. u2 is environment variable config → repo_memory. u3 is a project-level language scope decision → project_memory (affects the entire project).",
+    },
+    {
+        "case_id": "v05_batch100_0025",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "aggregator",
+            "task": "record data pipeline conventions",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The aggregator must never modify raw transaction data — all transformations must happen in derived tables only."},
+            {"unit_id": "u2", "text": "Run the data pipeline integration test suite before merging any aggregator changes."},
+            {"unit_id": "u3", "text": "My personal database password for the staging environment is finboard_stage_2026."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+            ], "skip": ["u3"],
+            "dsl": "READ NONE\nSTORE service_memory u1\nSTORE repo_memory u2\nSKIP u3",
+        },
+        "tags": ["store_skip_only", "repo_vs_service", "sensitive_boundary"],
+        "notes": "STORE/SKIP-only with sensitive. u1 is a data integrity invariant → service_memory. u2 is repo test convention → repo_memory. u3 is a database password → must SKIP.",
+    },
+
+    # ── READ + STORE joint (20) ──
+    {
+        "case_id": "v05_batch100_0026",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "search",
+            "task": "add semantic search support",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The search service currently uses keyword-based TF-IDF ranking with title boost of 2.0."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Search embedding models are stored in models/search/ and loaded at service startup."},
+            {"memory_id": "m3", "target": "service_memory", "content": "The old lexical search used BM25 before migrating to TF-IDF in v2."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add semantic search using sentence-transformers to augment the existing TF-IDF results with a hybrid ranking."},
+            {"unit_id": "u2", "text": "The hybrid ranking should weight semantic similarity at 0.4 and TF-IDF at 0.6 for the initial rollout."},
+            {"unit_id": "u3", "text": "Benchmark the hybrid search against TF-IDF-only on the standard query test set before deploying."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "task_state", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE task_state u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "task_progress", "stale_memory", "service_vs_task_state"],
+        "notes": "READ+STORE joint with stale. Reads m1 (current search) and m2 (model path). Skips m3 (stale lexical search). u1 is a durable new search capability → service_memory. u2 is an initial rollout parameter → task_state (experimental weight, not permanent). u3 is benchmark task → task_state.",
+    },
+    {
+        "case_id": "v05_batch100_0027",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "visualizer",
+            "task": "add export-to-PDF feature",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The visualizer currently renders charts as interactive SVG elements in the browser."},
+            {"memory_id": "m2", "target": "project_memory", "content": "The finboard project requires all exported reports to include a timestamp and the generating user's ID in the footer."},
+            {"memory_id": "m3", "target": "repo_memory", "content": "Export templates live under templates/exports/ and use Jinja2 with Chart.js for rendering."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add a PDF export button that renders the current dashboard view using headless Chromium."},
+            {"unit_id": "u2", "text": "PDF exports must include the report timestamp and user ID in the page footer as required by the project policy."},
+            {"unit_id": "u3", "text": "Test the PDF export on the staging environment with the CFO's dashboard configuration."},
+        ],
+        "gold": {
+            "read": ["m1", "m2", "m3"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2,m3\nSTORE service_memory u1\nSTORE service_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "task_progress", "project_vs_repo"],
+        "notes": "READ+STORE joint. Reads all three (all relevant). u1 is durable PDF export capability → service_memory. u2 implements a project-level policy (from m2) as service behavior → service_memory. u3 is a testing task → task_state.",
+    },
+    {
+        "case_id": "v05_batch100_0028",
+        "runtime_context": {
+            "project": "travel-planner", "repo": "voyager", "service": "booking",
+            "task": "add multi-city booking support",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The booking service currently supports round-trip and one-way bookings with a single pricing call per booking."},
+            {"memory_id": "m2", "target": "service_memory", "content": "The pricing service API charges per route segment and enforces a rate limit of 100 requests per minute."},
+            {"memory_id": "m3", "target": "task_state", "content": "The round-trip booking flow was last refactored in March 2026 to reduce pricing API calls by 30%."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add multi-city booking that allows up to 5 segments in a single booking, with each segment priced independently."},
+            {"unit_id": "u2", "text": "The multi-city flow must batch pricing requests to stay under the rate limit — group segments by destination region."},
+            {"unit_id": "u3", "text": "My frequent flyer number for test bookings is FF-TEST-123456."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+            ], "skip": ["u3"],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSKIP u3",
+        },
+        "tags": ["read_store_joint", "service_invariant", "stale_memory", "sensitive_boundary"],
+        "notes": "READ+STORE joint with stale and sensitive. Reads m1 (current booking) and m2 (pricing limits). Skips m3 (stale refactoring note). Stores both u1 and u2 as durable new booking behaviors → service_memory. Skips u3 (frequent flyer number → sensitive, must SKIP).",
+    },
+    {
+        "case_id": "v05_batch100_0029",
+        "runtime_context": {
+            "project": "education-platform", "repo": "learnhub", "service": "grading",
+            "task": "add rubric-based grading",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The grading service currently supports points-based grading with configurable weights per assignment type."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Grading configuration per course is stored in config/grading/course_overrides.yaml."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add rubric-based grading as an alternative to points-based. Each rubric criterion has a max score and a description."},
+            {"unit_id": "u2", "text": "The rubric definitions should be stored in the course configuration, not hardcoded in the grading service."},
+            {"unit_id": "u3", "text": "I prefer grade reports that show a breakdown by rubric criterion with comments from the instructor."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+                {"target": "user_profile", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE repo_memory u2\nSTORE user_profile u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "repo_convention", "user_profile_boundary"],
+        "notes": "READ+STORE joint with user_profile. u1 defines new grading capability → service_memory. u2 defines WHERE rubric data lives → repo_memory. u3 is a stable, non-sensitive preference for grade report format → user_profile. Shows user_profile in a new domain (education-platform).",
+    },
+    {
+        "case_id": "v05_batch100_0030",
+        "runtime_context": {
+            "project": "game-studio", "repo": "dungeon-tools", "service": "asset-pipeline",
+            "task": "add texture atlas generation",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The asset pipeline currently processes textures individually with ASTC compression at quality 90%."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Texture packing algorithms are implemented in src/asset_pipeline/packer.py with config in config/asset_pipeline/packer.yaml."},
+            {"memory_id": "m3", "target": "service_memory", "content": "The old sprite sheet system used a fixed 2048x2048 atlas regardless of texture count."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add automatic texture atlas generation that packs textures into power-of-two atlases using the max-rects algorithm."},
+            {"unit_id": "u2", "text": "The atlas generator should log a warning when texture utilization drops below 70% of the atlas area."},
+            {"unit_id": "u3", "text": "Update the game engine client to load textures from the atlas instead of individual files."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "task_progress", "stale_memory"],
+        "notes": "READ+STORE joint with stale. Reads m1 (current pipeline) and m2 (packer code). Skips m3 (stale sprite sheet system). u1 and u2 are durable new pipeline behaviors → service_memory. u3 is a dependent task for the game client → task_state.",
+    },
+
+    # ── More cases to fill out to 50 ──
+    # (continuing IDs 0031-0050)
+    {
+        "case_id": "v05_batch100_0031",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "search",
+            "task": "improve search relevance feedback",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The search service logs query terms and clicked document IDs for relevance analysis."},
+            {"memory_id": "m2", "target": "task_state", "content": "Last month's relevance tuning improved recall by 15% but precision dropped by 3%."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add a relevance feedback loop that boosts documents users clicked for the same query in future searches."},
+            {"unit_id": "u2", "text": "The feedback boost should decay over 30 days to prevent stale relevance signals from persisting indefinitely."},
+        ],
+        "gold": {
+            "read": ["m1"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+            ], "skip": [],
+            "dsl": "READ m1\nSTORE service_memory u1\nSTORE service_memory u2\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "stale_memory"],
+        "notes": "READ+STORE joint with stale. Reads m1 (current logging). Skips m2 (stale tuning metrics from last month). Both u1 and u2 define durable new search behaviors → service_memory.",
+    },
+    {
+        "case_id": "v05_batch100_0032",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "alerts",
+            "task": "add anomaly detection alerts",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The alerts service currently monitors threshold-based rules on revenue, costs, and active users."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Alert rule definitions are in config/alerts/rules/ with one YAML file per metric category."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add anomaly detection using a rolling z-score with a window of 30 days and a threshold of 3 standard deviations."},
+            {"unit_id": "u2", "text": "Anomaly alerts should include the z-score value and the 30-day mean for context in the notification."},
+            {"unit_id": "u3", "text": "I prefer financial alerts grouped by business unit rather than by metric type."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "user_profile", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSTORE user_profile u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "user_profile_boundary"],
+        "notes": "READ+STORE joint with user_profile. u1 and u2 define durable anomaly detection behaviors → service_memory. u3 is a stable user preference for alert grouping → user_profile.",
+    },
+    {
+        "case_id": "v05_batch100_0033",
+        "runtime_context": {
+            "project": "travel-planner", "repo": "voyager", "service": "pricing",
+            "task": "add dynamic pricing rules",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The pricing service currently uses static fare tables updated weekly from airline API data."},
+            {"memory_id": "m2", "target": "project_memory", "content": "The voyager project must comply with IATA fare transparency regulations for all displayed prices."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add demand-based surge pricing that increases fares by up to 40% when seat availability drops below 20% on a route."},
+            {"unit_id": "u2", "text": "All surge-priced fares must still display the base fare and the surge component separately to comply with fare transparency rules."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "project_vs_repo"],
+        "notes": "READ+STORE joint. Reads m1 (current pricing) and m2 (compliance requirement — needed because u2 depends on it). Both u1 and u2 define durable new pricing behaviors → service_memory. m2 project_memory is correctly read for context but the resulting rules are service_memory.",
+    },
+    {
+        "case_id": "v05_batch100_0034",
+        "runtime_context": {
+            "project": "education-platform", "repo": "learnhub", "service": "enrollment",
+            "task": "add waitlist management",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The enrollment service currently caps each course at 50 students and rejects enrollments beyond the cap."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Course capacity limits are configured per course in config/courses/capacity.yaml."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add a waitlist that automatically enrolls the next student when someone drops, up to 7 days before the course starts."},
+            {"unit_id": "u2", "text": "The waitlist should send an email notification to the student when they are automatically enrolled from the waitlist."},
+            {"unit_id": "u3", "text": "Deploy the waitlist feature to staging first and run the enrollment integration tests before production."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "task_progress"],
+        "notes": "READ+STORE joint. u1 and u2 define durable waitlist behaviors → service_memory. u3 is a deployment task → task_state.",
+    },
+    {
+        "case_id": "v05_batch100_0035",
+        "runtime_context": {
+            "project": "game-studio", "repo": "dungeon-tools", "service": "build-system",
+            "task": "add platform-specific builds",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The build system currently produces a single cross-platform build using Unity's IL2CPP backend."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Build scripts are in scripts/build/ with platform-specific configurations in config/build/platforms/."},
+            {"memory_id": "m3", "target": "task_state", "content": "The last platform-specific test was a Switch build attempt in January 2026 that failed on texture compression."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add separate build targets for PC, PlayStation 5, and Nintendo Switch with platform-specific texture compression settings."},
+            {"unit_id": "u2", "text": "The Switch build must use ASTC 4x4 compression and cap textures at 2048x2048 to meet memory constraints."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "stale_memory"],
+        "notes": "READ+STORE joint with stale. Reads m1 (current build) and m2 (scripts/config). Skips m3 (stale failed Switch attempt from months ago). Both u1 and u2 define durable new build behaviors → service_memory.",
+    },
+    {
+        "case_id": "v05_batch100_0036",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "summarizer",
+            "task": "add multi-document summaries",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The summarizer currently processes one document at a time and returns a 5-sentence extractive summary."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Summary model configuration is in config/summarizer/model.yaml with the model name and token limit."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add cross-document summarization that takes up to 10 related documents and produces a unified summary highlighting common themes."},
+            {"unit_id": "u2", "text": "The cross-document summary must cite the source document for each claim using the document file path."},
+            {"unit_id": "u3", "text": "Evaluate the cross-document summary quality using the ROUGE-L metric on the benchmark set."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "task_progress"],
+        "notes": "READ+STORE joint. u1 and u2 define durable new summarizer capabilities → service_memory. u3 is an evaluation task → task_state.",
+    },
+    {
+        "case_id": "v05_batch100_0037",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "aggregator",
+            "task": "add real-time aggregation",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The aggregator currently runs hourly batch jobs that process all transactions since the last run."},
+            {"memory_id": "m2", "target": "project_memory", "content": "The finboard project SLA requires dashboard data to be no more than 5 minutes stale during market hours."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add a streaming aggregation path using Kafka that updates dashboard metrics in real-time for transactions during market hours."},
+            {"unit_id": "u2", "text": "The streaming path must fall back to batch aggregation when Kafka is unavailable, maintaining the 5-minute SLA through the batch path."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "project_vs_repo"],
+        "notes": "READ+STORE joint. Reads m1 (current batch) and m2 (SLA requirement — needed because u2 must meet it). Both u1 and u2 define durable new aggregation behaviors → service_memory.",
+    },
+    {
+        "case_id": "v05_batch100_0038",
+        "runtime_context": {
+            "project": "travel-planner", "repo": "voyager", "service": "booking",
+            "task": "add cancellation policy engine",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The booking service currently enforces a uniform 24-hour free cancellation policy for all bookings."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Cancellation rules per fare class are defined in config/booking/cancellation_policies.yaml."},
+            {"memory_id": "m3", "target": "service_memory", "content": "The legacy cancellation system issued refunds as account credit only, never back to the original payment method."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add a tiered cancellation policy engine: refundable fares get 100% refund, standard fares get 50%, basic fares are non-refundable."},
+            {"unit_id": "u2", "text": "Refunds must be processed back to the original payment method within 5 business days for refundable fares."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "stale_memory", "repo_vs_service"],
+        "notes": "READ+STORE joint with stale. Reads m1 (current policy) and m2 (config). Skips m3 (stale legacy — account credit only). Both u1 and u2 define durable new cancellation behaviors → service_memory.",
+    },
+    {
+        "case_id": "v05_batch100_0039",
+        "runtime_context": {
+            "project": "education-platform", "repo": "learnhub", "service": "grading",
+            "task": "add grade appeal workflow",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The grading service stores final grades in the submissions table with a graded_at timestamp and instructor ID."},
+            {"memory_id": "m2", "target": "project_memory", "content": "The learnhub project requires all grade changes to have an audit trail with the original grade, new grade, and reason."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add a grade appeal workflow where students can submit an appeal within 14 days of grade posting with a written justification."},
+            {"unit_id": "u2", "text": "Appeals must be reviewed by a different instructor than the one who assigned the original grade."},
+            {"unit_id": "u3", "text": "All grade changes from appeals must be logged to the grade_audit table with the original grade, new grade, and reviewer ID."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "service_memory", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSTORE service_memory u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "project_vs_repo"],
+        "notes": "READ+STORE joint. Reads m1 (current grading) and m2 (audit requirement — needed because u3 must satisfy it). All three units define durable appeal workflow behaviors → service_memory. Triple service_memory is valid when all describe durable component behaviors.",
+    },
+    {
+        "case_id": "v05_batch100_0040",
+        "runtime_context": {
+            "project": "game-studio", "repo": "dungeon-tools", "service": "asset-pipeline",
+            "task": "add asset dependency tracking",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The asset pipeline currently processes all assets on every build regardless of whether they changed."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Asset metadata including content hashes is stored in build/asset_metadata.json after each build."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add incremental asset processing: only rebuild assets whose content hash has changed since the last build."},
+            {"unit_id": "u2", "text": "Asset dependencies should be tracked in a directed graph so that changing a parent asset triggers rebuild of all dependents."},
+            {"unit_id": "u3", "text": "Run a full rebuild after implementing incremental processing to establish the baseline content hashes."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "task_progress"],
+        "notes": "READ+STORE joint. u1 and u2 define durable new pipeline behaviors → service_memory. u3 is a one-time baseline task → task_state.",
+    },
+    {
+        "case_id": "v05_batch100_0041",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "indexer",
+            "task": "add incremental indexing",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The indexer currently performs a full reindex of all documents on every run, taking up to 8 minutes for large repos."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Index state including the last indexed commit SHA is stored in data/indexer/state.json."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add incremental indexing that only processes documents changed since the last indexed commit."},
+            {"unit_id": "u2", "text": "The incremental index must still support full reindex as a fallback triggered by a manual command."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant"],
+        "notes": "READ+STORE joint. Both u1 and u2 define durable new indexer behaviors → service_memory.",
+    },
+    {
+        "case_id": "v05_batch100_0042",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "visualizer",
+            "task": "add dark mode support",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The visualizer uses a light theme by default with CSS variables for all color definitions."},
+            {"memory_id": "m2", "target": "user_profile", "content": "The CFO prefers high-contrast charts with white backgrounds and thick gridlines."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add a dark mode toggle that switches all chart colors to a dark palette with light text and muted gridlines."},
+            {"unit_id": "u2", "text": "I prefer dashboards with compact layouts showing 4 charts per row instead of the default 2."},
+        ],
+        "gold": {
+            "read": ["m1"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "user_profile", "unit_id": "u2"},
+            ], "skip": [],
+            "dsl": "READ m1\nSTORE service_memory u1\nSTORE user_profile u2\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "user_profile_boundary", "related_but_useless"],
+        "notes": "READ+STORE joint with user_profile. Reads m1 (current theme) but NOT m2 (CFO preference for high-contrast — related but u1 is about dark mode, not contrast). u1 is a new visualizer feature → service_memory. u2 is a stable user layout preference → user_profile.",
+    },
+    {
+        "case_id": "v05_batch100_0043",
+        "runtime_context": {
+            "project": "travel-planner", "repo": "voyager", "service": "pricing",
+            "task": "record user display preferences",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "I prefer to see prices in EUR even when searching for flights originating in the US."},
+            {"unit_id": "u2", "text": "Always show the number of stops prominently in search results, not hidden in the detail view."},
+            {"unit_id": "u3", "text": "My passport number for test bookings is P12345678."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "user_profile", "unit_id": "u1"},
+                {"target": "user_profile", "unit_id": "u2"},
+            ], "skip": ["u3"],
+            "dsl": "READ NONE\nSTORE user_profile u1\nSTORE user_profile u2\nSKIP u3",
+        },
+        "tags": ["store_skip_only", "user_profile_boundary", "sensitive_boundary"],
+        "notes": "STORE/SKIP-only with dual user_profile and sensitive. u1 (currency preference) and u2 (display preference) are stable, non-sensitive user preferences → user_profile. u3 is a passport number → must SKIP as sensitive. Shows user_profile for travel domain.",
+    },
+    {
+        "case_id": "v05_batch100_0044",
+        "runtime_context": {
+            "project": "education-platform", "repo": "learnhub", "service": "enrollment",
+            "task": "add course recommendation engine",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The enrollment service tracks completed courses per student in the student_courses table."},
+            {"memory_id": "m2", "target": "user_profile", "content": "The student prefers courses with hands-on projects over theory-heavy lecture courses."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add a recommendation engine that suggests courses based on a student's completed courses and stated preferences."},
+            {"unit_id": "u2", "text": "The recommendation engine should explain why each course was recommended using a one-line reason."},
+            {"unit_id": "u3", "text": "I prefer course recommendations that prioritize courses taught by instructors I have rated highly in the past."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "user_profile", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSTORE user_profile u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "user_profile_boundary"],
+        "notes": "READ+STORE joint with user_profile. Reads both (enrollment history + user preference — both needed for recommendations). u1 and u2 define durable recommendation behaviors → service_memory. u3 is a stable, non-sensitive user preference about recommendation ordering → user_profile.",
+    },
+    {
+        "case_id": "v05_batch100_0045",
+        "runtime_context": {
+            "project": "game-studio", "repo": "dungeon-tools", "service": "build-system",
+            "task": "add automated performance testing",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The build system produces instrumented builds for profiling with frame-time and memory-usage telemetry enabled."},
+            {"memory_id": "m2", "target": "task_state", "content": "The last performance regression was a 15% frame-rate drop on PS5 traced to a shadow-map resolution increase."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add automated performance tests that run after each build and fail if frame-time exceeds 16ms on the target platform."},
+            {"unit_id": "u2", "text": "Performance test results should be stored in build/perf_results/YYYY-MM-DD/ with a comparison to the previous build."},
+        ],
+        "gold": {
+            "read": ["m1"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+            ], "skip": [],
+            "dsl": "READ m1\nSTORE service_memory u1\nSTORE repo_memory u2\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "repo_convention", "stale_memory"],
+        "notes": "READ+STORE joint with stale. Reads m1 (current instrumented builds). Skips m2 (stale regression example). u1 defines durable performance test behavior → service_memory. u2 defines WHERE results are stored → repo_memory.",
+    },
+
+    # ── Remaining edge cases (6 to reach 50) ──
+    {
+        "case_id": "v05_batch100_0046",
+        "runtime_context": {
+            "project": "docs-assistant", "repo": "docs-bot", "service": "search",
+            "task": "record project search scope decision",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The docs-assistant search scope is limited to public documentation repositories; private repos require a separate instance."},
+            {"unit_id": "u2", "text": "Add support for searching private repos by integrating with the org's OAuth provider for repository access."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "project_memory", "unit_id": "u1"},
+                {"target": "task_state", "unit_id": "u2"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE project_memory u1\nSTORE task_state u2\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "project_vs_repo", "target_boundary"],
+        "notes": "STORE/SKIP-only with project vs task. u1 defines a project-level scope decision (public-only) → project_memory. u2 is current feature work → task_state. Clean two-unit boundary case in a new domain.",
+    },
+    {
+        "case_id": "v05_batch100_0047",
+        "runtime_context": {
+            "project": "finance-dashboard", "repo": "finboard", "service": "alerts",
+            "task": "record alert suppression rules",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The alerts service supports per-metric suppression windows to prevent alert storms during known maintenance periods."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "All finboard services must suppress non-critical alerts during the monthly maintenance window from 02:00-04:00 UTC on the first Sunday."},
+            {"unit_id": "u2", "text": "Critical PagerDuty alerts must never be suppressed, even during maintenance windows."},
+            {"unit_id": "u3", "text": "Add the monthly maintenance suppression rule to the alerts configuration before the next maintenance window."},
+        ],
+        "gold": {
+            "read": ["m1"], "store": [
+                {"target": "project_memory", "unit_id": "u1"},
+                {"target": "project_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1\nSTORE project_memory u1\nSTORE project_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "project_vs_repo", "target_boundary"],
+        "notes": "READ+STORE joint with dual project_memory. u1 ('All finboard services') is a cross-service maintenance rule → project_memory. u2 ('never suppress critical') is a permanent project safety policy → project_memory. u3 is implementation task → task_state. Clear cross-service scope in both project_memory units.",
+    },
+    {
+        "case_id": "v05_batch100_0048",
+        "runtime_context": {
+            "project": "travel-planner", "repo": "voyager", "service": "booking",
+            "task": "record booking scope decisions",
+        },
+        "candidate_memories": [],
+        "current_units": [
+            {"unit_id": "u1", "text": "The voyager booking service only supports flight bookings; hotel and car rental are explicitly out of scope for the current project phase."},
+            {"unit_id": "u2", "text": "The booking confirmation email template is defined in templates/email/booking_confirmation.html."},
+            {"unit_id": "u3", "text": "Write the scope document section explaining that multi-modal bookings are deferred to v2."},
+        ],
+        "gold": {
+            "read": [], "store": [
+                {"target": "project_memory", "unit_id": "u1"},
+                {"target": "repo_memory", "unit_id": "u2"},
+                {"target": "task_state", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ NONE\nSTORE project_memory u1\nSTORE repo_memory u2\nSTORE task_state u3\nSKIP NONE",
+        },
+        "tags": ["store_skip_only", "project_vs_repo", "target_boundary"],
+        "notes": "STORE/SKIP-only with project scope. u1 defines what the project does and does NOT include → project_memory (scope boundary). u2 is repo template path → repo_memory. u3 is current writing task → task_state.",
+    },
+    {
+        "case_id": "v05_batch100_0049",
+        "runtime_context": {
+            "project": "education-platform", "repo": "learnhub", "service": "enrollment",
+            "task": "add course prerequisite validation",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The enrollment service checks course capacity before allowing enrollment."},
+            {"memory_id": "m2", "target": "repo_memory", "content": "Prerequisite data is stored in the courses table with a JSON column prerequisites listing required course IDs."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add prerequisite validation that blocks enrollment if the student has not completed all prerequisite courses with a passing grade."},
+            {"unit_id": "u2", "text": "The prerequisite check must also consider equivalent courses from other institutions as defined in the course_equivalency table."},
+            {"unit_id": "u3", "text": "My student ID for testing the enrollment flow is STUDENT-TEST-0001."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+            ], "skip": ["u3"],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSKIP u3",
+        },
+        "tags": ["read_store_joint", "service_invariant", "sensitive_boundary"],
+        "notes": "READ+STORE joint with sensitive. u1 and u2 define durable prerequisite validation behaviors → service_memory. u3 contains a student ID → must SKIP. Shows user-identifying data should be SKIPped.",
+    },
+    {
+        "case_id": "v05_batch100_0050",
+        "runtime_context": {
+            "project": "game-studio", "repo": "dungeon-tools", "service": "asset-pipeline",
+            "task": "add asset quality scoring",
+        },
+        "candidate_memories": [
+            {"memory_id": "m1", "target": "service_memory", "content": "The asset pipeline validates texture dimensions and format but does not currently score asset quality."},
+            {"memory_id": "m2", "target": "project_memory", "content": "The game-studio project requires all shipped assets to meet a minimum quality score of 80/100."},
+        ],
+        "current_units": [
+            {"unit_id": "u1", "text": "Add a quality scoring system that evaluates textures on resolution, compression artifacts, and color consistency."},
+            {"unit_id": "u2", "text": "Assets scoring below 80/100 must be flagged in the build report and blocked from release builds."},
+            {"unit_id": "u3", "text": "I prefer game assets to use a realistic art style with muted colors rather than cartoon-style saturation."},
+        ],
+        "gold": {
+            "read": ["m1", "m2"], "store": [
+                {"target": "service_memory", "unit_id": "u1"},
+                {"target": "service_memory", "unit_id": "u2"},
+                {"target": "user_profile", "unit_id": "u3"},
+            ], "skip": [],
+            "dsl": "READ m1,m2\nSTORE service_memory u1\nSTORE service_memory u2\nSTORE user_profile u3\nSKIP NONE",
+        },
+        "tags": ["read_store_joint", "service_invariant", "user_profile_boundary", "project_vs_repo"],
+        "notes": "READ+STORE joint with user_profile. Reads m1 (current validation) and m2 (quality requirement — needed because u2 enforces the 80/100 threshold from m2). u1 and u2 define durable quality scoring behaviors → service_memory. u3 is a stable artistic preference → user_profile. Shows user_profile in game-studio domain.",
+    },
+]
+
+
+# ═══════════════════════════════════════════════════════════════════
+# MAIN PIPELINE
+# ═══════════════════════════════════════════════════════════════════
+
+def main() -> None:
+    import argparse
+    from src.v04.case_validator import validate_case, validate_jsonl_file
+    from src.v04.parser import parse_policy_dsl, LEGAL_TARGETS
+
+    ap = argparse.ArgumentParser(description="Generate batch100 cases and SFT messages.")
+    ap.add_argument("--cases", default=str(ROOT / "data/v05/batches/v05_batch100_cases.jsonl"))
+    ap.add_argument("--out", default=str(ROOT / "data/v05/batches/v05_batch100_sft_messages.jsonl"))
+    ap.add_argument("--source", default="v05_batch100_dry_run")
+    ap.add_argument("--new50-out", default=str(ROOT / "data/v05/batches/v05_batch100_new50_cases.jsonl"))
+    args = ap.parse_args()
+
+    cases_path = Path(args.cases)
+    sft_path = Path(args.out)
+    new50_path = Path(args.new50_out)
+    source = args.source
+
+    # Step A: Load and correct batch50
+    batch50_cases = load_and_correct_batch50()
+    print(f"Loaded and corrected {len(batch50_cases)} batch50 cases")
+
+    # Write corrected batch50 back
+    batch50_path = ROOT / "data/v05/batches/v05_batch50_cases.jsonl"
+    with batch50_path.open("w", encoding="utf-8") as f:
+        for c in batch50_cases:
+            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+    print(f"Wrote corrected batch50 to {batch50_path}")
+
+    # Regenerate batch50 SFT
+    batch50_sft_path = ROOT / "data/v05/batches/v05_batch50_sft_messages.jsonl"
+    batch50_msgs = []
+    for c in batch50_cases:
+        has_read = bool(c["gold"]["read"])
+        has_store = bool(c["gold"]["store"])
+        shape = "READ + STORE joint" if (has_read and has_store) else ("READ-only" if has_read else "STORE/SKIP-only")
+        batch50_msgs.append({
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": render_user_input(c)},
+                {"role": "assistant", "content": c["gold"]["dsl"]},
+            ],
+            "case_id": c["case_id"], "source": "v05_batch50_dry_run",
+            "metadata": {"tags": c["tags"], "num_candidate_memories": len(c["candidate_memories"]),
+                         "num_current_units": len(c["current_units"]), "gold_shape": shape,
+                         "store_targets": [s["target"] for s in c["gold"]["store"]],
+                         "is_final_train_data": False},
+        })
+    with batch50_sft_path.open("w", encoding="utf-8") as f:
+        for m in batch50_msgs:
+            f.write(json.dumps(m, ensure_ascii=False) + "\n")
+    print(f"Regenerated {len(batch50_msgs)} batch50 SFT messages")
+
+    # Step B: Merge corrected batch50 + new50
+    all_cases = batch50_cases + NEW50_CASES
+    if len(all_cases) != 100:
+        print(f"ERROR: Expected 100 cases, got {len(all_cases)}")
+        sys.exit(1)
+
+    case_ids = [c["case_id"] for c in all_cases]
+    if len(case_ids) != len(set(case_ids)):
+        dupes = [cid for cid, cnt in Counter(case_ids).items() if cnt > 1]
+        print(f"ERROR: Duplicate case IDs: {dupes}")
+        sys.exit(1)
+
+    # Leakage
+    subset50_path = ROOT / "data/v04/model_predictions/p5_subset50_case_ids.txt"
+    subset50_ids = set(subset50_path.read_text().strip().splitlines()) if subset50_path.exists() else set()
+    fewshot_path = ROOT / "data/v04/model_predictions/qwen3_4b_unit_dsl_fewshot_examples.jsonl"
+    fewshot_ids: set[str] = set()
+    fewshot_texts: set[str] = set()
+    if fewshot_path.exists():
+        with fewshot_path.open() as f:
+            for line in f:
+                if line.strip():
+                    obj = json.loads(line)
+                    fewshot_ids.add(obj["case_id"])
+                    for u in obj.get("current_units", []): fewshot_texts.add(u["text"])
+                    for m in obj.get("candidate_memories", []): fewshot_texts.add(m["content"])
+
+    # Collect existing texts from batch50
+    batch50_texts: set[str] = set()
+    for c in batch50_cases:
+        for u in c.get("current_units", []): batch50_texts.add(u["text"])
+        for m in c.get("candidate_memories", []): batch50_texts.add(m["content"])
+
+    new_ids = {c["case_id"] for c in NEW50_CASES}
+    new_texts: set[str] = set()
+
+    # Validate all cases
+    all_ok = True
+    errors: list[str] = []
+
+    for case in all_cases:
+        cid = case["case_id"]
+        if cid in new_ids:
+            for u in case.get("current_units", []): new_texts.add(u["text"])
+            for m in case.get("candidate_memories", []): new_texts.add(m["content"])
+
+        result = validate_case(case)
+        if not result["valid"]:
+            all_ok = False
+            for e in result["errors"]: errors.append(f"{cid}: {e}")
+
+        dsl = case["gold"]["dsl"]
+        mem_ids = [m["memory_id"] for m in case["candidate_memories"]]
+        unit_ids = [u["unit_id"] for u in case["current_units"]]
+        parsed = parse_policy_dsl(dsl, mem_ids, unit_ids, LEGAL_TARGETS)
+        if not parsed["validation"]["valid"]:
+            all_ok = False
+            for e in parsed["validation"]["errors"]: errors.append(f"{cid} DSL: {e}")
+
+        parsed_read = {item["memory_id"] for item in parsed["read"]}
+        parsed_store = {item["unit_id"]: item["target"] for item in parsed["store"]}
+        parsed_skip = {item["unit_id"] for item in parsed["skip"]}
+        gold_read = set(case["gold"]["read"])
+        gold_store = {s["unit_id"]: s["target"] for s in case["gold"]["store"]}
+        gold_skip = set(case["gold"]["skip"])
+
+        if parsed_read != gold_read:
+            all_ok = False; errors.append(f"{cid} READ mismatch")
+        if parsed_store != gold_store:
+            all_ok = False; errors.append(f"{cid} STORE mismatch")
+        if parsed_skip != gold_skip:
+            all_ok = False; errors.append(f"{cid} SKIP mismatch")
+
+    if errors:
+        print("VALIDATION ERRORS:")
+        for e in errors: print(f"  {e}")
+        sys.exit(1)
+
+    # Leakage checks
+    if new_ids & subset50_ids:
+        print(f"LEAKAGE: new50 IDs in subset50"); all_ok = False
+    if new_ids & fewshot_ids:
+        print(f"LEAKAGE: new50 IDs in few-shot"); all_ok = False
+    if new_texts & fewshot_texts:
+        print(f"LEAKAGE: new50 texts match few-shot"); all_ok = False
+    if new_texts & batch50_texts:
+        print(f"LEAKAGE: new50 texts match batch50"); all_ok = False
+
+    if not all_ok:
+        sys.exit(1)
+
+    print("All 100 case validations PASSED. No leakage detected.")
+
+    # Write outputs
+    cases_path.parent.mkdir(parents=True, exist_ok=True)
+    with cases_path.open("w", encoding="utf-8") as f:
+        for c in all_cases: f.write(json.dumps(c, ensure_ascii=False) + "\n")
+    print(f"Wrote {len(all_cases)} cases to {cases_path}")
+
+    with new50_path.open("w", encoding="utf-8") as f:
+        for c in NEW50_CASES: f.write(json.dumps(c, ensure_ascii=False) + "\n")
+    print(f"Wrote {len(NEW50_CASES)} new50 cases to {new50_path}")
+
+    # SFT messages
+    messages = []
+    for c in all_cases:
+        has_read = bool(c["gold"]["read"]); has_store = bool(c["gold"]["store"])
+        shape = "READ + STORE joint" if (has_read and has_store) else ("READ-only" if has_read else "STORE/SKIP-only")
+        messages.append({
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": render_user_input(c)},
+                {"role": "assistant", "content": c["gold"]["dsl"]},
+            ],
+            "case_id": c["case_id"], "source": source,
+            "metadata": {"tags": c["tags"], "num_candidate_memories": len(c["candidate_memories"]),
+                         "num_current_units": len(c["current_units"]), "gold_shape": shape,
+                         "store_targets": [s["target"] for s in c["gold"]["store"]],
+                         "is_final_train_data": False},
+        })
+
+    with sft_path.open("w", encoding="utf-8") as f:
+        for m in messages: f.write(json.dumps(m, ensure_ascii=False) + "\n")
+    print(f"Wrote {len(messages)} SFT messages to {sft_path}")
+
+    # SFT validation
+    sft_ok = True
+    for c, m in zip(all_cases, messages):
+        assistant = m["messages"][2]["content"]
+        if assistant != c["gold"]["dsl"]:
+            print(f"SFT MISMATCH: {c['case_id']}"); sft_ok = False
+        if "```" in assistant:
+            print(f"SFT MARKDOWN: {c['case_id']}"); sft_ok = False
+        if assistant.strip().startswith("{"):
+            print(f"SFT JSON: {c['case_id']}"); sft_ok = False
+    if sft_ok:
+        print("All 100 SFT messages validated OK")
+
+    # Summary
+    shapes = Counter()
+    for c in all_cases:
+        hr = bool(c["gold"]["read"]); hs = bool(c["gold"]["store"])
+        shapes["READ + STORE joint" if (hr and hs) else ("READ-only" if hr else "STORE/SKIP-only")] += 1
+
+    all_tags = [t for c in all_cases for t in c["tags"]]
+    tag_counts = Counter(all_tags)
+    all_targets = [s["target"] for c in all_cases for s in c["gold"]["store"]]
+    target_counts = Counter(all_targets)
+    total_store = sum(len(c["gold"]["store"]) for c in all_cases)
+    total_skip = sum(len(c["gold"]["skip"]) for c in all_cases)
+
+    print("\n=== BATCH100 SUMMARY ===")
+    print(f"Total cases: {len(all_cases)} (batch50: {len(batch50_cases)}, new50: {len(NEW50_CASES)})")
+    print(f"Shape distribution: {dict(shapes)}")
+    print(f"Tag distribution (top 20): {dict(tag_counts.most_common(20))}")
+    print(f"STORE target counts: {dict(target_counts)}")
+    print(f"Total STORE units: {total_store}, Total SKIP units: {total_skip}")
+
+    # Domain check
+    projects = Counter(c["runtime_context"]["project"] for c in all_cases)
+    print(f"Project domains: {dict(projects)}")
+
+    # Coverage checks for new50
+    print("\n=== NEW50 COVERAGE CHECKS ===")
+    new_tags = [t for c in NEW50_CASES for t in c["tags"]]
+    new_tag_ct = Counter(new_tags)
+    new_targets_ct = Counter(s["target"] for c in NEW50_CASES for s in c["gold"]["store"])
+
+    checks = {
+        "READ-only >= 8": sum(1 for c in NEW50_CASES if c["gold"]["read"] and not c["gold"]["store"]) >= 8,
+        "STORE/SKIP-only >= 12": sum(1 for c in NEW50_CASES if not c["gold"]["read"] and c["gold"]["store"]) >= 12,
+        "READ+STORE joint >= 15": sum(1 for c in NEW50_CASES if c["gold"]["read"] and c["gold"]["store"]) >= 15,
+        "stale/related >= 8": new_tag_ct.get("stale_memory", 0) + new_tag_ct.get("related_but_useless", 0) >= 8,
+        "target_boundary >= 12": new_tag_ct.get("target_boundary", 0) >= 12,
+        "sensitive_boundary >= 8": new_tag_ct.get("sensitive_boundary", 0) >= 8,
+        "project_vs_task >= 6": new_tag_ct.get("project_vs_repo", 0) >= 6,
+        "service_vs_task >= 6": new_tag_ct.get("service_vs_task_state", 0) >= 6,
+        "repo_vs_service >= 6": new_tag_ct.get("repo_vs_service", 0) >= 6,
+        "user_profile_boundary >= 5": new_tag_ct.get("user_profile_boundary", 0) >= 5,
+        "user_profile STORE >= 6": new_targets_ct.get("user_profile", 0) >= 6,
+        "project_memory STORE >= 8": new_targets_ct.get("project_memory", 0) >= 8,
+        "new domains >= 2": len(set(c["runtime_context"]["project"] for c in NEW50_CASES) - {"memory-router", "mobile-field", "data-platform"}) >= 2,
+    }
+    for check, passed in checks.items():
+        print(f"  {check}: {'PASS' if passed else 'FAIL'}")
+        if not passed: all_ok = False
+
+    # Final target ranges check
+    print("\n=== TARGET RANGE CHECKS ===")
+    range_checks = {
+        "service_memory 55-75": 55 <= target_counts.get("service_memory", 0) <= 75,
+        "task_state 55-75": 55 <= target_counts.get("task_state", 0) <= 75,
+        "repo_memory 35-50": 35 <= target_counts.get("repo_memory", 0) <= 50,
+        "project_memory 18-25": 18 <= target_counts.get("project_memory", 0) <= 25,
+        "user_profile 10-15": 10 <= target_counts.get("user_profile", 0) <= 15,
+    }
+    for check, passed in range_checks.items():
+        print(f"  {check}: {'PASS' if passed else 'OUT OF RANGE'} (actual: {target_counts.get(check.split()[0], 0)})")
+
+    print(f"\nFinal: {'ALL PASSED' if all_ok else 'SOME FAILURES'}")
+
+
+if __name__ == "__main__":
+    main()

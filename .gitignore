@@ -15,3 +15,27 @@ models/
 outputs/
 wandb/
 *.log
+
+# Local secrets / env
+.env
+.env.*
+!.env.example
+
+# Python / local env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Local model files / caches
+hf_models/
+models/
+.cache/
+
+# Training outputs / checkpoints
+results/v05_lora/
+results/**/checkpoint-*/
+*.safetensors
+
+# OS/editor
+.DS_Store

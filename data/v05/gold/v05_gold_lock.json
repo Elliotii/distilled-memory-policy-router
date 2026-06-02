@@ -1,0 +1,93 @@
+{
+  "lock_status": "locked",
+  "lock_version": "v05_gold_001",
+  "locked_at_utc": "2026-06-02T08:33:15Z",
+  "project_stage": "v0.5",
+  "split": "gold",
+  "case_count": 100,
+  "gold_core_count": 70,
+  "gold_hard_count": 30,
+  "source_files": {
+    "v05_gold_corrected_cases_jsonl": "data/v05/gold/v05_gold_corrected_cases.jsonl",
+    "v05_gold_core_corrected_cases_jsonl": "data/v05/gold/v05_gold_core_corrected_cases.jsonl",
+    "v05_gold_hard_corrected_cases_jsonl": "data/v05/gold/v05_gold_hard_corrected_cases.jsonl",
+    "v05_gold_corrected_sft_messages_jsonl": "data/v05/gold/v05_gold_corrected_sft_messages.jsonl"
+  },
+  "sha256": {
+    "combined": "56e160782c3cd8b18a369227c422a67c43050ef226017adaa2ab7fbbfd52173d",
+    "core": "9acdd6a795b0a18d5c369253be8bb64e26a9af96e2aea31b4ef6c98adb598db2",
+    "hard": "5f4a5d552f76033c6a9a5443581a2dc2dc7ea0eeabdf99481fc1ec2c49f819b2",
+    "sft": "d9f215af282d6c90b65612c575d9a5827520a953d47f807e586b79ec94635c22"
+  },
+  "validation_summary": {
+    "validate_jsonl_file": "pass",
+    "dsl_parse": "100/100",
+    "canonical_consistency": "100/100",
+    "unit_coverage": "pass",
+    "sensitive_store": 0,
+    "sft_assistant_matches_gold_dsl": "100/100",
+    "train_gold_leakage_hard_blockers": 0,
+    "train_gold_leakage_warnings": 0,
+    "dev_gold_leakage_hard_blockers": 0,
+    "dev_gold_leakage_warnings": 0,
+    "tests": "77/77"
+  },
+  "usage_rules": [
+    "Final evaluation only",
+    "Not for training",
+    "Not for prompt tuning",
+    "Not for hyperparameter tuning",
+    "Not for checkpoint selection",
+    "Not for few-shot examples",
+    "Not for data generation feedback",
+    "Not for model comparison during development",
+    "Dev set is used for all development decisions"
+  ],
+  "immutability_rules": [
+    "Locked gold files must not be edited",
+    "Any future correction requires new lock version (e.g., v05_gold_002)",
+    "Current lock hash must remain unchanged",
+    "If critical error discovered post-lock: document, assess, unlock with explicit changelog, fix, re-lock",
+    "If fix is non-critical: note in error analysis but do not change gold"
+  ],
+  "advisory_review_summary": {
+    "reviewers": [
+      "Opus 4.8 Thinking (advisory only)"
+    ],
+    "initial_review": "Found 6 blockers: svc→proj distribution artifacts, notes out of sync, work email should SKIP, too-easy hard case, phone number collision, inconsistent report counts",
+    "fixes_applied": "All 6 blockers addressed in Context 5.3-D",
+    "lightweight_final_review": "Found 2 metadata issues: 24 damaged notes (uu1 typo), 10 service_memory project-style wordings. All fixed in Context 5.3-D2.",
+    "final_verdict": "Scoring content correct and lock-ready. No further advisory review required."
+  },
+  "changelog": [
+    {
+      "context": "5.3-B",
+      "change": "100-case gold draft generated (70 core + 30 hard)"
+    },
+    {
+      "context": "5.3-C2",
+      "change": "Gold review packet created; sent to Opus advisory review"
+    },
+    {
+      "context": "5.3-D",
+      "change": "Applied 12 fix groups: 8 svc→proj rollbacks, 1 false user_profile, 1 work email→SKIP, 1 phone collision, 1 hard case replacement; 5 borderline reviewed"
+    },
+    {
+      "context": "5.3-D2",
+      "change": "Applied metadata cleanup: 24 notes regenerated, 10 service wordings rewritten, 1 fixes report typo corrected. Zero label changes."
+    },
+    {
+      "context": "5.3-E",
+      "change": "Gold locked. Lock manifest created."
+    }
+  ],
+  "known_distribution_tradeoffs": {
+    "service_memory": "38.1% (above original 28-34% target — honest consequence of rollbacks)",
+    "task_state": "33.8% (within 28-34% target)",
+    "repo_memory": "16.7% (within 16-22% target)",
+    "project_memory": "7.1% (below 10-16% target — artificial project_memory labels removed)",
+    "user_profile": "4.3% (below 5-10% target — false user_profile removed, no low-risk additions)"
+  },
+  "adjudicator": "project-owner",
+  "second_reviewer": "none (single-human research with LLM advisory)"
+}
