@@ -4,11 +4,60 @@
 2026-06-04  CST
 
 ## Current Milestone
-P5.10-A: v0.5c final report consolidation and snapshot readiness
+P5.23-B: v0.5d r=16 dev-only consolidation and snapshot readiness
 
 ## Completed
 
-### P5.10-A (This Context)
+### P5.23-B (This Context)
+- Created v0.5d final consolidation reports:
+  - `reports/v05d/v05d_final_dev_only_summary.md` — r=16 dev-only summary
+  - `reports/v05d/v05d_r16_claims_and_limitations.md` — Allowed/forbidden claims
+  - `reports/v05d/v05d_next_step_decision_memo.md` — 4 options for next steps
+  - `reports/v05d/v05d_final_artifact_manifest.md` — What to commit
+  - `reports/v05d/v05d_git_handoff_checklist.md` — Commit commands
+  - `reports/v05d/v05d_consistency_check.md` — Cross-report audit
+- Created v0.5d docs:
+  - `docs/v05d/V05D_R16_DEV_ONLY_RESULTS.md`
+  - `docs/v05d/V05D_NEXT_STEP_OPTIONS.md`
+- Consistency check: 13 reports, all metrics aligned, no forbidden claims
+- Gold hash unchanged: `56e16078...`
+- **v0.5d ready for manual review and git snapshot**
+
+### P5.23-A (Previous)
+- **v0.5d r=16 QLoRA dev-only ablation complete**
+- Created r=16 config: `configs/v05d/qwen35_lora_json_r16_500.yaml`
+  - lora_r=16, lora_alpha=32 (alpha/r=2), all else same as r=8
+  - 9,830,400 trainable params (0.23%, 2x r=8's 4,915,200)
+- **Training**: 3506s (~58 min), no OOM/NaN
+  - Eval loss: 0.447 → 0.439 → **0.437**
+  - Token accuracy: 88.9% → 89.4% → **89.5%**
+- **Dev eval**: 99.0% parse
+  - Exact: **39.0%** (vs r=8: 34.0%, **+5.0pp** ✅✅)
+  - READ F1: **0.925** (+0.017)
+  - STORE F1: **0.968** (+0.009)
+  - Target acc: **77.7%** (+0.3pp)
+  - SKIP F1: **0.819** (+0.057)
+  - False store: 4.0% (−0.5pp)
+  - Sensitive (tag): 66.7% (unchanged)
+  - Parse: 99.0% (+1.0pp — only 1 missing-unit failure)
+- **r=16 decisively beats r=8 on dev** — all metrics improve or stay flat
+- **Decision: Option A — r=16 is promising; consider gold_v2 before final claim**
+  - Projected gold: 44-48% exact (could beat Qwen3.5 few-shot at 42%)
+  - But old gold is not blind enough — need gold_v2
+- Created 8 reports:
+  - `reports/v05d/v05d_qwen35_json_r16_plan.md`
+  - `reports/v05d/v05d_qwen35_json_r16_config_report.md`
+  - `reports/v05d/v05d_qwen35_json_r16_train_report.md`
+  - `reports/v05d/v05d_qwen35_json_r16_dev_eval_report.md`
+  - `reports/v05d/v05d_qwen35_json_r16_error_analysis.md`
+  - `reports/v05d/v05d_qwen35_json_r16_vs_r8_report.md`
+  - `reports/v05d/v05d_qwen35_json_r16_decision.md`
+- Predictions: `data/v05d/model_predictions/qwen35_lora_json_r16_500_dev_predictions.jsonl`
+- Training outputs: `results/v05d_lora/qwen35_json_r16_500/`
+- Gold hash unchanged: `56e16078...`
+- No gold used
+
+### P5.10-A (Previous)
 - Created v0.5c final consolidated reports:
   - `reports/v05c/v05c_final_project_report.md` — Executive summary + full results
   - `reports/v05c/v05c_final_experiment_summary.md` — Concise tables
@@ -851,41 +900,30 @@ python3 -m src.v05.check_leakage \
 
 ## Recommended Next Step
 
-**User action required:**
-1. **Manual review:** Review the v0.5c final reports and claims.
-2. **Manual git snapshot:** Stage and commit v0.5c files, tag `v0.5c-qwen35-json-lora-complete`.
-   - See `reports/v05c/v05c_git_handoff_checklist.md` for exact commands.
-3. **Decide next ablation** from `reports/v05c/v05c_next_ablation_decision_memo.md`:
-   - r=16 QLoRA (safest capacity increase)
-   - Safety-focused training (eliminate PII storage)
-   - Standard LoRA (if VRAM permits)
-   - gold_v2 (before hyperparameter tuning)
+**User decision required:**
+1. **r=16 shows +5pp exact on dev over r=8** — strong candidate for new best trained router.
+2. **Old gold is no longer blind** (3 evaluations) — should create gold_v2 before r=16 gold claim.
+3. **Options:**
+   - Create gold_v2 + evaluate r=16 and r=8 head-to-head
+   - Alternatively, directly evaluate r=16 on old gold as preliminary evidence
+   - Consider safety-focused training or standard LoRA next
 
-Do NOT start new experiments from this context.
-
-## Files Changed (P5.10-A)
+## Files Changed (P5.23-A)
 
 ### Created
-- `reports/v05c/v05c_final_project_report.md`
-- `reports/v05c/v05c_final_experiment_summary.md`
-- `reports/v05c/v05c_final_claims_and_limitations.md`
-- `reports/v05c/v05c_final_error_analysis.md`
-- `reports/v05c/v05c_final_artifact_manifest.md`
-- `reports/v05c/v05c_next_ablation_decision_memo.md`
-- `reports/v05c/v05c_git_handoff_checklist.md`
-- `reports/v05c/v05c_final_report_consistency_check.md`
-- `docs/v05c/V05C_FINAL_RESULTS.md`
-- `docs/v05c/V05C_PROJECT_NARRATIVE.md`
-- `docs/v05c/V05C_NEXT_ABLATION_OPTIONS.md`
+- `configs/v05d/qwen35_lora_json_r16_500.yaml`
+- `reports/v05d/*` (8 reports)
+- `data/v05d/model_predictions/qwen35_lora_json_r16_500_dev_predictions.jsonl`
 
 ### Updated
 - `docs/status/CURRENT_STATE.md`
 
-### Tests / Commands
-```bash
-sha256sum data/v05/gold/v05_gold_corrected_cases.jsonl  # unchanged
-ls reports/v05c/*.md | wc -l  # 42
-```
+### Generated (do not commit)
+- `results/v05d_lora/qwen35_json_r16_500/`
+
+### Unmodified
+- All data, gold, scripts unchanged
+- Gold hash: `56e16078...`
 
 ## Files Changed (P5.12-D)
 
