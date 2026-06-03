@@ -1,0 +1,65 @@
+# QLoRA training config — Qwen3.5 Unit JSON
+# v0.5c experiment: Qwen3.5 Unit JSON LoRA (model-capacity ablation)
+# Subset: 250
+
+base_model_path: /home/abc16/hf_models/Qwen3.5-4B
+output_dir: results/v05c_lora/qwen35_json_250
+train_file: data/v05b/json_sft/v05b_train_250_json_sft_messages.jsonl
+eval_file: data/v05b/json_sft/v05b_dev_json_sft_messages.jsonl
+
+# Interface
+interface: unit_json
+
+# QLoRA — 4-bit quantization for 12GB GPU
+load_in_4bit: true
+bnb_4bit_compute_dtype: bfloat16
+bnb_4bit_quant_type: nf4
+bnb_4bit_use_double_quant: true
+
+# LoRA hyperparameters
+# Qwen3.5 has hybrid architecture: 24 linear_attn + 8 self_attn layers.
+# Target both attention types for full coverage.
+# self_attn: q_proj, k_proj, v_proj, o_proj (standard)
+# linear_attn: in_proj_qkv (combined QKV), out_proj (output)
+lora_r: 8
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target_modules:
+  - q_proj       # self_attn layers (8 of 32)
+  - k_proj
+  - v_proj
+  - o_proj
+  - in_proj_qkv  # linear_attn layers (24 of 32)
+  - out_proj
+
+# Training
+num_train_epochs: 3
+per_device_train_batch_size: 4
+per_device_eval_batch_size: 4
+gradient_accumulation_steps: 4
+learning_rate: 2.0e-4
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+optim: adamw_8bit
+weight_decay: 0.01
+max_seq_length: 2048
+packing: false
+
+# Precision
+bf16: true
+tf32: true
+
+# Evaluation (epoch-based)
+eval_strategy: epoch
+save_strategy: epoch
+save_total_limit: 3
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+
+# Logging
+logging_steps: 10
+report_to: none
+
+# Reproducibility
+seed: 42
+data_seed: 42

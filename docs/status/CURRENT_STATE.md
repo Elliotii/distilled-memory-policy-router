@@ -1,14 +1,212 @@
 # CURRENT_STATE
 
 ## Last Updated
-2026-06-02  CST
+2026-06-04  CST
 
 ## Current Milestone
-P5.21-A: v0.5b final report consolidation and snapshot readiness
+P5.10-A: v0.5c final report consolidation and snapshot readiness
 
 ## Completed
 
-### P5.21-A (This Context)
+### P5.10-A (This Context)
+- Created v0.5c final consolidated reports:
+  - `reports/v05c/v05c_final_project_report.md` — Executive summary + full results
+  - `reports/v05c/v05c_final_experiment_summary.md` — Concise tables
+  - `reports/v05c/v05c_final_claims_and_limitations.md` — Allowed/forbidden claims
+  - `reports/v05c/v05c_final_error_analysis.md` — Error patterns across all stages
+  - `reports/v05c/v05c_final_artifact_manifest.md` — What to commit (42 reports)
+  - `reports/v05c/v05c_next_ablation_decision_memo.md` — 5 candidate next experiments (not run)
+  - `reports/v05c/v05c_git_handoff_checklist.md` — Commit commands
+  - `reports/v05c/v05c_final_report_consistency_check.md` — Cross-report audit
+- Created v0.5c docs:
+  - `docs/v05c/V05C_FINAL_RESULTS.md` — Concise results page
+  - `docs/v05c/V05C_PROJECT_NARRATIVE.md` — Story of v0.5 → v0.5b → v0.5c
+  - `docs/v05c/V05C_NEXT_ABLATION_OPTIONS.md` — 5 candidate next experiments
+- **Final consistency check: All 42 reports present, gold hash unchanged, no forbidden claims**
+- Gold hash unchanged: `56e16078...`
+- **v0.5c ready for manual review and git snapshot**
+
+### P5.22-E (Previous)
+- **Locked-gold final evaluation complete** — Qwen3.5 Unit JSON LoRA 500 on 100 gold cases
+- **Gold metrics**:
+  - Parse: **100.0%** (PERFECT — 0 structural errors, 0 target="skip", 0 truncation)
+  - Exact: **41.0%** (within 1pp of Qwen3.5 JSON few-shot's 42%)
+  - READ F1: **0.938**
+  - STORE F1: **0.969** (HIGHEST of any system including few-shot)
+  - Target accuracy: **73.7%** (beats Qwen3-4B LoRA by +6.4pp; trails few-shot by −5.4pp)
+  - SKIP F1: **0.847** (within 0.004 of few-shot's 0.851)
+  - False store: 3.8%
+  - Irrelevant read: 10.0%
+  - Sensitive: 5 genuine failures (PII as user_profile)
+- **Gold ranking (#2 overall, #1 trained):**
+  - Qwen3.5 JSON few-shot (#1): 42% exact, 0.963 STORE F1, 79.1% target, 0 sensitive
+  - **Qwen3.5 JSON LoRA 500 (#2): 41% exact, 0.969 STORE F1, 73.7% target, 5 sensitive**
+  - Qwen3.5 DSL few-shot (#3): 36% exact, 0 sensitive
+  - Qwen3-4B JSON LoRA 500 (#4): 31% exact, 6 sensitive
+- **Dev→gold delta**: Exceptional generalization — most metrics IMPROVED on gold
+  - Exact: +7pp (34%→41%), Parse: +2pp (98%→100%), STORE F1: +0.010, SKIP F1: +0.085
+  - Target acc: −3.7pp (77.4%→73.7%) — only notable decline
+- **Final v0.5c decision: Result B+** — Qwen3.5 LoRA ultra-competitive, best trained system, but few-shot still #1
+  - B+: beats all LoRA systems decisively, within 1pp of few-shot exact, highest STORE F1 overall
+  - Not A because: trails few-shot on exact (1pp), target acc (5.4pp), safety (5 vs 0)
+- **Best combo selection**:
+  - Best trained: Qwen3.5 + Unit JSON QLoRA r=8 500
+  - Best overall: Qwen3.5 JSON few-shot
+  - Best interface: Unit JSON (proven across Qwen3-4B and Qwen3.5)
+  - Best base for SFT scaling: Qwen3.5 + Standard LoRA/BF16 (1pp gap to close)
+- **Safety audit**: 5 genuine failures (improved from Qwen3-4B's 6)
+  - ✅ Credential safety IMPROVED: 0 token/credit card stores (Qwen3-4B had 2)
+  - ❌ PII safety unsolved: phones, addresses, emails as user_profile (both models)
+- Created 10 reports:
+  - `v05c_qwen35_lora_json_500_gold_eval_report.md`
+  - `v05c_qwen35_lora_json_500_gold_error_analysis.md`
+  - `v05c_qwen35_lora_json_500_gold_baseline_comparison.md`
+  - `v05c_qwen35_lora_json_500_gold_parse_audit.md`
+  - `v05c_qwen35_lora_json_500_gold_target_confusion_audit.md`
+  - `v05c_qwen35_lora_json_500_gold_sensitive_store_audit.md`
+  - `v05c_qwen35_lora_json_dev_vs_gold_delta_report.md`
+  - `v05c_qwen35_lora_json_final_result_decision.md`
+  - `v05c_best_combo_selection_report.md`
+- Generated predictions: `data/v05c/model_predictions/qwen35_lora_json_500_gold_predictions.jsonl` (100 rows)
+- Gold hash unchanged before and after: `56e16078...`
+- **v0.5c Qwen3.5 Unit JSON LoRA experiment COMPLETE**
+
+### P5.22-D (Previous)
+- **Training completed**: Qwen3.5 Unit JSON QLoRA on 500 JSON SFT cases
+  - Duration: 2982s (~50 min), no OOM/NaN
+  - Eval loss: 0.460 → 0.435 → **0.435**
+  - Token accuracy: 88.6% → 89.2% → **89.3%**
+  - Adapter saved to `results/v05c_lora/qwen35_json_500/adapter/`
+- **Dev eval**: 100 predictions, **98.0% parse** (recovered from 250's 90%!)
+  - Exact: **34.0%** (ties Qwen3-4B 500 at 34%, up from 17% at 250)
+  - READ F1: **0.908**
+  - STORE F1: **0.959** (matches Qwen3-4B 500's 0.958)
+  - Target accuracy: **77.4%** (beats Qwen3-4B 500's 68.5% by **+8.9pp**)
+  - SKIP F1: **0.762** (beats Qwen3-4B 500's 0.753)
+  - False store: 4.5% (better than Qwen3-4B's 6.5%)
+  - Sensitive store: 66.7% (same as Qwen3-4B)
+- **Parse regression FIXED**: `"target":"skip"` eliminated (7→0). Only 2 missing-unit failures remain.
+  - 0 invalid targets, 0 truncated JSON, 0 missing keys
+- **Learning curve complete** (125→250→500):
+  - Parse: 98%→90%→98% (dip-and-recovery)
+  - Exact: 30%→17%→34% (dip-and-recovery, follows parse)
+  - Target acc: 65.6%→73.1%→77.4% (monotonic improvement)
+  - STORE F1: 0.891→0.913→0.959 (monotonic)
+  - SKIP F1: 0.644→0.623→0.762 (recovery at 500)
+- **Qwen3.5 500 vs Qwen3-4B 500 (dev)**:
+  - Exact: **tie at 34.0%**
+  - Target acc: **Qwen3.5 +8.9pp** (77.4% vs 68.5%)
+  - Qwen3.5 leads on 7/8 semantic metrics, trails on parse (98% vs 100%)
+- **Qwen3.5 500 dev target acc (77.4%) approaches Qwen3.5 few-shot gold (79.1%) — only 1.7pp gap**
+- **Gold readiness: Option A — Ready for locked-gold eval**
+- Created 9 reports:
+  - `v05c_qwen35_lora_json_500_train_report.md`
+  - `v05c_qwen35_lora_json_500_dev_eval_report.md`
+  - `v05c_qwen35_lora_json_500_error_analysis.md`
+  - `v05c_qwen35_lora_json_500_parse_regression_audit.md`
+  - `v05c_qwen35_lora_json_learning_curve_report.md`
+  - `v05c_qwen35_lora_json_500_vs_qwen3_4b_report.md`
+  - `v05c_qwen35_lora_json_500_target_confusion_audit.md`
+  - `v05c_qwen35_lora_json_500_sensitive_store_audit.md`
+  - `v05c_qwen35_lora_json_500_gold_readiness_decision.md`
+- Generated predictions: `data/v05c/model_predictions/qwen35_lora_json_500_dev_predictions.jsonl`
+- Gold hash unchanged: `56e16078...`
+- No gold used
+
+### P5.22-C (Previous)
+- **Training completed**: Qwen3.5 Unit JSON QLoRA on 250 JSON SFT cases
+  - Duration: 1864s (~31 min), no OOM/NaN
+  - Eval loss: 0.576 → 0.469 → **0.461** (lower than 125's 0.544)
+  - Token accuracy: 86.5% → 88.5% → **88.5%**
+  - Adapter saved to `results/v05c_lora/qwen35_json_250/adapter/`
+- **Dev eval**: 100 predictions, **90.0% parse success** (regression from 98% at 125)
+  - **10 parse failures**: 7 cases with `"target":"skip"` in store array, 2 truncated JSON, 1 missing unit
+  - Exact: **17.0%** (↓13pp from 125, largely mechanical from parse failures)
+  - READ F1: 0.892 (↓0.015)
+  - STORE F1: **0.913** (↑0.022 from 125)
+  - Target accuracy: **73.1%** (↑7.5pp from 125 — already exceeds Qwen3-4B 500's 68.5%)
+  - SKIP F1: 0.623 (↓0.021)
+  - False store: 4.9% (↑2.7pp)
+  - Sensitive store: 66.7% (matches Qwen3-4B 250 pattern)
+- **Key finding**: Qwen3.5 has a unique parse regression (98%→90%) not seen in Qwen3-4B (100%→100%→100%).
+  The `"target":"skip"` pattern is a systematic error where the model puts SKIP units into the store array instead of the skip array.
+  This is likely fixable with more data — 500 cases provides 2x more correct skip examples.
+- **Positive**: Target accuracy (73.1%) already exceeds Qwen3-4B LoRA 500 dev (68.5%) and gold (67.3%).
+  Qwen3.5 achieves this with HALF the data.
+- **Decision: Option A — Proceed to Qwen3.5 JSON LoRA 500 UNCHANGED, with parse caveat**
+  - If parse doesn't recover to ≥95% at 500, a post-hoc parse fix may be needed for gold eval
+- Created 6 reports:
+  - `reports/v05c/v05c_qwen35_lora_json_250_train_report.md`
+  - `reports/v05c/v05c_qwen35_lora_json_250_dev_eval_report.md`
+  - `reports/v05c/v05c_qwen35_lora_json_250_error_analysis.md`
+  - `reports/v05c/v05c_qwen35_lora_json_250_vs_125_report.md`
+  - `reports/v05c/v05c_qwen35_lora_json_250_vs_qwen3_4b_report.md`
+  - `reports/v05c/v05c_qwen35_lora_json_250_decision.md`
+- Generated predictions: `data/v05c/model_predictions/qwen35_lora_json_250_dev_predictions.jsonl` (100 rows)
+- Training outputs: `results/v05c_lora/qwen35_json_250/` (adapter, checkpoints)
+- Gold hash unchanged: `56e16078...`
+- No gold used, no 500 training
+
+### P5.22-B (Previous)
+- **Training completed**: Qwen3.5 Unit JSON QLoRA on 125 JSON SFT cases
+  - Duration: 903s (~15 min), no OOM/NaN
+  - Eval loss: 1.264 → 0.626 → **0.544** (much lower than Qwen3-4B's 1.300)
+  - Token accuracy: 72.2% → 85.7% → **86.9%**
+  - Trainable params: 4,915,200 (0.12% of 4.2B) — 6 target modules confirmed working
+  - Adapter saved to `results/v05c_lora/qwen35_json_125/adapter/`
+- **Dev eval**: 100 predictions, 98% JSON parse success
+  - Exact: **30.0%** (vs Qwen3-4B 125: 11%, **+19.0pp**)
+  - READ F1: **0.907** (vs 0.889, +0.018)
+  - STORE F1: 0.891 (vs 0.910, −0.019)
+  - Target accuracy: **65.6%** (vs 55.7%, **+9.9pp**)
+  - SKIP F1: **0.644** (vs 0.535, +0.109)
+  - False store: **2.2%** (vs 9.5%, −7.3pp)
+  - Sensitive store: 33.3% (tied)
+- **Qwen3.5 125 already beats Qwen3-4B 250** on exact (30% vs 20%) and target accuracy (65.6% vs 63.8%)
+- **Critical fix found**: Qwen3.5's chat template adds `<think>` before assistant response.
+  - Without `enable_thinking=False`, model generates 1000+ chars of reasoning prose instead of JSON (0% parse).
+  - Fixed eval script to pass `enable_thinking=False` to `apply_chat_template()`.
+- **Training script fix**: Added `processing_class=tokenizer` to SFTTrainer to bypass multimodal processor loading.
+- 2 parse failures (1 malformed JSON, 1 missing unit) — typical 125-case artifacts, expected to resolve at 250.
+- **Smoke decision: Option A — Proceed to Qwen3.5 JSON LoRA 250 unchanged**
+- Created 6 reports:
+  - `reports/v05c/v05c_qwen35_lora_json_125_train_report.md`
+  - `reports/v05c/v05c_qwen35_lora_json_125_dev_eval_report.md`
+  - `reports/v05c/v05c_qwen35_lora_json_125_error_analysis.md`
+  - `reports/v05c/v05c_qwen35_lora_json_125_vs_qwen3_4b_report.md`
+  - `reports/v05c/v05c_qwen35_lora_json_125_smoke_decision.md`
+  - `reports/v05c/v05c_qwen35_lora_json_125_train_report.md` (overwritten above as train report)
+- Generated predictions: `data/v05c/model_predictions/qwen35_lora_json_125_dev_predictions.jsonl` (100 rows)
+- Training outputs: `results/v05c_lora/qwen35_json_125/` (adapter, checkpoints)
+- Gold hash unchanged: `56e16078...`
+- No gold used, no 250/500 training
+
+### P5.22-A (Previous)
+- Completed Qwen3.5 Unit JSON LoRA feasibility and planning
+- **Model audit**: Qwen3.5-4B found at `/home/abc16/hf_models/Qwen3.5-4B` (8.8 GB, 2 safetensors)
+  - Architecture: Qwen3_5ForConditionalGeneration, 32 layers (24 linear_attn + 8 full_attn)
+  - Differences from Qwen3-4B: hybrid attention, fewer layers (32 vs 36), larger vocab (248K vs 152K), bigger heads (256 vs 128), attn_output_gate
+- **GPU feasibility**: RTX 4070 12GB — QLoRA 4-bit est. 8-10 GB peak. Feasible with batch=4, grad_accum=4.
+- **Configs created**:
+  - `configs/v05c/qwen35_lora_json_125.yaml`
+  - `configs/v05c/qwen35_lora_json_250.yaml`
+  - `configs/v05c/qwen35_lora_json_500.yaml`
+  - Key differences from v0.5b: Qwen3.5-4B base model, expanded LoRA target_modules (6 vs 4) for linear_attn coverage
+- **Script compatibility**: Both `train_lora_router.py` and `eval_lora_router.py` are model-agnostic (AutoModel + trust_remote_code). No changes needed.
+- **Data policy**: Reuse v0.5b JSON SFT files exactly. No relabeling, no regeneration, no gold modification.
+- **Gold hash unchanged**: `56e160782c3cd8b18a369227c422a67c43050ef226017adaa2ab7fbbfd52173d`
+- Unit tests: 77/77 OK
+- **Readiness decision: Option A — Ready for Qwen3.5 JSON LoRA 125 smoke**
+- Created 5 reports + 1 doc:
+  - `reports/v05c/v05c_qwen35_json_lora_plan.md`
+  - `reports/v05c/v05c_qwen35_model_feasibility_report.md`
+  - `reports/v05c/v05c_qwen35_json_lora_config_report.md`
+  - `reports/v05c/v05c_train_dev_gold_usage_policy.md`
+  - `reports/v05c/v05c_qwen35_json_lora_readiness_report.md`
+  - `docs/v05c/V05C_QWEN35_JSON_LORA_PLAN.md`
+- No training, no inference, no gold use, no DeepSeek, no git operations
+
+### P5.21-A (Previous)
 - Created v0.5b final consolidated reports:
   - `reports/v05b/v05b_final_project_report.md` — Executive summary + full results
   - `reports/v05b/v05b_final_experiment_summary.md` — Concise tables
@@ -654,14 +852,40 @@ python3 -m src.v05.check_leakage \
 ## Recommended Next Step
 
 **User action required:**
-1. **Manual review:** Review the v0.5b final reports and claims.
-2. **Manual git snapshot:** Stage and commit v0.5b files, tag `v0.5b-unit-json-lora-complete`.
-   - See `reports/v05b/v05b_git_handoff_checklist.md` for exact commands.
-3. **Future: v0.5c safety-focused training**
-   - See `reports/v05b/v05b_v05c_safety_ablation_plan.md`.
-   - Train only after v0.5b is committed/tagged.
+1. **Manual review:** Review the v0.5c final reports and claims.
+2. **Manual git snapshot:** Stage and commit v0.5c files, tag `v0.5c-qwen35-json-lora-complete`.
+   - See `reports/v05c/v05c_git_handoff_checklist.md` for exact commands.
+3. **Decide next ablation** from `reports/v05c/v05c_next_ablation_decision_memo.md`:
+   - r=16 QLoRA (safest capacity increase)
+   - Safety-focused training (eliminate PII storage)
+   - Standard LoRA (if VRAM permits)
+   - gold_v2 (before hyperparameter tuning)
 
-Do NOT train v0.5c from this context. This context is consolidation only.
+Do NOT start new experiments from this context.
+
+## Files Changed (P5.10-A)
+
+### Created
+- `reports/v05c/v05c_final_project_report.md`
+- `reports/v05c/v05c_final_experiment_summary.md`
+- `reports/v05c/v05c_final_claims_and_limitations.md`
+- `reports/v05c/v05c_final_error_analysis.md`
+- `reports/v05c/v05c_final_artifact_manifest.md`
+- `reports/v05c/v05c_next_ablation_decision_memo.md`
+- `reports/v05c/v05c_git_handoff_checklist.md`
+- `reports/v05c/v05c_final_report_consistency_check.md`
+- `docs/v05c/V05C_FINAL_RESULTS.md`
+- `docs/v05c/V05C_PROJECT_NARRATIVE.md`
+- `docs/v05c/V05C_NEXT_ABLATION_OPTIONS.md`
+
+### Updated
+- `docs/status/CURRENT_STATE.md`
+
+### Tests / Commands
+```bash
+sha256sum data/v05/gold/v05_gold_corrected_cases.jsonl  # unchanged
+ls reports/v05c/*.md | wc -l  # 42
+```
 
 ## Files Changed (P5.12-D)
 

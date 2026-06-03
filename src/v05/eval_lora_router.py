@@ -87,13 +87,14 @@ def main() -> int:
 
     import torch
     sys_hash = hashlib.sha256(system_prompt.encode()).hexdigest()
+    out_path = Path(args.out)
     preds = []
-    for case in cases:
+    for i, case in enumerate(cases):
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": render_user_input(case)},
         ]
-        text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=False)
         inputs = tokenizer(text, return_tensors="pt").to(model.device)
         t0 = time.perf_counter()
         with torch.inference_mode():
@@ -109,10 +110,11 @@ def main() -> int:
             "metadata": {"max_new_tokens": args.max_new_tokens, "device": str(model.device),
                          "timestamp_utc": datetime.now(timezone.utc).isoformat()},
         })
-        if len(preds) % 20 == 0:
-            print(f"  ... {len(preds)}/{len(cases)} done")
+        # Incremental write every prediction to survive timeouts
+        write_jsonl(out_path, preds)
+        if (i + 1) % 10 == 0:
+            print(f"  ... {i + 1}/{len(cases)} done")
 
-    write_jsonl(Path(args.out), preds)
     print(f"Wrote {len(preds)} predictions")
     return 0
 

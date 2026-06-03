@@ -217,6 +217,7 @@ def train(cfg: dict[str, Any]) -> bool:
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         formatting_func=format_sft,
+        processing_class=tokenizer,
     )
 
     t0 = time.perf_counter()
