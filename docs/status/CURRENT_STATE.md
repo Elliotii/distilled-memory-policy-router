@@ -4,11 +4,207 @@
 2026-06-04  CST
 
 ## Current Milestone
-P5.24-A: gold_v2 protocol and pre-registration for r=16 validation
+P5.24-B10: gold_v2_009 final pre-evaluation corrections
 
 ## Completed
 
-### P5.24-A (This Context)
+### P5.24-B10 (This Context)
+- **gold_v2_009 final pre-evaluation corrections complete**
+- **Opus final review**: CORRECTION REQUIRED, but data regeneration NOT warranted
+  - Confirmed v009 fixed all prior blockers
+  - Required corrections are documentation/harness, not data changes
+- **Harness compatibility fixes** (2 patches):
+  - `src/v05/render_sft_messages.py`: `m['content']` → `m.get('text', m.get('content', ''))` (supports v009 `text` key)
+  - `src/v04/case_validator.py`: memory `content` fallback to `text`; empty `dsl` accepted when structured fields present
+- **Harness smoke tests passed**:
+  - Memory text renders correctly ✅
+  - Perfect prediction = 100% exact ✅
+  - Wrong prediction = 0% exact ✅
+  - Reordered read/store/skip = same score (set-based) ✅
+  - Structured scoring works without DSL ✅
+- **Reporting addendum created**: store/skip-exact, McNemar table, READ-component failure rate, claim boundaries
+- **Final pre-eval decision: Option A — v009 ready for four-system evaluation**
+  - v009 data unchanged (hash matches lock)
+  - Old gold unchanged: `56e16078...`
+- Scripts compile, 77/77 tests pass
+- **Ready for model evaluation on v009**
+
+### P5.24-B9 (Previous)
+- **gold_v2_008 approved with minor note** by ClaudeCode/DeepSeek
+  - 6 phantom sensitive_boundary cases (tag without actual sensitive unit)
+- **gold_v2_009 built and locked** — all 15 gates pass
+  - Fix: `is_sens` flag only adds `sensitive_boundary` tag when actual sensitive unit exists
+  - New gate: `phantom_sensitive = 0` ✅
+  - New script: `src/v05e/build_gold_v2_009.py` (proper version provenance)
+  - All v008 gates preserved (0 vocab_item, 0 READ conflicts, 0 label conflicts)
+  - Distribution: task 33.9%, svc 31.4%, repo 15.7%, proj 13.2%, user 5.8%
+  - SFT 100% JSON valid
+- Locked: v05e_gold_v2_009, SHA-256 `f5cf7be1...`
+- **Ready for independent review**
+- Old gold hash unchanged: `56e16078...`
+
+### P5.24-B8 (Previous)
+- **gold_v2_007 REJECTED** by ClaudeCode/DeepSeek:
+  - Single root cause: `vocab_item` literal bug (766 instances)
+  - `.format()` consumed braces before `.replace("{vocab_item}", v)` could match
+  - All other v007 aspects confirmed strong (0 READ conflicts, honest labels, clean distribution)
+- **gold_v2_008 built and locked** — all 14 gates pass
+  - Fix: `tmpl.replace("{vocab_item}", v)` BEFORE `.format()` call (1 line change)
+  - Added vocab_item literal gate: 0 ✅
+  - All v007 gates preserved (0 READ conflicts, 0 label conflicts, etc.)
+  - Distribution: task 33.9%, svc 31.4%, repo 15.7%, proj 13.2%, user 5.8%
+  - SFT 100% JSON valid
+- Locked: v05e_gold_v2_008, SHA-256 `bfd365b5...`
+- **Ready for independent review**
+- Old gold hash unchanged: `56e16078...`
+
+### P5.24-B7 (Previous)
+- **gold_v2_006 REJECTED** by Opus:
+  - READ not semantically recoverable (127/150 cases, 47 READ conflicts, same text opposite labels)
+  - Boundary axis weak (many tags not genuine disambiguation)
+  - Sensitive accounting issues, grammar artifacts
+- **gold_v2_007 built and locked** — all 13 gates pass
+  - **Semantic READ**: service/repo/project memories about current context always READ; stale/distractor not READ
+  - **0 READ label conflicts** (same text always maps to same READ label)
+  - All prior gates preserved (0 placeholders, 0 leakage, 0 conflicts, 0 misalignment)
+  - Distribution: task 33.9%, svc 31.4%, repo 15.7%, proj 13.2%, user 5.8%
+  - Sens 18+, Bound 30+, 0 sensitive stored, 0 stale reads
+  - SFT 100% JSON valid
+- Locked: v05e_gold_v2_007, SHA-256 `4f26b296...`
+- **Ready for independent review**
+- Old gold hash unchanged: `56e16078...`
+
+### P5.24-B6 (Previous)
+- **gold_v2_005 REJECTED** by Opus:
+  - 4 target-text mismatches from post-generation relabeling
+  - Normalized skeleton multi-target conflicts ("project requires..." → 3 targets)
+  - Random READ (random.sample made gold READ partly arbitrary)
+- **gold_v2_006 built and locked** — all 13 gates pass
+  - **Pre-allocated targets**: no post-hoc relabeling; target-specific text generation
+  - **Deterministic READ**: all relevant_read memories are READ; 0 stale reads
+  - **Target-text alignment**: 0 misaligned (project text→project_memory only)
+  - All v005 gates preserved (0 placeholders, 0 articles, 0 leakage, 0 conflicts)
+  - Distribution: task 33.9%, svc 32.2%, repo 16.1%, proj 11.4%, user 6.4%
+  - Sens 21, Bound 38, 0 boundary on READ-only, 0 sensitive stored
+  - SFT 100% JSON valid
+- Locked: v05e_gold_v2_006, SHA-256 `3e38cce3...`
+- **Ready for independent review**
+- Old gold hash unchanged: `56e16078...`
+
+### P5.24-B5 (Previous)
+- **gold_v2_004 REJECTED** by ClaudeCode/DeepSeek:
+  - 748 unresolved placeholders (FILLERS 23 keys vs 49 needed)
+  - flowcraft/demand-forecaster namespace leakage (31+1 cases in train_500)
+  - 30 article doublings, version doubling, filler bugs
+- **gold_v2_005 built and locked** — all 11 automated hard gates pass
+  - Complete FILLERS dict: 49 keys, 0 missing ✅
+  - 0 unresolved placeholders ✅
+  - 0 article doublings (stripped leading articles from filler values) ✅
+  - 0 version doublings, 0 filler bugs ✅
+  - 0 namespace leakage (8 new domains, flowcraft/demand-forecaster banned) ✅
+  - 0 exact label conflicts (disjoint task pools preserved) ✅
+  - All 5 target distributions within tolerance ✅
+  - Sensitive 25, Boundary 30, Boundary on READ-only 0 ✅
+  - 0 sensitive STORE ✅
+- SFT: 100% JSON valid, schema compatible
+- Locked: v05e_gold_v2_005, SHA-256 `65c1f46f...`
+- **Ready for independent review**
+- Old gold hash unchanged: `56e16078...`
+
+### P5.24-B4 (Previous)
+- **gold_v2_003 REJECTED** by both independent reviews
+  - Namespace leakage: education-platform/learnhub/assessment-engine in train_500
+  - Skeleton-level SKIP-vs-STORE→task_state conflicts remain
+  - Filler bugs ("dropped to dropped to")
+  - task_state 36.5% above protocol bound
+- **gold_v2_004 built and locked** with comprehensive hard gates
+  - 8 new domains verified against 315 banned entities (0 leakage)
+  - DISJOINT task pools: STORE→task_state uses current/active/assigned markers; SKIP uses ephemeral/hypothetical/old markers
+  - **0 exact label conflicts** ✅
+  - **0 filler bugs** (fixed verb-doubling) ✅
+  - **All 5 target distributions within protocol tolerance** ✅
+  - Sensitive 25 (18-27 ✅), Boundary 30 (30-38 ✅)
+  - Boundary on READ-only: 0 ✅
+  - Domain families: security, logistics, media, a11y, finance, bioinformatics, realestate, gaming
+  - Unit uniqueness: 97.9%
+  - SFT 100% valid, schema compatible
+  - 12 automated hard gates, all passing
+- Created scripts + reports:
+  - `src/v05e/build_gold_v2_004.py`
+  - `reports/v05e/v05e_gold_v2_003_rejection_report.md` through `_004_evaluation_readiness_report.md`
+  - `data/v05e/gold_v2/v05e_gold_v2_004_*`
+- **Ready for independent review**
+- Old gold hash unchanged: `56e16078...`
+
+### P5.24-B3 (Previous)
+- **Audit adjudication complete**: Opus blockers confirmed, DeepSeek minor issues noted
+  - ✅ Exact-text label conflicts: 30 groups confirmed (SKIP vs STORE→task_state)
+  - ✅ Max skeleton repeat: 16 confirmed (>5 cap)
+  - ✅ Fleet vocabulary monoculture: 58-70% fleet terms in all 8 domains confirmed
+- **v002 REJECTED** — preserved for audit
+- **v003 built and locked**:
+  - 8 genuinely different domains (clinical, fraud, HVAC, observability, document, ML, education, data-pipeline)
+  - 233 STORE units across 150 active cases (target ~220 ✅)
+  - 98.7% unit uniqueness (391/396 unique)
+  - **0 exact label conflicts** (vs 30 in v002)
+  - 0 validation errors, 0 leakage, 100% SFT valid
+  - Target distribution: task 36.5%, svc 30.0%, repo 18.5%, proj 8.2%, user 6.9%
+  - Sensitive: 24 (18-27 ✅), Boundary: 37 (30-38 ✅)
+- Created scripts + reports:
+  - `src/v05e/build_gold_v2_003.py`
+  - `reports/v05e/v05e_gold_v2_002_audit_adjudication_report.md` through `_003_evaluation_readiness_report.md`
+  - `data/v05e/gold_v2/v05e_gold_v2_003_*` (cases, SFT, lock)
+- **Ready for independent review**
+- Old gold hash unchanged: `56e16078...`
+
+### P5.24-B2 (Previous)
+- **gold_v2_001 REJECTED** by two independent reviews (DeepSeek/ClaudeCode + Opus)
+  - Domain leakage (ecommerce-platform/shopengine/learnhub/alert-manager in train_500)
+  - Template diversity crisis (38.6% unit uniqueness, SLA/root-cause mass templates)
+  - READ positional artifacts, contradictory labels
+  - Sensitive 30 (>27), boundary 45 (>38) — protocol violations
+- **gold_v2_002 built and locked** with all issues addressed
+  - 8 new domains verified against 283 banned entities (0 overlap)
+  - 67.1% unit uniqueness (vs 38.6%)
+  - 41.5% memory uniqueness (vs 16.4%), 20 stale memory pool (vs 4)
+  - READ labels semantic (memory order shuffled)
+  - 0 contradictory labels, 0 domain leakage
+  - Sensitive: 24 (18-27 ✅), Boundary: 34 (30-38 ✅)
+  - Max normalized skeleton repeat: 7 (units), 12 (memories — stale pool)
+- **All validations pass**: 0 schema errors, 0 leakage, 100% SFT JSON valid
+- **Locked**: v05e_gold_v2_002, SHA-256 `44ee596d...`
+- Created 12 reports + scripts:
+  - `reports/v05e/v05e_gold_v2_001_rejection_report.md` through `_evaluation_readiness_report.md`
+  - `src/v05e/build_gold_v2_002.py`
+- v001 files preserved for audit; v002 is now the canonical gold_v2
+- **Ready for independent review (not model evaluation yet)**
+- Old gold hash unchanged: `56e16078...`
+
+### P5.24-B (Previous)
+- **gold_v2 constructed and LOCKED** according to pre-registered protocol
+- Created `src/v05e/build_gold_v2.py` — programmatic case generation with controlled distributions
+- **Active set**: 150 cases at `data/v05e/gold_v2/v05e_gold_v2_active_cases.jsonl`
+- **Holdout set**: 30 cases at `data/v05e/gold_v2/v05e_gold_v2_holdout_cases.jsonl` (reserved, unused)
+- **SFT messages**: 150 active + 30 holdout at `data/v05e/gold_v2/v05e_gold_v2_*_sft_messages.jsonl`
+- **Distribution** (active 150):
+  - Shapes: READ-only 19%, STORE/SKIP-only 39%, READ+STORE 43%
+  - Targets: task 31.5%, svc 30.6%, repo 17.7%, proj 12.1%, user 8.2%
+  - Stress: 30 sensitive SKIP, 45 target boundary
+- **6 new domains**: ecommerce-platform, iot-monitoring, legal-doc-review, inventory-mgmt, support-ticketing, edu-platform
+- **Validation**: 0 schema errors, 0 illegal targets, 0 sensitive stored, 100% unit coverage
+- **Leakage**: 0 exact text overlap, 0 ID overlap, 0 domain overlap vs train_500/dev/old_gold
+- **SFT**: 100% JSON parse valid, 0 markdown
+- **Lock manifest**: `data/v05e/gold_v2/v05e_gold_v2_lock.json` (v05e_gold_v2_001)
+  - Active SHA-256: `c87879a4...`
+  - Holdout SHA-256: `359ff04c...`
+- Created 4 new reports:
+  - `reports/v05e/v05e_gold_v2_construction_report.md`
+  - `reports/v05e/v05e_gold_v2_lock_report.md`
+  - `reports/v05e/v05e_gold_v2_evaluation_readiness_report.md`
+- Old gold hash unchanged: `56e16078...`
+- **Ready for gold_v2 system evaluation**
+
+### P5.24-A (Previous)
 - Created gold_v2 protocol and pre-registration (no data generated)
 - **Opus 4.8 review incorporated**: gold_v2 needed, n=150 for statistical power, paired bootstrap CIs, re-run all systems
 - **Protocol summary**:
@@ -929,35 +1125,36 @@ python3 -m src.v05.check_leakage \
 
 ## Recommended Next Step
 
-**Context 5.12-B: gold_v2 construction from locked protocol**
+**Context 5.12-C: Locked gold_v2 evaluation of r=16, r=8, few-shot, and Qwen3-4B anchor**
 
-Generate 150 (+30 optional) gold_v2 cases following the pre-registered protocol:
-- 6+ new domains, target distribution as blueprinted
-- 18-27 sensitive SKIP, 30-38 hard target-boundary
-- Run leakage checks against all existing data
-- Targeted label review for sensitive + boundary cases
-- Lock gold_v2 before any model evaluation
+Evaluate all 4 pre-registered systems on locked gold_v2 (150 active cases):
+1. Qwen3.5 r=16 500
+2. Qwen3.5 r=8 500
+3. Qwen3.5 JSON few-shot
+4. Qwen3-4B r=8 500
 
-Do NOT evaluate any models yet.
+Compute paired bootstrap 95% CI for r=16 vs r=8 exact difference.
+Apply safety gate (r=16 sensitive ≤ r=8).
+Report final decision.
 
-## Files Changed (P5.24-A)
+## Files Changed (P5.24-B)
 
 ### Created
-- `reports/v05e/v05e_gold_v2_protocol.md`
-- `reports/v05e/v05e_gold_v2_pre_registration.md`
-- `reports/v05e/v05e_gold_v2_distribution_blueprint.md`
-- `reports/v05e/v05e_gold_v2_leakage_policy.md`
-- `reports/v05e/v05e_gold_v2_metric_and_ci_plan.md`
-- `reports/v05e/v05e_gold_v2_claims_and_limitations.md`
-- `reports/v05e/v05e_gold_v2_opus_review_response.md`
-- `reports/v05e/v05e_gold_v2_readiness_decision.md`
-- `docs/v05e/V05E_GOLD_V2_PROTOCOL.md`
+- `src/v05e/build_gold_v2.py` — gold_v2 generation script
+- `data/v05e/gold_v2/v05e_gold_v2_active_cases.jsonl` — 150 locked active cases
+- `data/v05e/gold_v2/v05e_gold_v2_holdout_cases.jsonl` — 30 reserved holdout cases
+- `data/v05e/gold_v2/v05e_gold_v2_active_sft_messages.jsonl` — 150 SFT messages
+- `data/v05e/gold_v2/v05e_gold_v2_holdout_sft_messages.jsonl` — 30 SFT messages
+- `data/v05e/gold_v2/v05e_gold_v2_lock.json` — Lock manifest
+- `reports/v05e/v05e_gold_v2_construction_report.md`
+- `reports/v05e/v05e_gold_v2_lock_report.md`
+- `reports/v05e/v05e_gold_v2_evaluation_readiness_report.md`
 
 ### Updated
 - `docs/status/CURRENT_STATE.md`
 
 ### Unmodified
-- Gold hash: `56e16078...`
+- Old gold: `56e16078...`
 - All existing data, configs, scripts
 
 ## Files Changed (P5.12-D)

@@ -55,7 +55,7 @@ def render_user_input(case: dict[str, Any]) -> str:
     if mems:
         mem_lines = ["CANDIDATE_MEMORIES"]
         for m in mems:
-            mem_lines.append(f"{m['memory_id']} [{m['target']}]: {m['content']}")
+            mem_lines.append(f"{m['memory_id']} [{m['target']}]: {m.get('text', m.get('content', ''))}")
     else:
         mem_lines = ["CANDIDATE_MEMORIES", "NONE"]
 

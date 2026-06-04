@@ -1,0 +1,18 @@
+{
+  "lock_version": "v05e_gold_v2_001",
+  "locked_utc": "2026-06-04T06:36:33.610216+00:00",
+  "active_cases": 150,
+  "holdout_cases": 30,
+  "active_path": "data/v05e/gold_v2/v05e_gold_v2_active_cases.jsonl",
+  "holdout_path": "data/v05e/gold_v2/v05e_gold_v2_holdout_cases.jsonl",
+  "active_sft_path": "data/v05e/gold_v2/v05e_gold_v2_active_sft_messages.jsonl",
+  "holdout_sft_path": "data/v05e/gold_v2/v05e_gold_v2_holdout_sft_messages.jsonl",
+  "hashes": {
+    "active_cases": "c87879a44c8cc7a94802b5f253fa2f5cd521214a5cc743b7670c4238bf7132fe",
+    "holdout_cases": "359ff04c47ae98f6e5ebf6db912250bacec69cdeef79a6f4128bfdd416f9ea70",
+    "active_sft": "94f2a364623d2310d80241ebf70c236cc3f8af67d2a73434c61a70365591940e",
+    "holdout_sft": "e6989cbc5557a64d4c867839f43c0eacfbed123d748af4f6d8486b71673cd19c"
+  },
+  "protocol_tag": "v0.5e-gold-v2-protocol",
+  "statement": "gold_v2 has NOT been evaluated by any model. Active set (150) is for final r=16/r=8/few-shot evaluation. Holdout (30) is reserved for future use."
+}

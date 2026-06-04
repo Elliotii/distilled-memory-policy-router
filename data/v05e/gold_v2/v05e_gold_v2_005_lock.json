@@ -1,0 +1,19 @@
+{
+  "lock_version": "v05e_gold_v2_005",
+  "locked_utc": "2026-06-04T15:27:56.737026+00:00",
+  "active_cases": 150,
+  "holdout_cases": 30,
+  "hashes": {
+    "active_cases": "65c1f46f6b06cbb5cafa143a43cd6691d339582372dafaba4827bc62952686f1",
+    "holdout_cases": "4f42a6c5f745a6d342df42307ddf24c89a5964679cb53e6212d2b5007b4fc3a8",
+    "active_sft_messages": "618dcffc5dfdbb344ee4aac0b4f3e4c8fae51ff1f92fae61f12237e2d69294ed",
+    "holdout_sft_messages": "441e6d714322d0dd162e0c83724aed017ec24681f07f71b6608bc1b8cfc65529"
+  },
+  "statement": "gold_v2_005. All 11 hard gates pass. Replaces v001-v004.",
+  "prior_rejected": [
+    "v001",
+    "v002",
+    "v003",
+    "v004"
+  ]
+}

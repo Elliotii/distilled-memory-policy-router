@@ -1,0 +1,13 @@
+{
+  "lock_version": "v05e_gold_v2_003",
+  "locked_utc": "2026-06-04T08:28:43.378955+00:00",
+  "active_cases": 150,
+  "holdout_cases": 30,
+  "hashes": {
+    "active_cases": "b5276384ade22716ade9eb03f8bd744f4cc398912673bc1a90e77e543bb90f12",
+    "holdout_cases": "08bb2401e694f36c8e6e5f127c0eed5c5ece19de68a9a54a2ea18de38a21a745",
+    "active_sft_messages": "ef5bf1b258567f6dc60b17cc1ff0ec361370f85a0e0835034814b1db4d0a6546",
+    "holdout_sft_messages": "d23a096344dd76c5c45f5b3b0fbec3cfeaa1d6ce16df08a9213ece2551084789"
+  },
+  "statement": "gold_v2_003. Replaces rejected v001/v002."
+}

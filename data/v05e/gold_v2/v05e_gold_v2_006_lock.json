@@ -1,0 +1,20 @@
+{
+  "lock_version": "v05e_gold_v2_006",
+  "locked_utc": "2026-06-04T16:24:52.694263+00:00",
+  "active_cases": 150,
+  "holdout_cases": 30,
+  "hashes": {
+    "active_cases": "3e38cce31e8d7b2c1e145614f2de09bfb8e3ca138634d65058b05ac8ae50b5f4",
+    "holdout_cases": "ed2caf95f89220f763b655b22c38efcfca4de55955573ea68df1400ff11473a1",
+    "active_sft_messages": "fca69fc109e6854ceaab75ce3128eced56f1b532368f6529c5bdbdb1858cd878",
+    "holdout_sft_messages": "c6dd4941a36fc39a2cd497cf6c74df70562a305333df8082a125b91846888cca"
+  },
+  "statement": "gold_v2_006. All 13 gates pass. Pre-allocated targets, deterministic READ, no post-hoc relabeling.",
+  "prior_rejected": [
+    "v001",
+    "v002",
+    "v003",
+    "v004",
+    "v005"
+  ]
+}

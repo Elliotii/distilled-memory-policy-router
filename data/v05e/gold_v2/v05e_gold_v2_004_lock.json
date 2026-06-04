@@ -1,0 +1,18 @@
+{
+  "lock_version": "v05e_gold_v2_004",
+  "locked_utc": "2026-06-04T14:59:21.442679+00:00",
+  "active_cases": 150,
+  "holdout_cases": 30,
+  "hashes": {
+    "active_cases": "ee3b0762b0fe7ecaa353eaea57f2104e4370cfdd52e1597af1b17adfb546b335",
+    "holdout_cases": "ccc27819baf1e0e945a3e596386ae96aa677c5e62712e310c2f8853057be2159",
+    "active_sft_messages": "2c76446a2c91475421fbf6b11f3fd42e4ad9a122458337568616d2ad302d8f5c",
+    "holdout_sft_messages": "49432f53858ce5ef35e2f320b96ea9d453bb1daa3a2987d17438d90ac307a0bf"
+  },
+  "statement": "gold_v2_004. Replaces v001/v002/v003. Hard gates enforced.",
+  "prior_versions_rejected": [
+    "v001",
+    "v002",
+    "v003"
+  ]
+}

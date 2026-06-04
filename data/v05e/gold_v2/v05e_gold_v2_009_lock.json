@@ -1,0 +1,23 @@
+{
+  "lock_version": "v05e_gold_v2_009",
+  "locked_utc": "2026-06-04T18:21:14.932264+00:00",
+  "active_cases": 150,
+  "holdout_cases": 30,
+  "hashes": {
+    "active_cases": "f5cf7be1d06f085e62b87cf0b9c8021119b54ed94968bb5519b3150995eb4f72",
+    "holdout_cases": "6bd4de9e091c6d43b80a85d4d55cc50baeb72ec656e096e4e36bd2b7e780562c",
+    "active_sft_messages": "8b30c5c6d41d1bd25773d3fe4d6854f903d6303cbc309e45777dc8b72757dd03",
+    "holdout_sft_messages": "0d7e035801ace816b4695b4be50920230d7523aba7484b3effd36e3fc804318b"
+  },
+  "statement": "gold_v2_009. Fixed phantom sensitive_boundary tags. All 15 gates pass.",
+  "prior_rejected": [
+    "v001",
+    "v002",
+    "v003",
+    "v004",
+    "v005",
+    "v006",
+    "v007",
+    "v008"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "lock_version": "v05e_gold_v2_008",
+  "locked_utc": "2026-06-04T17:28:41.261027+00:00",
+  "active_cases": 150,
+  "holdout_cases": 30,
+  "hashes": {
+    "active_cases": "bfd365b59dac77b7ded27c9e988a821374f2a6c241679f20427ac95a50054cba",
+    "holdout_cases": "9f14b36c268fdd5d37bdab0ba593489c6b798d208f86486798eff99bc5fe83fd",
+    "active_sft_messages": "8b30c5c6d41d1bd25773d3fe4d6854f903d6303cbc309e45777dc8b72757dd03",
+    "holdout_sft_messages": "0d7e035801ace816b4695b4be50920230d7523aba7484b3effd36e3fc804318b"
+  },
+  "statement": "gold_v2_008. Fixed vocab_item literal bug. All 14 gates pass.",
+  "prior_rejected": [
+    "v001",
+    "v002",
+    "v003",
+    "v004",
+    "v005",
+    "v006",
+    "v007"
+  ]
+}

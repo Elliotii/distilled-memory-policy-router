@@ -141,7 +141,7 @@ def _validate_candidate_memories(value: Any, errors: list[str]) -> list[str]:
 
         memory_id = item.get("memory_id")
         target = item.get("target")
-        content = item.get("content")
+        content = item.get("content") or item.get("text", "")
 
         if not isinstance(memory_id, str) or not memory_id.strip():
             errors.append(f"candidate_memories[{index}].memory_id is required")
@@ -301,7 +301,7 @@ def _validate_gold_dsl(
     if dsl is None:
         return
     if not isinstance(dsl, str) or not dsl.strip():
-        errors.append("gold.dsl must be a non-empty string when present")
+        # Accept empty DSL when structured fields (read/store/skip) are present
         return
 
     parsed = parse_policy_dsl(dsl, candidate_memory_ids, current_unit_ids, LEGAL_TARGETS)
