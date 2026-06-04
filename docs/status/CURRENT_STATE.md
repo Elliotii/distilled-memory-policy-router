@@ -4,11 +4,40 @@
 2026-06-04  CST
 
 ## Current Milestone
-P5.23-B: v0.5d r=16 dev-only consolidation and snapshot readiness
+P5.24-A: gold_v2 protocol and pre-registration for r=16 validation
 
 ## Completed
 
-### P5.23-B (This Context)
+### P5.24-A (This Context)
+- Created gold_v2 protocol and pre-registration (no data generated)
+- **Opus 4.8 review incorporated**: gold_v2 needed, n=150 for statistical power, paired bootstrap CIs, re-run all systems
+- **Protocol summary**:
+  - 150 active cases + 30 optional holdout
+  - 6+ new domains (no old-gold overlap)
+  - Shapes: READ-only 18%, STORE/SKIP 39%, READ+STORE 43%
+  - Targets: task_state 33%, svc 32%, repo 17%, proj 12%, user 6%
+  - Stress: 18-27 sensitive SKIP, 30-38 hard target-boundary
+- **Evaluated systems** (pre-registered): r=16, r=8, Qwen3.5 few-shot, Qwen3-4B r=8
+- **Primary metric**: Paired exact difference with bootstrap 95% CI
+- **Success criterion**: CI lower bound > 0 for "r=16 better" claim
+- **Safety gate**: r=16 sensitive failures ≤ r=8
+- **Leakage policy**: 5-level (L0-L5) checks against train_500, dev, old gold, few-shot exemplars
+- **Claims bounded**: Allowed/forbidden pre-registered
+- **Readiness: Option A — Ready to generate gold_v2 cases**
+- Created 8 reports + 1 doc:
+  - `reports/v05e/v05e_gold_v2_protocol.md`
+  - `reports/v05e/v05e_gold_v2_pre_registration.md`
+  - `reports/v05e/v05e_gold_v2_distribution_blueprint.md`
+  - `reports/v05e/v05e_gold_v2_leakage_policy.md`
+  - `reports/v05e/v05e_gold_v2_metric_and_ci_plan.md`
+  - `reports/v05e/v05e_gold_v2_claims_and_limitations.md`
+  - `reports/v05e/v05e_gold_v2_opus_review_response.md`
+  - `reports/v05e/v05e_gold_v2_readiness_decision.md`
+  - `docs/v05e/V05E_GOLD_V2_PROTOCOL.md`
+- Old gold hash unchanged: `56e16078...`
+- No data generated, no models run
+
+### P5.23-B (Previous)
 - Created v0.5d final consolidation reports:
   - `reports/v05d/v05d_final_dev_only_summary.md` — r=16 dev-only summary
   - `reports/v05d/v05d_r16_claims_and_limitations.md` — Allowed/forbidden claims
@@ -900,30 +929,36 @@ python3 -m src.v05.check_leakage \
 
 ## Recommended Next Step
 
-**User decision required:**
-1. **r=16 shows +5pp exact on dev over r=8** — strong candidate for new best trained router.
-2. **Old gold is no longer blind** (3 evaluations) — should create gold_v2 before r=16 gold claim.
-3. **Options:**
-   - Create gold_v2 + evaluate r=16 and r=8 head-to-head
-   - Alternatively, directly evaluate r=16 on old gold as preliminary evidence
-   - Consider safety-focused training or standard LoRA next
+**Context 5.12-B: gold_v2 construction from locked protocol**
 
-## Files Changed (P5.23-A)
+Generate 150 (+30 optional) gold_v2 cases following the pre-registered protocol:
+- 6+ new domains, target distribution as blueprinted
+- 18-27 sensitive SKIP, 30-38 hard target-boundary
+- Run leakage checks against all existing data
+- Targeted label review for sensitive + boundary cases
+- Lock gold_v2 before any model evaluation
+
+Do NOT evaluate any models yet.
+
+## Files Changed (P5.24-A)
 
 ### Created
-- `configs/v05d/qwen35_lora_json_r16_500.yaml`
-- `reports/v05d/*` (8 reports)
-- `data/v05d/model_predictions/qwen35_lora_json_r16_500_dev_predictions.jsonl`
+- `reports/v05e/v05e_gold_v2_protocol.md`
+- `reports/v05e/v05e_gold_v2_pre_registration.md`
+- `reports/v05e/v05e_gold_v2_distribution_blueprint.md`
+- `reports/v05e/v05e_gold_v2_leakage_policy.md`
+- `reports/v05e/v05e_gold_v2_metric_and_ci_plan.md`
+- `reports/v05e/v05e_gold_v2_claims_and_limitations.md`
+- `reports/v05e/v05e_gold_v2_opus_review_response.md`
+- `reports/v05e/v05e_gold_v2_readiness_decision.md`
+- `docs/v05e/V05E_GOLD_V2_PROTOCOL.md`
 
 ### Updated
 - `docs/status/CURRENT_STATE.md`
 
-### Generated (do not commit)
-- `results/v05d_lora/qwen35_json_r16_500/`
-
 ### Unmodified
-- All data, gold, scripts unchanged
 - Gold hash: `56e16078...`
+- All existing data, configs, scripts
 
 ## Files Changed (P5.12-D)
 
