@@ -131,7 +131,7 @@ def make_case_input(case: dict[str, Any]) -> str:
     mems = case["candidate_memories"]
     if mems:
         for m in mems:
-            lines.append(f"{m['memory_id']} [{m['target']}]: {m['content']}")
+            lines.append(f"{m['memory_id']} [{m['target']}]: {m.get('text', m.get('content', ''))}")
     else:
         lines.append("NONE")
     lines.append("")

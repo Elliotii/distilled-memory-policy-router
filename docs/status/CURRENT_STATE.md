@@ -4,11 +4,49 @@
 2026-06-04  CST
 
 ## Current Milestone
-P5.24-B10: gold_v2_009 final pre-evaluation corrections
+P5.12-D: v0.5e final evaluation synthesis and project decision
 
 ## Completed
 
-### P5.24-B10 (This Context)
+### P5.12-D (This Context)
+- **v0.5e final synthesis complete**
+- Created 7 final reports:
+  - `reports/v05e/v05e_final_project_report.md` — Executive summary
+  - `reports/v05e/v05e_final_experiment_summary.md` — Concise tables
+  - `reports/v05e/v05e_final_r16_vs_r8_decision.md` — Final verdict
+  - `reports/v05e/v05e_final_claims_and_limitations.md` — Allowed/forbidden claims
+  - `reports/v05e/v05e_final_error_analysis.md` — Error patterns
+  - `reports/v05e/v05e_final_artifact_manifest.md` — What to commit
+  - `reports/v05e/v05e_next_step_decision_memo.md` — Next options
+- Created 3 docs:
+  - `docs/v05e/V05E_FINAL_RESULTS.md`
+  - `docs/v05e/V05E_PROJECT_NARRATIVE.md`
+  - `docs/v05e/V05E_NEXT_STEPS.md`
+- **Final decision**: r16 directionally promising but statistically indistinguishable from r8 on primary metric
+- **Consistency**: All metrics match audited reports, no forbidden claims, hashes unchanged
+- **v0.5e complete — ready for packaging and git snapshot**
+- Gold hashes unchanged: v009 `f5cf7be1...`, old gold `56e16078...`
+
+### P5.12-C (Previous)
+- **Four-system evaluation on gold_v2_009 complete** (150 active cases)
+- **Systems evaluated**:
+  1. Qwen3.5 r=16 LoRA: 22.7% exact, 94.7% parse, 0.909 STORE F1, **84.2% target acc** (best), 0.892 SKIP F1
+  2. Qwen3.5 r=8 LoRA: 22.7% exact, 98.7% parse, 0.880 STORE F1, 79.1% target acc, 0.834 SKIP F1
+  3. Qwen3.5 few-shot: 30.7% exact, 86.0% parse, 0.856 STORE F1, 75.3% target acc, 0.847 SKIP F1
+  4. Qwen3-4B r=8 LoRA: 16.0% exact, 100.0% parse, 0.925 STORE F1, 76.8% target acc, 0.860 SKIP F1
+- **Primary metric: r16 vs r8 paired exact CI**
+  - Mean diff: 0.00pp, 95% CI [−5.33, +5.33] — CI includes 0
+  - **r16 and r8 are statistically indistinguishable on exact match**
+- **Directional evidence**: r16 leads on store/skip-exact (+8.7pp), STORE F1 (+0.029), target acc (+5.1pp), SKIP F1 (+0.058)
+- **Decision**: r16 is directionally promising; r8 is the conservative choice (better parse: 98.7% vs 94.7%)
+- **Few-shot note**: 86% parse suggests enable_thinking not fully suppressed; may underestimate few-shot exact
+- **Safety**: All Qwen3.5 systems show 0% eval_runner sensitive tag rate on v009 ✅
+- Harness patch applied: `qwen_v05_output_runner.py` — memory `text` fallback
+- Gold hashes unchanged (v009 and old gold)
+- 4 prediction files + 5 reports created
+- **v0.5d/v0.5e gold_v2 evaluation series complete**
+
+### P5.24-B10 (Previous)
 - **gold_v2_009 final pre-evaluation corrections complete**
 - **Opus final review**: CORRECTION REQUIRED, but data regeneration NOT warranted
   - Confirmed v009 fixed all prior blockers
