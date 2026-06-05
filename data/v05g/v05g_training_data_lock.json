@@ -1,0 +1,51 @@
+{
+  "version": "v05g",
+  "created": "2026-06-05",
+  "repaired": "2026-06-05",
+  "description": "v05g targeted-balanced training data for BF16 LoRA scaling experiment \u2014 REPAIRED for semantic quality",
+  "files": {
+    "v05g_train_500_control_cases": {
+      "path": "/home/abc16/distilled-memory-policy-router/data/v05g/cases/v05g_train_500_control_cases.jsonl",
+      "sha256": "c6ec79d954cd273965de34b8009555e3d84d1fbbbc46cc3c207410f810b66075"
+    },
+    "v05g_train_500_control_json_sft": {
+      "path": "/home/abc16/distilled-memory-policy-router/data/v05g/json_sft/v05g_train_500_control_json_sft_messages.jsonl",
+      "sha256": "d88d34fbeef2d715f5d6b09a8d7f3b48a091a99b46e167aa8690fa236efa096e"
+    },
+    "v05g_train_additional_500_cases": {
+      "path": "/home/abc16/distilled-memory-policy-router/data/v05g/cases/v05g_train_additional_500_targeted_cases.jsonl",
+      "sha256": "dadc6731060ffd797194b784c2f13c00a30f5a0b74da67a75e4d0b9649763165"
+    },
+    "v05g_train_additional_500_json_sft": {
+      "path": "/home/abc16/distilled-memory-policy-router/data/v05g/json_sft/v05g_train_additional_500_targeted_json_sft_messages.jsonl",
+      "sha256": "f4297c75605ef35914925b797dd950d572b226085561471a57019b8853cecc15"
+    },
+    "v05g_train_1000_cases": {
+      "path": "/home/abc16/distilled-memory-policy-router/data/v05g/cases/v05g_train_1000_targeted_cases.jsonl",
+      "sha256": "c7b0d94e46bb288ca5977319aa8ea05d89c6e1f1f0cb83858da91211de4b0eba"
+    },
+    "v05g_train_1000_json_sft": {
+      "path": "/home/abc16/distilled-memory-policy-router/data/v05g/json_sft/v05g_train_1000_targeted_json_sft_messages.jsonl",
+      "sha256": "da613fff93b6c730fe45a83bbb4cd6e9618b599b14d0aa1cf9aceaa5d6d453d7"
+    }
+  },
+  "quality_gates": {
+    "SFT parse=100%": true,
+    "unit coverage=100%": true,
+    "store/skip mutually exclusive": true,
+    "sensitive STORE=0": true,
+    "no target:\"skip\" in store": true,
+    "no duplicate unit assignment": true,
+    "no invalid targets": true,
+    "no invalid read/store/skip IDs": true,
+    "no unresolved placeholders": true
+  },
+  "all_gates_pass": true,
+  "repair_info": {
+    "read_semantic_recoverability": "fixed",
+    "prefix_shortcut": "fixed",
+    "sensitive_literal_diversification": "fixed",
+    "binary_3word_accuracy": 90.880303989867,
+    "body_dependent_cases_pct": 64.2
+  }
+}

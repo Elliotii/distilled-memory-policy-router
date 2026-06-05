@@ -1,0 +1,61 @@
+# BF16 standard LoRA training config — Qwen3.5 Unit JSON
+# v0.5g experiment: BF16 standard LoRA r=16 (precision & scaling ablation)
+# Trains on: 500-control data (same data as v05d QLoRA r16 500)
+# Key difference: standard BF16 LoRA (no 4-bit quantization) vs existing QLoRA r16 500
+
+base_model_path: "${QWEN35_MODEL_PATH}"
+output_dir: results/v05g_bf16_lora/qwen35_json_r16_500
+train_file: data/v05g/json_sft/v05g_train_500_control_json_sft_messages.jsonl
+eval_file: data/v05b/json_sft/v05b_dev_json_sft_messages.jsonl
+
+# Interface
+interface: unit_json
+
+# Precision mode: standard BF16 LoRA — no quantization
+quantization: none
+
+# LoRA hyperparameters — same as v05d r=16 for fair comparison
+# Qwen3.5 hybrid architecture: 24 linear_attn + 8 self_attn layers
+# Target both attention types for full coverage
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+lora_target_modules:
+  - q_proj       # self_attn layers (8 of 32)
+  - k_proj
+  - v_proj
+  - o_proj
+  - in_proj_qkv  # linear_attn layers (24 of 32)
+  - out_proj
+
+# Training
+num_train_epochs: 3
+per_device_train_batch_size: 4
+per_device_eval_batch_size: 4
+gradient_accumulation_steps: 4
+learning_rate: 2.0e-4
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+optim: adamw_torch      # standard BF16 LoRA: use torch adamw (not 8-bit)
+weight_decay: 0.01
+max_seq_length: 2048
+packing: false
+
+# Precision
+bf16: true
+tf32: true
+
+# Evaluation (epoch-based)
+eval_strategy: epoch
+save_strategy: epoch
+save_total_limit: 3
+load_best_model_at_end: true
+metric_for_best_model: eval_loss
+
+# Logging
+logging_steps: 10
+report_to: none
+
+# Reproducibility
+seed: 42
+data_seed: 42

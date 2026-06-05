@@ -29,6 +29,13 @@ def load_yaml(path: str) -> dict[str, Any]:
         return yaml.safe_load(f)
 
 
+def _resolve_path(raw: str) -> str:
+    """Expand environment variables and ~ in a path string."""
+    s = os.path.expanduser(raw)
+    s = os.path.expandvars(s)
+    return s
+
+
 def preflight(cfg: dict[str, Any]) -> bool:
     """Run preflight checks. Return True if safe to train."""
     print("=" * 60)
@@ -37,11 +44,12 @@ def preflight(cfg: dict[str, Any]) -> bool:
 
     ok = True
 
-    # Paths
-    train_path = Path(cfg["train_file"])
-    eval_path = Path(cfg["eval_file"])
-    model_path = Path(cfg["base_model_path"])
-    output_dir = Path(cfg["output_dir"])
+    # Paths — resolve env vars
+    train_path = Path(_resolve_path(cfg["train_file"]))
+    eval_path = Path(_resolve_path(cfg["eval_file"]))
+    model_path = Path(_resolve_path(cfg["base_model_path"]))
+    output_dir = Path(_resolve_path(cfg["output_dir"]))
+    print(f"✅ Resolved model path: {model_path}")
 
     for label, path in [("train", train_path), ("eval", eval_path), ("model", model_path)]:
         if not path.exists():
@@ -90,7 +98,9 @@ def preflight(cfg: dict[str, Any]) -> bool:
     else:
         p = torch.cuda.get_device_properties(0)
         free, total = torch.cuda.mem_get_info(0)
+        quant_mode = cfg.get("quantization", "4bit")
         print(f"✅ CUDA: {p.name}, {total//1024**3}GB total, {free//1024**3}GB free")
+        print(f"✅ Quantization mode: {quant_mode}")
 
     # Output dir
     if output_dir.exists() and list(output_dir.iterdir()):
@@ -118,7 +128,12 @@ def preflight(cfg: dict[str, Any]) -> bool:
 
 
 def train(cfg: dict[str, Any]) -> bool:
-    """Run QLoRA training. Return True on success."""
+    """Run LoRA/QLoRA training. Return True on success.
+    
+    Supports two quantization modes via config:
+    - quantization: "4bit" (QLoRA — default, backward-compatible)
+    - quantization: "none" (standard BF16 LoRA — no quantization)
+    """
     import torch
     from transformers import (
         AutoModelForCausalLM, AutoTokenizer, TrainingArguments, BitsAndBytesConfig,
@@ -131,10 +146,12 @@ def train(cfg: dict[str, Any]) -> bool:
     print("TRAINING")
     print("=" * 60)
 
-    model_path = cfg["base_model_path"]
+    model_path = _resolve_path(cfg["base_model_path"])
     train_path = cfg["train_file"]
     eval_path = cfg["eval_file"]
     output_dir = Path(cfg["output_dir"])
+    quant_mode = cfg.get("quantization", "4bit")  # "4bit" or "none"
+    gp_checkpointing = cfg.get("gradient_checkpointing", False)
 
     # Load data
     with open(train_path) as f:
@@ -142,6 +159,7 @@ def train(cfg: dict[str, Any]) -> bool:
     with open(eval_path) as f:
         eval_data = [json.loads(l) for l in f if l.strip()]
     print(f"Train: {len(train_data)}  |  Eval: {len(eval_data)}")
+    print(f"Quantization: {quant_mode}")
 
     # Tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True, trust_remote_code=True)
@@ -157,23 +175,38 @@ def train(cfg: dict[str, Any]) -> bool:
     train_dataset = Dataset.from_list(train_data)
     eval_dataset = Dataset.from_list(eval_data)
 
-    # QLoRA
-    bnb_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_compute_dtype=torch.bfloat16,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_use_double_quant=True,
-    )
-
-    print("Loading model with QLoRA...")
-    model = AutoModelForCausalLM.from_pretrained(
-        model_path,
-        quantization_config=bnb_config,
-        device_map="auto",
-        local_files_only=True,
-        trust_remote_code=True,
-    )
-    model = prepare_model_for_kbit_training(model)
+    # Model loading: QLoRA vs standard BF16 LoRA
+    if quant_mode == "none":
+        # Standard BF16 LoRA — no quantization
+        print("Loading model in BF16 (standard LoRA, no quantization)...")
+        model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            torch_dtype=torch.bfloat16,
+            device_map="auto",
+            local_files_only=True,
+            trust_remote_code=True,
+        )
+        # No prepare_model_for_kbit_training needed for standard LoRA
+        use_kbit = False
+    else:
+        # QLoRA — 4-bit quantization
+        bnb_compute_dtype = getattr(torch, cfg.get("bnb_4bit_compute_dtype", "bfloat16"))
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=bnb_compute_dtype,
+            bnb_4bit_quant_type=cfg.get("bnb_4bit_quant_type", "nf4"),
+            bnb_4bit_use_double_quant=cfg.get("bnb_4bit_use_double_quant", True),
+        )
+        print("Loading model with QLoRA (4-bit quantization)...")
+        model = AutoModelForCausalLM.from_pretrained(
+            model_path,
+            quantization_config=bnb_config,
+            device_map="auto",
+            local_files_only=True,
+            trust_remote_code=True,
+        )
+        model = prepare_model_for_kbit_training(model)
+        use_kbit = True
 
     lora_config = LoraConfig(
         r=cfg.get("lora_r", 8),
@@ -186,6 +219,31 @@ def train(cfg: dict[str, Any]) -> bool:
     model = get_peft_model(model, lora_config)
     model.print_trainable_parameters()
 
+    # Gradient checkpointing (for VRAM-constrained GPUs like RTX 4090 24GB)
+    if gp_checkpointing:
+        print("Enabling gradient checkpointing...")
+        if hasattr(model, "config") and hasattr(model.config, "use_cache"):
+            model.config.use_cache = False
+            print("  model.config.use_cache = False")
+        if hasattr(model, "gradient_checkpointing_enable"):
+            model.gradient_checkpointing_enable()
+            print("  gradient_checkpointing_enable() called")
+        else:
+            # Fallback for wrapped models
+            try:
+                model.enable_input_require_grads()
+                print("  enable_input_require_grads() called (PEFT gradient checkpointing compat)")
+            except Exception:
+                pass
+    else:
+        print("Gradient checkpointing: disabled")
+
+    # Optimizer: adamw_8bit works with QLoRA; standard LoRA needs adamw_torch
+    optim = cfg.get("optim", "adamw_8bit")
+    if quant_mode == "none" and optim == "adamw_8bit":
+        print("⚠ Switching optimizer from adamw_8bit to adamw_torch (required for standard BF16 LoRA)")
+        optim = "adamw_torch"
+
     training_args = TrainingArguments(
         output_dir=str(output_dir),
         num_train_epochs=cfg.get("num_train_epochs", 3),
@@ -195,7 +253,7 @@ def train(cfg: dict[str, Any]) -> bool:
         learning_rate=cfg.get("learning_rate", 2e-4),
         lr_scheduler_type=cfg.get("lr_scheduler_type", "cosine"),
         warmup_ratio=cfg.get("warmup_ratio", 0.1),
-        optim=cfg.get("optim", "adamw_8bit"),
+        optim=optim,
         weight_decay=cfg.get("weight_decay", 0.01),
         bf16=cfg.get("bf16", True),
         tf32=cfg.get("tf32", True),
@@ -208,6 +266,7 @@ def train(cfg: dict[str, Any]) -> bool:
         report_to=cfg.get("report_to", "none"),
         seed=cfg.get("seed", 42),
         data_seed=cfg.get("data_seed", 42),
+        gradient_checkpointing=gp_checkpointing,
         remove_unused_columns=False,
     )
 
