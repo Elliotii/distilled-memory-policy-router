@@ -89,7 +89,7 @@
 - **READ is not solved.** READ F1 84.6% leaves significant room. Exact match (36.0%) reflects the READ bottleneck.
 - **Not a production system.** Synthetic gold, template-generated training data, single-split evaluation.
 - **Not pure data causality.** 1000-targeted adds both volume and domain/template-family diversity. Cannot isolate which drove improvement.
-- **Not an A100 result.** RTX 4090 fallback config with halved batch size and gradient checkpointing. Full A100 run might differ.
+- **Not a planned larger-GPU result.** RTX 4090 fallback config used halved batch size and gradient checkpointing. Other hardware settings might differ.
 - **No downstream validation.** Router predictions not tested with an actual retriever or coding agent.
 - **No claim of BF16 superiority.** 500-control underperforms QLoRA r16. BF16 alone does not help.
 

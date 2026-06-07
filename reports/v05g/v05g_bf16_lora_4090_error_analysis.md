@@ -155,7 +155,7 @@ user_profile → project_memory: 1
 
 ### Write-Side Validation
 1. **Downstream benchmark** — Test the 1000-targeted adapter with a real retriever to measure end-to-end utility.
-2. **A100 reproduction** — If possible, train on A100/L40S to verify the 4090 fallback did not distort results.
+2. **Larger-GPU reproduction** — If possible, train on the originally planned larger-GPU setup to verify the 4090 fallback did not distort results.
 
 ### Not Recommended
 - **Further data scaling within current framework** — Write-side metrics are at ceiling. READ bottleneck requires architectural changes.

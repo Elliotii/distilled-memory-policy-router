@@ -8,12 +8,12 @@
 ## Allowed Claims
 
 ### General
-- ✅ BF16 standard LoRA r=16 1000-targeted is the best evaluated system on locked gold_v2_009.
+- ✅ BF16 standard LoRA r=16 1000-targeted is the best evaluated system on locked gold_v2_009 by exact match and write-side routing metrics among the compared systems. READ F1 was not available for older v0.5e anchors.
 - ✅ 1000-targeted improves over 500-control on both dev and gold across all primary metrics.
 - ✅ The largest gold gains are on write-side routing: STORE F1, SKIP F1, and target classification.
 - ✅ Target accuracy on gold_v2_009 reaches 100.0% for the 1000-targeted variant.
 - ✅ False store rate on gold drops from 10.4% (500) to 1.2% (1000).
-- ✅ Sensitive store rate on gold is 0/4 for both variants (semantic detection).
+- ✅ Sensitive store rate on locked gold_v2_009 is 0/4 for both variants under the semantic sensitive-store metric. Dev still shows 2/3 sensitive stores, so this is a promising signal, not a safety guarantee.
 - ✅ BF16 standard LoRA training is feasible on RTX 4090 24GB with gradient checkpointing.
 - ✅ The 1000-targeted training strategy (500-control + 500 domain-diverse targeted-balanced) is effective for write-side routing.
 
@@ -50,11 +50,11 @@ Do NOT claim any of the following:
 - ❌ "Read the right memories every time"
 
 ### Benchmarking
-- ❌ "A100 result" — This was an RTX 4090 fallback config.
+- ❌ Claims that this used the originally planned larger-GPU setting — this was an RTX 4090 fallback config.
 - ❌ "Beats all baselines on all metrics" — Few-shot has better READ? Not compared for READ F1.
 - ❌ "Statistically significant improvement" — No CI computed for 500 vs 1000.
 - ❌ "Generalizes to real-world tasks"
-- ❌ "Real retriever performance"
+- ❌ "Live retrieval performance"
 
 ### Causality
 - ❌ "BF16 caused the improvement" — 500-control disproves this.
@@ -67,7 +67,7 @@ Do NOT claim any of the following:
 ## Limitations
 
 ### Methodological
-1. **RTX 4090 fallback config** — Batch size 2, gradient checkpointing enabled. Not directly comparable to A100/L40S configs.
+1. **RTX 4090 fallback config** — Batch size 2, gradient checkpointing enabled. Not directly comparable to the originally planned larger-GPU configs.
 2. **No paired CI** — 500 vs 1000 not evaluated with bootstrap CI (different data, not paired). Cannot claim statistical significance.
 3. **Single gold evaluation** — No holdout set evaluated. gold_v2_009 holdout (30 cases) remains unused.
 4. **Template-generated data** — Both training data (additional 500) and gold_v2_009 are synthetic templates. No human semantic review.
@@ -94,7 +94,7 @@ Do NOT claim any of the following:
 
 For portfolio, resume, or public-facing summary:
 
-> **Memory Policy Router v0.5g** — Built a LoRA-fine-tuned Qwen3.5-4B router that predicts read/write/ignore memory operations for coding-agent contexts. Achieved 100% target accuracy and 99% store-side F1 on held-out evaluation data using a targeted-balanced training strategy. Identified READ (memory selection) as the primary remaining bottleneck, with F1 of 84.6%, and documented concrete paths to close the gap. The system correctly handles all sensitive data cases (0/4 false stores on evaluation).
+> **Memory Policy Router v0.5g** — Built a LoRA-fine-tuned Qwen3.5-4B router that predicts READ / STORE / SKIP memory-policy decisions for coding-agent contexts. Achieved 100% target accuracy and 99% store-side F1 on locked gold_v2_009 using a targeted-balanced training strategy. Identified READ (memory selection) as the primary remaining bottleneck, with F1 of 84.6%. Under the semantic sensitive-store metric, 0/4 sensitive units were stored on locked gold_v2_009, while dev still shows 2/3 sensitive stores, so this is a promising signal rather than a safety guarantee.
 
 ---
 

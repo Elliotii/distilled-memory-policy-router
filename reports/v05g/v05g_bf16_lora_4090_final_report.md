@@ -12,7 +12,7 @@
 1. Does BF16 standard LoRA r=16 improve over QLoRA r=16 with the same 500 examples?
 2. Does 1000 targeted-balanced data improve over BF16 r=16 500?
 
-**Answer:** BF16 alone does NOT improve over QLoRA r=16. The 1000-targeted variant is the best evaluated system on locked gold_v2_009, driven by write-side routing gains (STORE F1 0.990, SKIP F1 0.981, target accuracy 100.0%). READ selection remains the dominant remaining full-exact bottleneck.
+**Answer:** BF16 alone does NOT improve over QLoRA r=16. The 1000-targeted variant is the best evaluated system on locked gold_v2_009 by exact match and write-side routing metrics among the compared systems, driven by write-side routing gains (STORE F1 0.990, SKIP F1 0.981, target accuracy 100.0%). READ F1 was not available for older v0.5e anchors, and READ selection remains the dominant remaining full-exact bottleneck.
 
 ---
 
@@ -28,7 +28,7 @@ Evaluate BF16 standard LoRA r=16 on Qwen3.5-4B using two data variants deployed 
 ## 2. Setup
 
 ### Environment
-- **GPU:** RTX 4090 24GB (fallback from planned L40S/A100)
+- **GPU:** RTX 4090 24GB (fallback from the planned larger-GPU setup)
 - **Model:** Qwen3.5-4B at `$QWEN35_MODEL_PATH`
 - **Training framework:** PyTorch + Transformers + PEFT + TRL
 - **LoRA:** r=16, alpha=32, 6 target modules, BF16 (no quantization)
@@ -59,7 +59,7 @@ f5cf7be1d06f085e62b87cf0b9c8021119b54ed94968bb5519b3150995eb4f72
 | BF16 r16 500 4090 | `configs/v05g/qwen35_bf16_lora_json_r16_500_4090.yaml` |
 | BF16 r16 1000 4090 | `configs/v05g/qwen35_bf16_lora_json_r16_1000_4090.yaml` |
 
-Key differences from planned L40S/A100 configs:
+Key differences from the planned larger-GPU configs:
 - `per_device_train_batch_size`: 2 (vs 4)
 - `gradient_accumulation_steps`: 8 (vs 4)
 - `gradient_checkpointing`: true (vs disabled)
@@ -120,28 +120,28 @@ Key differences from planned L40S/A100 configs:
 | 6 | Qwen3-4B QLoRA r8 500 | 16.0% | 100.0% | — | 0.925 | 0.860 | 76.8% | — |
 
 **Key observations:**
-- **BF16 r16 1000_4090 is the best evaluated system on locked gold_v2_009** on exact, STORE F1, SKIP F1, target accuracy, and false store rate.
+- **BF16 r16 1000_4090 is the best evaluated system on locked gold_v2_009** by exact match and write-side routing metrics among the compared systems. READ F1 was not available for older v0.5e anchors.
 - BF16 r16 500_4090 does NOT outperform old QLoRA r16 on gold (16.7% vs 22.7% exact). BF16 alone is not sufficient.
 - The strong result is BF16 standard LoRA + 1000 targeted-balanced data under 4090 fallback settings.
 - 1000-targeted closes the gold generalization gap: dev 59% → gold 36% (23pp gap) vs 500-control: dev 49% → gold 16.7% (32.3pp gap).
 
 ## 8. Main Findings
 
-1. **1000-targeted is the best evaluated system** — leads on 6 of 7 primary metrics.
+1. **1000-targeted is the best evaluated system by exact match and write-side routing metrics among the compared systems** — READ F1 was not available for older v0.5e anchors.
 2. **BF16 alone does not help** — 500-control underperforms old QLoRA r16 on gold.
 3. **Write-side routing is near-solved** — 1000-targeted achieves STORE F1 0.990, SKIP F1 0.981, target accuracy 100.0% on gold.
 4. **READ selection remains the bottleneck** — READ F1 84.6% on gold (vs 93.3% on dev). Irrelevant read rate 15.5%.
 5. **Data quality matters more than precision** — 1000-targeted (BF16) beats 500-control (BF16) by 19.3pp exact on gold, while 500-control (BF16) trails 500 (QLoRA) by 6pp.
-6. **Safety improved** — 0/4 sensitive store on gold (both variants), down from QLoRA r16's 0% (tag-based, v05e used eval_runner tag not semantic check).
+6. **Sensitive-store metric is promising but limited** — 0/4 sensitive units were stored on locked gold_v2_009 under the semantic sensitive-store metric. Dev still shows 2/3 sensitive stores, and older tag-based safety rates are not directly comparable.
 
 ## 9. Limitations
 
-1. **RTX 4090 fallback** — Not the planned L40S/A100 config. Batch size halved, gradient checkpointing enabled. Full-precision A100 results may differ.
+1. **RTX 4090 fallback** — Not the planned larger-GPU config. Batch size halved, gradient checkpointing enabled. Other hardware settings may differ.
 2. **Template-generated training data** — Additional 500 targeted-balanced cases are synthetic. Semantic quality not human-reviewed.
 3. **READ = entity matching in training** — READ labels recoverable but collapse to name matching; does not teach graded context selection.
 4. **Prefix shortcut** — 3-word-prefix accuracy 90.9% in training data; model may learn shallow patterns.
 5. **1000-vs-500 confound** — Includes data volume + domain/template-family confound. Not pure data-size causality.
-6. **No production claim** — These are lab results on a synthetic gold set. No claim of production safety, downstream utility, or real retriever performance.
+6. **No production claim** — These are lab results on a synthetic gold set. No claim of production safety, downstream utility, or live retrieval performance.
 7. **Gold is synthetic** — gold_v2_009 is template-generated. Semantic label quality assumed from template logic.
 
 ## 10. Next Steps
