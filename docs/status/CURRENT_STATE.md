@@ -1,14 +1,79 @@
 # CURRENT_STATE
 
 ## Last Updated
-2026-06-05  CST
+2026-06-08  CST
 
 ## Current Milestone
-P5.13-B: v0.5g targeted-balanced training data preparation
+P5.13-C: v0.5g BF16 LoRA 4090 final synthesis COMPLETE
 
 ## Completed
 
-### P5.13-B (This Context)
+### P5.13-C (This Context)
+- **v0.5g BF16 LoRA 4090 final synthesis complete**
+- **Two BF16 standard LoRA r=16 variants trained on RTX 4090 24GB fallback and evaluated:**
+  1. **500-control** (same data as v05e QLoRA r16): BF16 alone does NOT improve over QLoRA r16
+  2. **1000-targeted** (500-control + 500 targeted-balanced): Best evaluated system on locked gold_v2_009
+- **Artifacts downloaded and verified** from `/mnt/c/Users/abc16/Desktop/v05g_bf16_lora_4090_final_artifacts.tar.gz` (80.6 MB)
+- **Server snapshot:** `v0.5g-bf16-lora-4090-ready / 7e40f02bbb34c2c5ecf8f7468a066cba0105db4d` (git archive deployment)
+
+**Key Results (gold_v2_009, 150 cases):**
+| Metric | BF16 500_4090 | BF16 1000_4090 | Best Previous |
+|--------|:-------------:|:--------------:|:-------------:|
+| Exact | 16.7% | **36.0%** | 30.7% (few-shot) |
+| Parse | 98.7% | 99.3% | 100.0% (Qwen3-4B) |
+| READ F1 | 80.1% | **84.6%** | — |
+| STORE F1 | 89.2% | **0.990** | 0.925 (Qwen3-4B) |
+| SKIP F1 | 84.0% | **0.981** | 0.892 (QLoRA r16) |
+| Target Acc | 84.7% | **100.0%** | 84.2% (QLoRA r16) |
+| False Store | 10.4% | **1.2%** | — |
+| Sens Store | 0/4 | 0/4 | — |
+
+**Dev Results (100 cases):**
+| Metric | BF16 500_4090 | BF16 1000_4090 |
+|--------|:-------------:|:--------------:|
+| Exact | 49.0% | **59.0%** |
+| Parse | 100.0% | 100.0% |
+| READ F1 | 92.0% | **93.3%** |
+| STORE F1 | 96.7% | **97.1%** |
+| Target Acc | 85.3% | **89.5%** |
+
+**Main Findings:**
+1. **1000-targeted is the best evaluated system** on locked gold_v2_009 across write-side metrics (STORE F1 0.990, SKIP F1 0.981, target acc 100.0%)
+2. **BF16 alone is not sufficient** — 500-control underperforms old QLoRA r16 on gold (16.7% vs 22.7%)
+3. **READ remains the dominant full-exact bottleneck** — READ F1 84.6%, irrelevant read rate 15.5%
+4. **Write-side routing near-solved** — target confusion matrix is diagonal, false store down to 1.2%
+5. **Safety improved** — 0/4 genuine sensitive stores on gold (semantic detection)
+
+**Verification Checks Passed:**
+- ✅ Row counts: dev predictions 100 each, gold predictions 150 each
+- ✅ Metrics JSON parse: 4/4 valid
+- ✅ Summary MDs: 4/4 present
+- ✅ Adapter directories non-empty: both ~57MB, adapter_model.safetensors present
+- ✅ gold_v2_009 SHA-256: `f5cf7be1d06f085e62b87cf0b9c8021119b54ed94968bb5519b3150995eb4f72` (unchanged)
+- ✅ SNAPSHOT_COMMIT.txt matches: `7e40f02bbb34c2c5ecf8f7468a066cba0105db4d`
+- ✅ All metrics match known expected values
+
+**Reports Created:**
+- `reports/v05g/v05g_bf16_lora_4090_final_report.md` — Complete synthesis
+- `reports/v05g/v05g_bf16_lora_4090_gold_v2_result.md` — Gold-focused analysis
+- `reports/v05g/v05g_bf16_lora_4090_error_analysis.md` — Error patterns and bottlenecks
+- `reports/v05g/v05g_bf16_lora_4090_claims_and_limitations.md` — Claim boundaries
+- `docs/v05g/V05G_BF16_LORA_4090_FINAL_RESULTS.md` — Readable summary
+
+**Artifact location:** `/mnt/c/Users/abc16/Desktop/v05g_bf16_lora_4090_final_artifacts.tar.gz`
+
+**Final interpretation:**
+- The strong result is BF16 standard LoRA + 1000 targeted-balanced data under 4090 fallback settings
+- BF16 alone is not the driver; data quality and quantity are
+- Write-side routing is effectively solved for this dataset
+- READ remains the bottleneck and requires fundamentally different approaches (retrieval augmentation, longer context, graded relevance)
+- **No further v0.5 experiments recommended before v1.0 packaging**
+
+**Next step:** Post-result audit or v1.0 packaging
+- No model training, no model inference, no data generation changes
+- No new gold, no metrics changes, no experiment redesign
+
+### P5.13-B (Previous)
 - **v0.5g targeted-balanced training data preparation complete**
 - Prepared two training datasets for BF16 LoRA r16 scaling experiment on Qwen3.5-4B:
   1. **500-control**: Exact copy of v05b train 500 JSON SFT (same data as QLoRA r16)

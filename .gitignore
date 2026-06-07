@@ -39,3 +39,7 @@ results/**/checkpoint-*/
 
 # OS/editor
 .DS_Store
+
+# v05g server runtime artifacts
+results/v05g_bf16_lora/
+logs/v05g/
