@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>项目 Walkthrough｜轻量记忆策略路由器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <nav class="top-nav">
+      <a href="index.html">首页</a>
+      <a href="resume_bullets.html">简历 bullet</a>
+      <a href="interview_notes.html">面试讲解</a>
+      <a href="project_walkthrough.html">项目 walkthrough</a>
+      <a href="v1_1_roadmap.html">v1.1 roadmap</a>
+    </nav>
+
+    <section class="hero">
+      <h1>Repo Walkthrough</h1>
+      <p>这页面向面试官或 reviewer：从哪里开始看、哪些命令不需要 GPU、哪些文件是 source-of-truth，以及 v1.0 的边界是什么。</p>
+    </section>
+
+    <h2>建议先看哪些文件</h2>
+    <table>
+      <tr>
+        <th>路径</th>
+        <th>作用</th>
+      </tr>
+      <tr>
+        <td><a href="../../README.md">README.md</a></td>
+        <td>项目总览、核心结果、限制和复现入口。</td>
+      </tr>
+      <tr>
+        <td><a href="../PROJECT_OVERVIEW.md">docs/PROJECT_OVERVIEW.md</a></td>
+        <td>问题动机、任务边界和版本演进。</td>
+      </tr>
+      <tr>
+        <td><a href="../ARCHITECTURE.md">docs/ARCHITECTURE.md</a></td>
+        <td>候选记忆、current units、router、context builder / writer stub 的边界。</td>
+      </tr>
+      <tr>
+        <td><a href="../TASK_FORMULATION.md">docs/TASK_FORMULATION.md</a></td>
+        <td>READ / STORE / SKIP 任务定义和指标解释。</td>
+      </tr>
+      <tr>
+        <td><a href="../RESULTS.md">docs/RESULTS.md</a></td>
+        <td>v0.5e/v0.5g 结果表和 v10 downstream-lite closeout。</td>
+      </tr>
+      <tr>
+        <td><a href="../../reports/v10/v10_benchmark_synthesis.md">reports/v10/v10_benchmark_synthesis.md</a></td>
+        <td>6.4 benchmark synthesis，适合作为 v1.0 closeout 入口。</td>
+      </tr>
+    </table>
+
+    <h2>如何运行 no-inference demo</h2>
+    <p>这些命令只 replay 小 fixture，不加载模型、不需要 GPU。</p>
+    <pre>python3 demo/run_demo.py --list
+python3 demo/run_demo.py --case demo/cases/case_001.json
+python3 demo/run_demo.py --case demo/cases/case_002.json</pre>
+
+    <h2>如何运行 proxy benchmark</h2>
+    <p>proxy 使用 locked gold 和 saved predictions，估算不同策略注入多少候选记忆。它不是下游回答质量评测。</p>
+    <pre>python3 scripts/run_downstream_lite_proxy.py \
+  --gold data/v05e/gold_v2/v05e_gold_v2_009_active_cases.jsonl \
+  --predictions data/v05g/model_predictions/bf16_r16_1000_4090_gold_v2_009_predictions.jsonl \
+  --out-json reports/v10/downstream_lite_proxy_metrics.json \
+  --out-md reports/v10/downstream_lite_proxy_report.md</pre>
+
+    <h2>如何查看 LLM micro-pilot artifacts</h2>
+    <table>
+      <tr>
+        <th>文件</th>
+        <th>用途</th>
+      </tr>
+      <tr>
+        <td><code>data/v10/llm_downstream_lite/micro_pilot_prompt_pack.jsonl</code></td>
+        <td>2-case micro-pilot 的 prompt pack。</td>
+      </tr>
+      <tr>
+        <td><code>data/v10/llm_downstream_lite/micro_pilot_responses_deepseek_v4_flash.jsonl</code></td>
+        <td>14 个已保存响应。</td>
+      </tr>
+      <tr>
+        <td><code>reports/v10/llm_downstream_lite_micro_pilot_scores.md</code></td>
+        <td>自动 citation metrics。</td>
+      </tr>
+      <tr>
+        <td><code>reports/v10/llm_downstream_lite_micro_pilot_manual_review_report.md</code></td>
+        <td>rubric-based internal qualitative review。</td>
+      </tr>
+    </table>
+
+    <h2>哪些内容不需要 GPU</h2>
+    <ul>
+      <li>阅读 README / docs / reports。</li>
+      <li>运行 demo fixture replay。</li>
+      <li>运行 saved-prediction proxy benchmark。</li>
+      <li>解析 JSONL、复核 metrics、查看 prompt pack 和 response artifacts。</li>
+    </ul>
+
+    <h2>Source-of-truth</h2>
+    <ul>
+      <li>Project scope: <code>docs/planning/lightweight_memory_policy_router_project_spec.md</code></li>
+      <li>Locked gold: <code>data/v05e/gold_v2/v05e_gold_v2_009_active_cases.jsonl</code></li>
+      <li>Gold SHA-256: <code>f5cf7be1d06f085e62b87cf0b9c8021119b54ed94968bb5519b3150995eb4f72</code></li>
+      <li>Saved predictions: <code>data/v05g/model_predictions/</code></li>
+      <li>v0.5g metrics: <code>reports/v05g/server_runs/</code></li>
+    </ul>
+
+    <h2>哪些文件不要提交</h2>
+    <div class="note warning">
+      <ul>
+        <li><code>.env</code> 或任何 secret。</li>
+        <li>adapter 权重、<code>*.safetensors</code>、base model。</li>
+        <li>日志、wandb runs、大型临时输出。</li>
+        <li>本地缓存、虚拟环境、系统文件。</li>
+      </ul>
+    </div>
+
+    <h2>v1.0 边界</h2>
+    <p>v1.0 是 saved-prediction / artifact-replay / benchmark packaging，不是 live inference system。它的价值在于结果可复核、边界清晰、失败点可解释，并为后续 live LoRA 和 memory-agent demo 留出路线。</p>
+
+    <p class="footer">相关来源：<a href="../../demo/README.md">demo README</a>、<a href="../DOWNSTREAM_LITE_BENCHMARK.md">Downstream-lite proxy</a>、<a href="../LLM_DOWNSTREAM_LITE_BENCHMARK.md">LLM downstream-lite</a>。</p>
+  </main>
+</body>
+</html>

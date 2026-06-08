@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>v1.1 Roadmap｜轻量记忆策略路由器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <nav class="top-nav">
+      <a href="index.html">首页</a>
+      <a href="resume_bullets.html">简历 bullet</a>
+      <a href="interview_notes.html">面试讲解</a>
+      <a href="project_walkthrough.html">项目 walkthrough</a>
+      <a href="v1_1_roadmap.html">v1.1 roadmap</a>
+    </nav>
+
+    <section class="hero">
+      <h1>v1.1 / v1.2 Roadmap</h1>
+      <p>以下是后续扩展设想，不是 v1.0 已完成内容。v1.0 只关闭了 saved-prediction replay、benchmark packaging、micro-pilot artifacts 和中文作品集包装。</p>
+    </section>
+
+    <h2>v1.1：恢复 live LoRA 推理</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Adapter artifact</h3>
+        <p>从 AutoDL / artifact tarball 中保存并校验 LoRA adapter，记录 hash、config 和 base model 依赖。</p>
+      </article>
+      <article class="card">
+        <h3>WSL 环境</h3>
+        <p>后续下载到 WSL，本地建立隔离环境，避免把 base model 或 adapter 权重提交进 git。</p>
+      </article>
+      <article class="card">
+        <h3>Live router CLI</h3>
+        <p>实现一个最小 CLI：输入 candidate memories 和 current units，输出 READ / STORE / SKIP + target。</p>
+      </article>
+    </div>
+
+    <h2>v1.1：简单 memory-agent demo</h2>
+    <p>目标不是做端到端产品，而是展示 router 在一个受控 harness 里的位置。</p>
+    <pre>user input
+  -> current unit extraction
+  -> candidate memory provider
+  -> live router
+  -> selected memory context
+  -> downstream answerer
+  -> STORE preview + audit trace</pre>
+
+    <h2>Web UI 设想</h2>
+    <table>
+      <tr>
+        <th>界面区域</th>
+        <th>展示内容</th>
+      </tr>
+      <tr>
+        <td>用户输入</td>
+        <td>当前任务或对话片段。</td>
+      </tr>
+      <tr>
+        <td>current units</td>
+        <td>从当前输入中拆出的待路由单元。</td>
+      </tr>
+      <tr>
+        <td>candidate memories</td>
+        <td>候选记忆列表，带 memory ID 和 target/type。</td>
+      </tr>
+      <tr>
+        <td>router input / output</td>
+        <td>展示结构化输入，以及 READ / STORE / SKIP + target 输出。</td>
+      </tr>
+      <tr>
+        <td>selected memory context</td>
+        <td>READ 后会注入给下游模型的记忆上下文。</td>
+      </tr>
+      <tr>
+        <td>downstream LLM response</td>
+        <td>固定 prompt 下的回答，带 citation / grounding 检查。</td>
+      </tr>
+      <tr>
+        <td>STORE preview</td>
+        <td>只预览待写入内容，不直接写入长期记忆。</td>
+      </tr>
+      <tr>
+        <td>audit trace</td>
+        <td>记录路由输入、输出、引用、跳过原因和人工复核字段。</td>
+      </tr>
+    </table>
+
+    <h2>技术选型</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>服务层</h3>
+        <p>FastAPI 用于 router service 和 artifact API；Streamlit 可作为最快速 demo 方案。</p>
+      </article>
+      <article class="card">
+        <h3>前端</h3>
+        <p>React 适合做更完整的 audit UI；v1.1 可先用轻量页面或 Streamlit。</p>
+      </article>
+      <article class="card">
+        <h3>Memory store</h3>
+        <p>SQLite 或 JSON memory store 作为可审计 stub，不追求复杂数据库能力。</p>
+      </article>
+      <article class="card">
+        <h3>Retriever stub</h3>
+        <p>BM25 / keyword retriever stub 只用于生成候选集，仍需明确它不是 v1.0 评测对象。</p>
+      </article>
+      <article class="card">
+        <h3>WSL LoRA service</h3>
+        <p>单独进程加载 adapter，CLI / Web UI 通过本地接口调用，便于隔离模型依赖。</p>
+      </article>
+    </div>
+
+    <h2>明确边界</h2>
+    <div class="note warning">
+      <p>以上都是 v1.1/v1.2 计划，不是 v1.0 已完成内容。v1.0 不包含 live LoRA 推理、不包含 Web memory agent、不包含真实 memory lifecycle，也不包含线上部署结论。</p>
+    </div>
+
+    <p class="footer">建议下一步从 live router CLI 开始，而不是直接做复杂 UI。</p>
+  </main>
+</body>
+</html>

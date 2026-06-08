@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>简历 Bullet｜轻量记忆策略路由器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <nav class="top-nav">
+      <a href="index.html">首页</a>
+      <a href="resume_bullets.html">简历 bullet</a>
+      <a href="interview_notes.html">面试讲解</a>
+      <a href="project_walkthrough.html">项目 walkthrough</a>
+      <a href="v1_1_roadmap.html">v1.1 roadmap</a>
+    </nav>
+
+    <section class="hero">
+      <h1>中文简历 Bullet</h1>
+      <p>以下表述适合 AI / LLM / Agent / 后训练 / 评测相关实习。所有指标均来自 locked gold_v2_009 或 v10 benchmark closeout，避免超出证据范围。</p>
+    </section>
+
+    <h2>1. 极简一行版</h2>
+    <div class="card">
+      <p>构建轻量 Memory Policy Router，基于 Qwen3.5-4B + BF16 LoRA 预测 READ / STORE / SKIP 记忆策略，在 locked gold_v2_009 上达到 36.0% exact、99.0% STORE F1、98.1% SKIP F1、100.0% target accuracy。</p>
+    </div>
+
+    <h2>2. 技术强化版</h2>
+    <div class="card">
+      <p>设计并评测面向 Coding / Business Agent 的记忆策略路由任务，将固定 candidate memories 与 current units 映射为 READ / STORE / SKIP + STORE target；最佳 BF16 LoRA r16 1000-targeted 配置在 locked gold 上 parse 99.3%、READ F1 84.6%、false store rate 1.2%。</p>
+    </div>
+
+    <h2>3. Agent / Memory / Eval 方向版</h2>
+    <div class="card">
+      <p>围绕 Agent Memory 污染与上下文浪费问题，搭建固定候选记忆的离线路由 benchmark、no-inference replay demo 与 downstream-lite proxy；结果显示 router_selected 可减少注入记忆数量并保留多数 gold READ recall，但尚未与 naive/random baseline 清晰拉开差距。</p>
+    </div>
+
+    <h2>4. 后训练 / LoRA 方向版</h2>
+    <div class="card">
+      <p>比较 QLoRA 与 BF16 LoRA r16 小模型记忆路由方案，验证 BF16 本身不是主要收益来源；1000 targeted-balanced 数据显著改善写侧路由，在 locked gold 上 STORE F1 99.0%、SKIP F1 98.1%、target accuracy 100.0%。</p>
+    </div>
+
+    <h2>5. 工程系统版</h2>
+    <div class="card">
+      <p>完成从数据锁定、训练配置、预测保存、指标复算到 v1.0 文档包装的可复现工程链路；支持无模型推理的 demo、proxy benchmark 和 14-response LLM micro-pilot artifact review。</p>
+    </div>
+
+    <h2>不建议使用的写法</h2>
+    <table>
+      <tr>
+        <th>不建议写法</th>
+        <th>原因</th>
+      </tr>
+      <tr>
+        <td>宣称已经验证了完整下游价值</td>
+        <td>只有 14-response micro-pilot，且是诊断性质。</td>
+      </tr>
+      <tr>
+        <td>宣称是线上可部署的记忆系统</td>
+        <td>没有真实流量、隐私治理、检索链路或 memory lifecycle。</td>
+      </tr>
+      <tr>
+        <td>宣称实现 MemoryOS</td>
+        <td>本项目只研究策略路由层。</td>
+      </tr>
+      <tr>
+        <td>宣称显著降低线上成本</td>
+        <td>当前只有 context-size proxy，没有线上成本测量。</td>
+      </tr>
+      <tr>
+        <td>宣称对所有 baseline 都有优势</td>
+        <td>6.4 proxy 与 micro-pilot 均没有给出这种结论。</td>
+      </tr>
+      <tr>
+        <td>宣称检索器效果提升</td>
+        <td>candidate memories 是固定输入，未评测 live retrieval。</td>
+      </tr>
+    </table>
+
+    <p class="footer">相关来源：<a href="../RESULTS.md">docs/RESULTS.md</a>、<a href="../../reports/v10/v10_benchmark_synthesis.md">v10 synthesis</a>、<a href="../../reports/v05g/v05g_bf16_lora_4090_claims_and_limitations.md">claims and limitations</a>。</p>
+  </main>
+</body>
+</html>

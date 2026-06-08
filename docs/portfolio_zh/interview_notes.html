@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>面试讲解｜轻量记忆策略路由器</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <nav class="top-nav">
+      <a href="index.html">首页</a>
+      <a href="resume_bullets.html">简历 bullet</a>
+      <a href="interview_notes.html">面试讲解</a>
+      <a href="project_walkthrough.html">项目 walkthrough</a>
+      <a href="v1_1_roadmap.html">v1.1 roadmap</a>
+    </nav>
+
+    <section class="hero">
+      <h1>面试讲解提纲</h1>
+      <p>目标是在面试中把项目讲清楚：问题边界、技术路线、实验结果、失败点和后续扩展。重点是专业克制，而不是夸大。</p>
+    </section>
+
+    <h2>30 秒中文 pitch</h2>
+    <div class="card">
+      <p>我做的是一个轻量 Memory Policy Router，面向 Coding / Business Agent 的记忆管理问题。它不做检索和写入，而是在候选记忆和当前任务单元已经给定时，预测哪些记忆要 READ 进上下文、哪些当前信息要 STORE、哪些要 SKIP，以及 STORE 写到哪个目标类别。最佳 BF16 LoRA r16 1000-targeted 配置在 locked gold 上写侧指标很强，但 READ 仍是瓶颈，所以我把它定位为严谨的 portfolio-stage research/engineering 项目。</p>
+    </div>
+
+    <h2>2 分钟技术讲解</h2>
+    <div class="card">
+      <p>这个项目的核心动机是：长期智能体不能简单地“全部记住、全部读入”。这样会带来上下文噪声和记忆污染。我的做法是把问题拆成一个可监督学习的策略层：输入固定 candidate memories 和 current units，输出 READ memory ids、STORE unit ids、SKIP unit ids，以及每个 STORE unit 的 target。</p>
+      <p>v0.3 起初是 JSON/span contract，后来 v0.4/v0.5 转成 unit-level READ / STORE / SKIP，因为小模型不需要复制 span，输出空间更稳定。v0.5g 训练了 Qwen3.5-4B 的 BF16 LoRA r16，并比较 500-control 与 1000-targeted 数据。最终 1000-targeted 在 locked gold_v2_009 上达到 exact 36.0%、parse 99.3%、READ F1 84.6%、STORE F1 99.0%、SKIP F1 98.1%、target accuracy 100.0%。</p>
+      <p>我也做了 v1.0 包装：结果复算、no-inference demo、downstream-lite proxy、LLM micro-pilot 和中文投递材料。重要限制是：READ 没解决，proxy 没证明 router 对 naive/random baseline 有清晰优势，micro-pilot 也只是提示记忆上下文有帮助，不是完整下游结论。</p>
+    </div>
+
+    <h2>架构解释</h2>
+    <pre>user input / task notes
+        -> current units
+candidate memories
+        -> router input
+        -> Memory Policy Router
+        -> READ / STORE / SKIP + STORE target
+        -> selected memory context + writer stub
+        -> downstream LLM response / audit trace</pre>
+
+    <h2>实验解释</h2>
+    <table>
+      <tr>
+        <th>实验</th>
+        <th>怎么讲</th>
+      </tr>
+      <tr>
+        <td>v0.5g router metrics</td>
+        <td>主结果是 locked gold_v2_009 上的 intrinsic routing evaluation。写侧非常强，READ 是 exact 的主要限制。</td>
+      </tr>
+      <tr>
+        <td>6.4 proxy benchmark</td>
+        <td>使用 saved predictions 做无推理 replay。router_selected 减少注入记忆并保留多数 gold READ recall，但和 naive/random baseline 区分不充分。</td>
+      </tr>
+      <tr>
+        <td>6.4 micro-pilot</td>
+        <td>2 cases × 7 strategies，共 14 个 DeepSeek V4 Flash 响应。API runner、citation scorer 和内部 rubric review 可用；结果只支持诊断性结论。</td>
+      </tr>
+    </table>
+
+    <h2>如何解释负面结果</h2>
+    <ul>
+      <li><strong>READ 是瓶颈：</strong>READ 需要判断当前任务和候选记忆的相关性，不只是分类当前文本是否该存。</li>
+      <li><strong>router 没有和 naive/random 拉开：</strong>候选记忆顺序存在 confound，简单 top-k 在部分样本上已经很强。</li>
+      <li><strong>micro-pilot 不是完整下游结论：</strong>只有 14 个响应，内部 rubric review 主要验证流程和发现现象。</li>
+    </ul>
+
+    <h2>常见面试问题和回答</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>为什么不直接用大模型？</h3>
+        <p>大模型可以做，但记忆路由是高频控制面决策。小模型策略层的价值在于低成本、可复现、可审计，并且能把记忆污染问题拆出来评测。</p>
+      </article>
+      <article class="card">
+        <h3>为什么不 retrieve everything？</h3>
+        <p>全部注入会浪费上下文，并可能把过期、无关或误导性信息带给下游模型。项目关注的是“候选记忆已给定后该读哪些”。</p>
+      </article>
+      <article class="card">
+        <h3>LoRA 学到了什么？</h3>
+        <p>结果显示写侧路由和 target 分类学得更稳定；READ 更多依赖相关性判断，目前仍受 entity-matching-heavy 数据影响。</p>
+      </article>
+      <article class="card">
+        <h3>exact 只有 36% 怎么解释？</h3>
+        <p>exact 要 READ、STORE、SKIP、target 全部正确，任何一个 READ 漏选或误选都会失败。组件指标显示写侧接近上限，主要剩 READ。</p>
+      </article>
+      <article class="card">
+        <h3>READ 为什么难？</h3>
+        <p>READ 是当前任务意图和候选记忆内容之间的相关性判断，训练数据里很多标签可由实体名匹配恢复，这不足以学习更细的 relevance。</p>
+      </article>
+      <article class="card">
+        <h3>和 MemoryOS / EverOS 有什么区别？</h3>
+        <p>这个项目只做 policy router，不做存储、检索、更新、合并、删除、权限、隐私治理或完整 agent loop。</p>
+      </article>
+      <article class="card">
+        <h3>为什么不做 live LoRA？</h3>
+        <p>v1.0 目标是可复现包装和 saved-prediction replay。live LoRA 需要 adapter artifact、推理服务、环境隔离和安全边界，适合作为 v1.1。</p>
+      </article>
+      <article class="card">
+        <h3>继续做下一步是什么？</h3>
+        <p>先做 live router CLI，再做简单 memory-agent demo，然后加入 Web UI、audit trace 和轻量检索 stub。</p>
+      </article>
+      <article class="card">
+        <h3>如果落到工程系统，怎么设计？</h3>
+        <p>把 retriever、router、context builder、writer preview、audit log 分层。router 只输出策略，所有写入先进入 review 或 policy gate。</p>
+      </article>
+    </div>
+
+    <p class="footer">相关来源：<a href="../ARCHITECTURE.md">Architecture</a>、<a href="../TASK_FORMULATION.md">Task formulation</a>、<a href="../../reports/v10/v10_benchmark_synthesis.md">v10 synthesis</a>。</p>
+  </main>
+</body>
+</html>

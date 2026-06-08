@@ -156,6 +156,10 @@ See [demo/README.md](demo/README.md) for the fixture list and commands.
 
 A downstream-lite context-efficiency proxy is documented in [docs/DOWNSTREAM_LITE_BENCHMARK.md](docs/DOWNSTREAM_LITE_BENCHMARK.md). A tiny LLM downstream-lite micro-pilot is documented in [docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md](docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md) and summarized in [reports/v10/v10_benchmark_synthesis.md](reports/v10/v10_benchmark_synthesis.md).
 
+## 中文作品集 / 面试材料
+
+中文作品集摘要、简历 bullet、面试讲解和 v1.1 roadmap 见 [docs/portfolio_zh/index.html](docs/portfolio_zh/index.html)。
+
 ## Reproducibility
 
 - Locked evaluation file: `data/v05e/gold_v2/v05e_gold_v2_009_active_cases.jsonl`.

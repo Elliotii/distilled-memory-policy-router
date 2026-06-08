@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>轻量记忆策略路由器｜中文作品集</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="page">
+    <nav class="top-nav">
+      <a href="index.html">首页</a>
+      <a href="resume_bullets.html">简历 bullet</a>
+      <a href="interview_notes.html">面试讲解</a>
+      <a href="project_walkthrough.html">项目 walkthrough</a>
+      <a href="v1_1_roadmap.html">v1.1 roadmap</a>
+      <a href="../../README.md">README</a>
+    </nav>
+
+    <section class="hero">
+      <h1>Lightweight Memory Policy Router</h1>
+      <p><strong>一句话：</strong>这是一个面向 Coding / Business Agents 的轻量记忆策略路由器，研究在固定候选记忆和当前任务单元已给定时，如何决定哪些记忆读入上下文、哪些当前信息写入长期记忆、哪些应该跳过。</p>
+      <div class="pill-row">
+        <span class="pill">Agent Memory</span>
+        <span class="pill">LoRA 后训练</span>
+        <span class="pill">离线评测</span>
+        <span class="pill">Benchmark Packaging</span>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h3>适合投递方向</h3>
+        <p>AI / LLM / Agent / 后训练 / 评测工程 / 数据构造相关实习。重点展示小模型策略层、严谨评测、负面结果分析和可复现包装。</p>
+      </article>
+      <article class="card">
+        <h3>核心问题</h3>
+        <p>长期智能体如果“什么都记、什么都读”，会带来上下文浪费和记忆污染。这个项目把问题收窄为一个可训练、可评测的 policy layer。</p>
+      </article>
+      <article class="card">
+        <h3>方法概览</h3>
+        <p>输入固定 candidate memories 与 current units；输出 READ / STORE / SKIP，以及 STORE 的目标类别：task_state、service_memory、repo_memory、project_memory、user_profile。</p>
+      </article>
+    </section>
+
+    <h2>最关键结果</h2>
+    <table>
+      <tr>
+        <th>项目</th>
+        <th>结果</th>
+      </tr>
+      <tr>
+        <td>最佳 v0.5g 系统</td>
+        <td>BF16 LoRA r16 + 1000 targeted-balanced data，RTX 4090 fallback settings。</td>
+      </tr>
+      <tr>
+        <td>locked gold_v2_009</td>
+        <td>Exact 36.0%，Parse 99.3%，READ F1 84.6%，STORE F1 99.0%，SKIP F1 98.1%，Target Acc 100.0%。</td>
+      </tr>
+      <tr>
+        <td>污染控制信号</td>
+        <td>False store rate 1.2%；semantic sensitive-store metric 下 locked gold 为 0/4。</td>
+      </tr>
+      <tr>
+        <td>6.4 micro-pilot</td>
+        <td>2 cases × 7 strategies = 14 个 DeepSeek V4 Flash 响应；内部 rubric 复核显示有记忆上下文的策略优于 no_memory，但没有得到 router 特定优势结论。</td>
+      </tr>
+    </table>
+
+    <h2>最重要限制</h2>
+    <div class="note warning">
+      <p>这个项目不是检索器、不是记忆数据库、不是 writer / updater / merger，也不是端到端智能体。当前结果来自受控 synthetic benchmark 与 saved-prediction replay；READ 仍是主要瓶颈，6.4 proxy 没有把 router_selected 和 naive/random baseline 清晰地区分开。</p>
+    </div>
+
+    <h2>入口链接</h2>
+    <section class="grid">
+      <article class="card">
+        <h3><a href="resume_bullets.html">简历 bullet</a></h3>
+        <p>不同投递方向可直接改写使用的中文简历表述。</p>
+      </article>
+      <article class="card">
+        <h3><a href="interview_notes.html">面试讲解</a></h3>
+        <p>30 秒 pitch、2 分钟技术讲解、负面结果解释和常见问答。</p>
+      </article>
+      <article class="card">
+        <h3><a href="project_walkthrough.html">项目 walkthrough</a></h3>
+        <p>从 repo 角度说明先看什么、怎么跑 no-inference demo、怎么看 benchmark artifacts。</p>
+      </article>
+      <article class="card">
+        <h3><a href="v1_1_roadmap.html">v1.1 roadmap</a></h3>
+        <p>live LoRA、memory-agent demo、Web UI 和轻量检索 stub 的后续计划。</p>
+      </article>
+    </section>
+
+    <p class="footer">本页是中文作品集摘要，完整技术细节见 <a href="../../README.md">README</a>、<a href="../RESULTS.md">docs/RESULTS.md</a> 和 <a href="../../reports/v10/v10_benchmark_synthesis.md">v10 benchmark synthesis</a>。</p>
+  </main>
+</body>
+</html>
