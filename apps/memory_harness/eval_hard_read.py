@@ -217,7 +217,7 @@ def top_observations(by_case_rows: List[JsonDict]) -> List[str]:
         sample_order = max(order_rows, key=lambda row: row["post_budget_context"]["required_injected_recall"])
         observations.append(
             f"{sample_order['case_id']}: budgeted_candidate_order is order-sensitive and reaches "
-            f"{sample_order['post_budget_context']['required_injected_recall']:.2f} required recall on this structured fixture order."
+            f"{sample_order['post_budget_context']['required_injected_recall']:.2f} required recall on this candidate order."
         )
     keyword_rows = observation_rows(by_case_rows, "keyword_top_k")
     keyword_misses = [
@@ -301,21 +301,35 @@ def write_report(
     aggregates: JsonDict,
     observations: List[str],
     by_case_rows: List[JsonDict],
+    is_v2_design: bool = False,
 ) -> None:
     lines = [
         "# Hard READ Selection Pilot Report",
         "",
-        "Context: 7.3 hard READ pilot fixture expansion and selection-only evaluation.",
+        "Context: hard READ pilot fixture selection-only evaluation.",
         "",
         "This report evaluates memory selection only. It does not run a downstream answerer, call an API, load Qwen or LoRA, or evaluate learned router/live LoRA behavior.",
         "",
-        "Learned router/live LoRA is not evaluated in 7.3 because no real backend output is available for these new hard-read cases.",
+        "Learned router/live LoRA is not evaluated because no real backend output is available for these hard-read cases.",
         "",
         "## Run Summary",
         "",
         f"- Case count: {case_count}",
         f"- Memory pool count: {memory_count}",
         f"- Strategies evaluated: {', '.join(strategies)}",
+    ]
+    if is_v2_design:
+        lines.extend([
+            "",
+            "## v2 Design Intent Compared With v1",
+            "",
+            "- Candidate memory order is fixed-seed shuffled rather than label-ordered, so `budgeted_candidate_order` is a stress test for order bias rather than a favorable pseudo-oracle.",
+            "- Current task notes are deliberately less answerable without memory: they define the task but omit exact commands, thresholds, deadlines, and implementation constraints that live only in memory.",
+            "- v2 is designed to reduce no_memory answerability by under-specifying task notes, but this is not verified by the selection-only eval; it must be checked in a later downstream response pilot.",
+            "- This remains an 8-case pilot fixture repair, not the final 30-40 case hard READ evaluation.",
+            "- This is selection-only and does not measure downstream answer quality.",
+        ])
+    lines.extend([
         "",
         "## Metric Semantics",
         "",
@@ -329,7 +343,7 @@ def write_report(
         "",
         "| Strategy | Mean pre selected | Mean post injected | Pre req recall | Post req recall | Pre avoid | Post avoid | Pre stale | Post stale | Pre contradictory | Post contradictory | Pre wrong-scope | Post wrong-scope | Pre sensitive | Post sensitive | Mean context chars |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
-    ]
+    ])
     for strategy in sorted(aggregates):
         row = aggregates[strategy]
         lines.append(
@@ -369,13 +383,13 @@ def write_report(
         "",
         "## Candidate-Order Baseline Note",
         "",
-        "`budgeted_candidate_order` represents the naive first-k candidate-order baseline. The pilot candidate order is structured and should not be treated as a realistic retriever ranking.",
+        "`budgeted_candidate_order` represents the naive first-k candidate-order baseline. It is order-sensitive and should not be treated as a realistic retriever ranking.",
         "",
         "## Limitations",
         "",
         "- Selection metrics are diagnostic and do not measure downstream answer quality.",
-        "- The 10-case pilot is intentionally structured/template-like to validate hard-candidate schema and selection metrics; it is not the final 30-40 case hard READ evaluation.",
-        "- Pilot candidate ordering is structured and should not be interpreted as realistic retrieval rank quality.",
+        "- This pilot is intentionally small and fixture-like to validate hard-candidate schema and selection metrics; it is not the final 30-40 case hard READ evaluation.",
+        "- Candidate ordering is a fixture property and should not be interpreted as realistic retrieval rank quality.",
         "- Keyword retrieval is a deterministic lexical stub, not evidence about deployed retrieval behavior.",
         "- Oracle selection uses labels and is a reference ceiling for fixture inspection only.",
         "- No learned router, live LoRA, or saved router output is evaluated in this context.",
@@ -383,7 +397,7 @@ def write_report(
         "",
         "## Next Context Recommendation",
         "",
-        "Recommended next context: Context 7.4 - Downstream LLM response collection for selected hard READ pilot subset, after reviewing whether these fixtures are strong enough for answer-quality scoring.",
+        "Recommended next context: Context 7.4-E — v2 downstream prompt-pack scaffold and manual prompt inspection.",
     ])
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -479,6 +493,7 @@ def evaluate(args: argparse.Namespace) -> JsonDict:
         aggregates=aggregates,
         observations=top_observations(by_case_rows),
         by_case_rows=by_case_rows,
+        is_v2_design=any(str(case.get("case_id", "")).startswith("hard_read_v2_") for case in cases),
     )
     return metrics_json
 
