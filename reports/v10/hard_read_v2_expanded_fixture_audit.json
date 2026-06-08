@@ -1,0 +1,41 @@
+{
+  "candidate_count_distribution": {
+    "10": 32
+  },
+  "case_count": 32,
+  "claim_boundary": "Fixture audit only; no downstream answer quality, no API calls, no model inference, no learned router/live LoRA behavior.",
+  "domain_distribution": {
+    "coding/service implementation": 3,
+    "customer-support/CRM workflow": 3,
+    "data/privacy/compliance": 3,
+    "documentation/process-agent": 3,
+    "observability/SRE": 3,
+    "product/business process": 3,
+    "repo validation / CI": 3,
+    "security/auth": 3,
+    "unspecified": 8
+  },
+  "errors": [],
+  "first_four_required_recall": {
+    "distribution": {
+      "0.00": 28,
+      "0.50": 4
+    },
+    "max": 0.5,
+    "mean": 0.0625
+  },
+  "hard_negative_type_distribution": {
+    "contradictory": 32,
+    "near_duplicate": 63,
+    "none": 96,
+    "same_entity_irrelevant": 64,
+    "sensitive_boundary": 2,
+    "stale": 31,
+    "wrong_scope": 32
+  },
+  "memory_count": 320,
+  "ok": true,
+  "unique_case_count": 32,
+  "unique_memory_count": 320,
+  "warnings": []
+}
