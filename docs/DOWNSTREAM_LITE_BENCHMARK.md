@@ -55,4 +55,6 @@ The benchmark uses saved `raw_output` predictions only. It does not load Qwen, c
 
 ## Claim Boundary
 
-This benchmark can only support a context-efficiency proxy statement over locked artifacts: saved router predictions select fewer candidate memories than injecting all candidates while preserving many labeled READ memories. It does not establish downstream answer quality, deployment savings, production safety, retriever behavior, or full-agent behavior, and it does not by itself prove that the router beats ordering-sensitive naive top-k selection.
+This benchmark can only support a context-efficiency proxy statement over locked artifacts: saved router predictions select fewer candidate memories than injecting all candidates while preserving many labeled READ memories. It does not establish downstream answer quality, deployment savings, production safety, retriever behavior, or end-to-end agent behavior, and it does not by itself establish router superiority over ordering-sensitive naive top-k selection.
+
+For the v1.0 benchmark closeout, this proxy should be read alongside the tiny LLM downstream-lite micro-pilot in [LLM_DOWNSTREAM_LITE_BENCHMARK.md](LLM_DOWNSTREAM_LITE_BENCHMARK.md) and the synthesis report at `reports/v10/v10_benchmark_synthesis.md`. The combined result supports only a conservative scaffold claim: the replay, prompt-pack, citation scoring, and internal rubric review are reproducible, while full downstream evaluation remains future work.

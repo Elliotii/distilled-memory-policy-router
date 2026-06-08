@@ -138,6 +138,25 @@ The result supports three conservative conclusions:
 
 The best gold run still has 64 irrelevant reads and 63 missed reads. That makes READ the dominant source of remaining full-exact failures despite strong STORE/SKIP behavior.
 
+## Downstream-Lite v10 Benchmark Closeout
+
+The v10 downstream-lite work adds a narrow benchmark scaffold around the locked gold artifacts and saved BF16 r16 1000_4090 predictions. It should be treated as diagnostic packaging for v1.0, not as downstream proof.
+
+No-inference proxy:
+
+- `router_selected` injects fewer candidate memories than `all_candidates`: 2.78 memories per case versus 3.42.
+- `router_selected` reduces selected-memory count by 18.7% while retaining 85.2% gold READ recall.
+- The proxy is not clearly distinguishable from simple baselines: `random_k` reaches 85.0% recall and `shuffled_top_k` reaches 84.0%.
+
+LLM downstream-lite micro-pilot:
+
+- A tiny 2-case, 7-strategy, 14-response DeepSeek V4 Flash micro-pilot ran successfully: 14/14 OK, 0 errors.
+- Citation-format repair removed invalid current-unit citations, bare memory references, and hallucinated memory citations from the scored micro-pilot artifacts.
+- A rubric-based internal qualitative review suggests memory context helped over `no_memory` in the two reviewed cases.
+- `router_selected` tied with `all_candidates` and `shuffled_top_k` on the internal qualitative utility score, so this does not prove router-specific downstream superiority.
+
+See `reports/v10/v10_benchmark_synthesis.md` for the v1.0-facing benchmark synthesis and claim boundaries.
+
 ## Reproducibility Pointers
 
 | Artifact | Path |
@@ -158,7 +177,7 @@ Adapter weights are intentionally excluded from git and preserved in external ar
 - `gold_v2_009` is a controlled synthetic benchmark.
 - The 1000-targeted training set adds both more data and domain/template diversity, so this does not isolate pure data-size causality.
 - The current READ labels are heavily tied to entity matching and do not teach graded relevance.
-- There is no downstream LLM agent evaluation yet.
+- There is only a tiny downstream-lite LLM micro-pilot; it is not a full downstream evaluation and does not prove downstream utility.
 - The router assumes fixed candidate memories and does not evaluate retrieval from a live store.
 - The system does not rewrite, merge, delete, verify, or manage memory lifecycle.
 - The result should not be treated as a production safety result.

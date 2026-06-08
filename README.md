@@ -154,7 +154,7 @@ python3 demo/run_demo.py --case demo/cases/case_001.json
 
 See [demo/README.md](demo/README.md) for the fixture list and commands.
 
-A downstream-lite context-efficiency proxy is documented in [docs/DOWNSTREAM_LITE_BENCHMARK.md](docs/DOWNSTREAM_LITE_BENCHMARK.md).
+A downstream-lite context-efficiency proxy is documented in [docs/DOWNSTREAM_LITE_BENCHMARK.md](docs/DOWNSTREAM_LITE_BENCHMARK.md). A tiny LLM downstream-lite micro-pilot is documented in [docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md](docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md) and summarized in [reports/v10/v10_benchmark_synthesis.md](reports/v10/v10_benchmark_synthesis.md).
 
 ## Reproducibility
 
@@ -171,7 +171,7 @@ A downstream-lite context-efficiency proxy is documented in [docs/DOWNSTREAM_LIT
 - The benchmark is controlled and synthetic.
 - Candidate memories are fixed; this project does not evaluate retrieval from a live memory store.
 - The router does not rewrite, merge, deduplicate, delete, or verify memories.
-- No downstream LLM agent validation has been run yet.
+- A tiny 14-response downstream-lite LLM micro-pilot has been run, but it is diagnostic only and does not prove downstream utility.
 - READ selection is not solved and remains the main exact-match bottleneck.
 - Sensitive-store behavior is promising on gold but not enough for a safety claim.
 - Results come from a single model family and a single locked gold set.
@@ -184,8 +184,8 @@ Next v1.0 packaging steps:
 - Architecture and task-formulation documentation.
 - Demo fixtures that show the input/output shape without model inference.
 - Downstream-lite efficiency proxy over existing predictions and labels.
-- An execution-ready LLM downstream-lite prompt pack is documented in [docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md](docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md); it has not yet been executed.
-- A small LLM downstream-lite pilot scaffold is prepared under `data/v10/llm_downstream_lite/`; it has not yet been executed.
+- An execution-ready LLM downstream-lite prompt pack is documented in [docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md](docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md).
+- A 2-case, 7-strategy, 14-response DeepSeek V4 Flash micro-pilot has been executed and internally reviewed; the full 42-prompt pilot remains future work.
 - Resume and interview notes with conservative claims.
 - Final audit before a v1.0 tag.
 
