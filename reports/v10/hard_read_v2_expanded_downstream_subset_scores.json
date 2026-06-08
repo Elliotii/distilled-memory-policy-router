@@ -1,0 +1,1418 @@
+{
+  "by_prompt": [
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_009",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_009__no_memory",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "no_memory",
+      "valid_memory_citations": [],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_009",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m283"
+      ],
+      "prompt_id": "hard_read_v2_009__all_candidates",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m281",
+        "m282"
+      ],
+      "stale_citations": [],
+      "strategy": "all_candidates",
+      "valid_memory_citations": [
+        "m281",
+        "m283",
+        "m282"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m284",
+        "m287",
+        "m288"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_009",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m283"
+      ],
+      "prompt_id": "hard_read_v2_009__budgeted_candidate_order",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "budgeted_candidate_order",
+      "valid_memory_citations": [
+        "m288",
+        "m287",
+        "m283",
+        "m284"
+      ],
+      "wrong_scope_citations": [
+        "m287"
+      ]
+    },
+    {
+      "avoid_citations": [
+        "m288"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_009",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m283"
+      ],
+      "prompt_id": "hard_read_v2_009__keyword_top_k",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m281",
+        "m282"
+      ],
+      "stale_citations": [],
+      "strategy": "keyword_top_k",
+      "valid_memory_citations": [
+        "m281",
+        "m283",
+        "m282",
+        "m288"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m284",
+        "m287",
+        "m288",
+        "m289"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_009",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_009__random_k",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "random_k",
+      "valid_memory_citations": [
+        "m284",
+        "m287",
+        "m288",
+        "m289"
+      ],
+      "wrong_scope_citations": [
+        "m287"
+      ]
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_009",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m283"
+      ],
+      "prompt_id": "hard_read_v2_009__oracle_selected",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m281",
+        "m282"
+      ],
+      "stale_citations": [],
+      "strategy": "oracle_selected",
+      "valid_memory_citations": [
+        "m281",
+        "m282",
+        "m283"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_026",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_026__no_memory",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "no_memory",
+      "valid_memory_citations": [],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m454",
+        "m456",
+        "m460"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_026",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [
+        "m456"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m453"
+      ],
+      "prompt_id": "hard_read_v2_026__all_candidates",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m451",
+        "m452"
+      ],
+      "stale_citations": [],
+      "strategy": "all_candidates",
+      "valid_memory_citations": [
+        "m451",
+        "m456",
+        "m454",
+        "m460",
+        "m452",
+        "m453"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m454",
+        "m458"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_026",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m453"
+      ],
+      "prompt_id": "hard_read_v2_026__budgeted_candidate_order",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "budgeted_candidate_order",
+      "valid_memory_citations": [
+        "m454",
+        "m458",
+        "m453"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m456",
+        "m457"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_026",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [
+        "m456"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m453"
+      ],
+      "prompt_id": "hard_read_v2_026__keyword_top_k",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m451"
+      ],
+      "stale_citations": [],
+      "strategy": "keyword_top_k",
+      "valid_memory_citations": [
+        "m456",
+        "m451",
+        "m453",
+        "m457"
+      ],
+      "wrong_scope_citations": [
+        "m457"
+      ]
+    },
+    {
+      "avoid_citations": [
+        "m455",
+        "m458"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_026",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m453"
+      ],
+      "prompt_id": "hard_read_v2_026__random_k",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m451"
+      ],
+      "stale_citations": [
+        "m455"
+      ],
+      "strategy": "random_k",
+      "valid_memory_citations": [
+        "m451",
+        "m453",
+        "m455",
+        "m458"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_026",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m453"
+      ],
+      "prompt_id": "hard_read_v2_026__oracle_selected",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m451",
+        "m452"
+      ],
+      "stale_citations": [],
+      "strategy": "oracle_selected",
+      "valid_memory_citations": [
+        "m451",
+        "m452",
+        "m453"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_011",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_011__no_memory",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "no_memory",
+      "valid_memory_citations": [],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m305"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_011",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m303"
+      ],
+      "prompt_id": "hard_read_v2_011__all_candidates",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m301",
+        "m302"
+      ],
+      "stale_citations": [
+        "m305"
+      ],
+      "strategy": "all_candidates",
+      "valid_memory_citations": [
+        "m301",
+        "m302",
+        "m303",
+        "m305"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m304",
+        "m307",
+        "m308"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_011",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m303"
+      ],
+      "prompt_id": "hard_read_v2_011__budgeted_candidate_order",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "budgeted_candidate_order",
+      "valid_memory_citations": [
+        "m308",
+        "m307",
+        "m303",
+        "m304"
+      ],
+      "wrong_scope_citations": [
+        "m307"
+      ]
+    },
+    {
+      "avoid_citations": [
+        "m304",
+        "m306",
+        "m308"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_011",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [
+        "m306"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m303"
+      ],
+      "prompt_id": "hard_read_v2_011__keyword_top_k",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "keyword_top_k",
+      "valid_memory_citations": [
+        "m303",
+        "m306",
+        "m308",
+        "m304"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m305",
+        "m307",
+        "m309"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_011",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_011__random_k",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m302"
+      ],
+      "stale_citations": [
+        "m305"
+      ],
+      "strategy": "random_k",
+      "valid_memory_citations": [
+        "m305",
+        "m302",
+        "m307",
+        "m309"
+      ],
+      "wrong_scope_citations": [
+        "m307"
+      ]
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_011",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m303"
+      ],
+      "prompt_id": "hard_read_v2_011__oracle_selected",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m301",
+        "m302"
+      ],
+      "stale_citations": [],
+      "strategy": "oracle_selected",
+      "valid_memory_citations": [
+        "m301",
+        "m302",
+        "m303"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_020",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_020__no_memory",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "no_memory",
+      "valid_memory_citations": [],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_020",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_020__all_candidates",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "all_candidates",
+      "valid_memory_citations": [],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m394",
+        "m397"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_020",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m393"
+      ],
+      "prompt_id": "hard_read_v2_020__budgeted_candidate_order",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "budgeted_candidate_order",
+      "valid_memory_citations": [
+        "m394",
+        "m393",
+        "m397"
+      ],
+      "wrong_scope_citations": [
+        "m397"
+      ]
+    },
+    {
+      "avoid_citations": [
+        "m395",
+        "m397"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_020",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m393"
+      ],
+      "prompt_id": "hard_read_v2_020__keyword_top_k",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m391"
+      ],
+      "stale_citations": [
+        "m395"
+      ],
+      "strategy": "keyword_top_k",
+      "valid_memory_citations": [
+        "m393",
+        "m391",
+        "m395",
+        "m397"
+      ],
+      "wrong_scope_citations": [
+        "m397"
+      ]
+    },
+    {
+      "avoid_citations": [
+        "m394",
+        "m395"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_020",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m393"
+      ],
+      "prompt_id": "hard_read_v2_020__random_k",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [
+        "m395"
+      ],
+      "strategy": "random_k",
+      "valid_memory_citations": [
+        "m393",
+        "m394",
+        "m395"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_020",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m393"
+      ],
+      "prompt_id": "hard_read_v2_020__oracle_selected",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m391",
+        "m392"
+      ],
+      "stale_citations": [],
+      "strategy": "oracle_selected",
+      "valid_memory_citations": [
+        "m391",
+        "m392",
+        "m393"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_013",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_013__no_memory",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "no_memory",
+      "valid_memory_citations": [],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_013",
+      "conditional_required_citation_recall": 0.5,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_013__all_candidates",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m321"
+      ],
+      "stale_citations": [],
+      "strategy": "all_candidates",
+      "valid_memory_citations": [
+        "m321"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m324",
+        "m327",
+        "m328"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_013",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m323"
+      ],
+      "prompt_id": "hard_read_v2_013__budgeted_candidate_order",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "budgeted_candidate_order",
+      "valid_memory_citations": [
+        "m324",
+        "m327",
+        "m323",
+        "m328"
+      ],
+      "wrong_scope_citations": [
+        "m327"
+      ]
+    },
+    {
+      "avoid_citations": [
+        "m325",
+        "m326"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_013",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [
+        "m326"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m323"
+      ],
+      "prompt_id": "hard_read_v2_013__keyword_top_k",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m321"
+      ],
+      "stale_citations": [
+        "m325"
+      ],
+      "strategy": "keyword_top_k",
+      "valid_memory_citations": [
+        "m321",
+        "m326",
+        "m325",
+        "m323"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m325",
+        "m326",
+        "m329"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_013",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [
+        "m326"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_013__random_k",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m322"
+      ],
+      "stale_citations": [
+        "m325"
+      ],
+      "strategy": "random_k",
+      "valid_memory_citations": [
+        "m326",
+        "m325",
+        "m322",
+        "m329"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_013",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m323"
+      ],
+      "prompt_id": "hard_read_v2_013__oracle_selected",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m321",
+        "m322"
+      ],
+      "stale_citations": [],
+      "strategy": "oracle_selected",
+      "valid_memory_citations": [
+        "m321",
+        "m322",
+        "m323"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_014",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_014__no_memory",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "no_memory",
+      "valid_memory_citations": [],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m334",
+        "m335"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_014",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m333"
+      ],
+      "prompt_id": "hard_read_v2_014__all_candidates",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m331",
+        "m332"
+      ],
+      "stale_citations": [
+        "m335"
+      ],
+      "strategy": "all_candidates",
+      "valid_memory_citations": [
+        "m331",
+        "m335",
+        "m332",
+        "m333",
+        "m334"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m334",
+        "m337",
+        "m338"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_014",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m333"
+      ],
+      "prompt_id": "hard_read_v2_014__budgeted_candidate_order",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "budgeted_candidate_order",
+      "valid_memory_citations": [
+        "m334",
+        "m333",
+        "m337",
+        "m338"
+      ],
+      "wrong_scope_citations": [
+        "m337"
+      ]
+    },
+    {
+      "avoid_citations": [
+        "m335",
+        "m336",
+        "m338",
+        "m339"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_014",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [
+        "m336"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_014__keyword_top_k",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [
+        "m335"
+      ],
+      "strategy": "keyword_top_k",
+      "valid_memory_citations": [
+        "m336",
+        "m338",
+        "m335",
+        "m339"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_014",
+      "conditional_required_citation_recall": 0.5,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_014__random_k",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m331"
+      ],
+      "stale_citations": [],
+      "strategy": "random_k",
+      "valid_memory_citations": [
+        "m331"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_014",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m333"
+      ],
+      "prompt_id": "hard_read_v2_014__oracle_selected",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m331",
+        "m332"
+      ],
+      "stale_citations": [],
+      "strategy": "oracle_selected",
+      "valid_memory_citations": [
+        "m331",
+        "m332",
+        "m333"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_031",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_031__no_memory",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "no_memory",
+      "valid_memory_citations": [],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m505",
+        "m506"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_031",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [
+        "m506"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m503"
+      ],
+      "prompt_id": "hard_read_v2_031__all_candidates",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m501",
+        "m502"
+      ],
+      "stale_citations": [
+        "m505"
+      ],
+      "strategy": "all_candidates",
+      "valid_memory_citations": [
+        "m501",
+        "m505",
+        "m503",
+        "m506",
+        "m502"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m504",
+        "m508"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_031",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m503"
+      ],
+      "prompt_id": "hard_read_v2_031__budgeted_candidate_order",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "budgeted_candidate_order",
+      "valid_memory_citations": [
+        "m503",
+        "m508",
+        "m504"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m504",
+        "m506"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_031",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [
+        "m506"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m503"
+      ],
+      "prompt_id": "hard_read_v2_031__keyword_top_k",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "keyword_top_k",
+      "valid_memory_citations": [
+        "m506",
+        "m503",
+        "m504"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m504",
+        "m506",
+        "m508",
+        "m510"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_031",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [
+        "m506"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_031__random_k",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "random_k",
+      "valid_memory_citations": [
+        "m506",
+        "m508",
+        "m504",
+        "m510"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_031",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m503"
+      ],
+      "prompt_id": "hard_read_v2_031__oracle_selected",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m501",
+        "m502"
+      ],
+      "stale_citations": [],
+      "strategy": "oracle_selected",
+      "valid_memory_citations": [
+        "m501",
+        "m502",
+        "m503"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_032",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_032__no_memory",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "no_memory",
+      "valid_memory_citations": [],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m514"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_032",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m513"
+      ],
+      "prompt_id": "hard_read_v2_032__all_candidates",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m511",
+        "m512"
+      ],
+      "stale_citations": [],
+      "strategy": "all_candidates",
+      "valid_memory_citations": [
+        "m511",
+        "m513",
+        "m512",
+        "m514"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m514",
+        "m517",
+        "m518"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_032",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m513"
+      ],
+      "prompt_id": "hard_read_v2_032__budgeted_candidate_order",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "budgeted_candidate_order",
+      "valid_memory_citations": [
+        "m513",
+        "m514",
+        "m518",
+        "m517"
+      ],
+      "wrong_scope_citations": [
+        "m517"
+      ]
+    },
+    {
+      "avoid_citations": [
+        "m515",
+        "m517",
+        "m519"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_032",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m513"
+      ],
+      "prompt_id": "hard_read_v2_032__keyword_top_k",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [
+        "m515"
+      ],
+      "strategy": "keyword_top_k",
+      "valid_memory_citations": [
+        "m513",
+        "m515",
+        "m517",
+        "m519"
+      ],
+      "wrong_scope_citations": [
+        "m517"
+      ]
+    },
+    {
+      "avoid_citations": [
+        "m520"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_032",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_032__random_k",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m511"
+      ],
+      "stale_citations": [],
+      "strategy": "random_k",
+      "valid_memory_citations": [
+        "m511",
+        "m520"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_032",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m513"
+      ],
+      "prompt_id": "hard_read_v2_032__oracle_selected",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m511",
+        "m512"
+      ],
+      "stale_citations": [],
+      "strategy": "oracle_selected",
+      "valid_memory_citations": [
+        "m511",
+        "m512",
+        "m513"
+      ],
+      "wrong_scope_citations": []
+    }
+  ],
+  "by_strategy": {
+    "all_candidates": {
+      "avg_avoid_citations": 1.125,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.25,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.375,
+      "avg_wrong_scope_citations": 0.0,
+      "conditional_required_citation_recall": 0.8125,
+      "e2e_required_citation_recall": 0.8125,
+      "no_response_count": 0,
+      "prompt_count": 8,
+      "response_coverage": 1.0
+    },
+    "budgeted_candidate_order": {
+      "avg_avoid_citations": 2.625,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.0,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.0,
+      "avg_wrong_scope_citations": 0.75,
+      "conditional_required_citation_recall": 0.0,
+      "e2e_required_citation_recall": 0.0,
+      "no_response_count": 0,
+      "prompt_count": 8,
+      "response_coverage": 1.0
+    },
+    "keyword_top_k": {
+      "avg_avoid_citations": 2.375,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.625,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.5,
+      "avg_wrong_scope_citations": 0.375,
+      "conditional_required_citation_recall": 0.5,
+      "e2e_required_citation_recall": 0.3125,
+      "no_response_count": 0,
+      "prompt_count": 8,
+      "response_coverage": 1.0
+    },
+    "no_memory": {
+      "avg_avoid_citations": 0.0,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.0,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.0,
+      "avg_wrong_scope_citations": 0.0,
+      "conditional_required_citation_recall": 0.0,
+      "e2e_required_citation_recall": 0.0,
+      "no_response_count": 0,
+      "prompt_count": 8,
+      "response_coverage": 1.0
+    },
+    "oracle_selected": {
+      "avg_avoid_citations": 0.0,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.0,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.0,
+      "avg_wrong_scope_citations": 0.0,
+      "conditional_required_citation_recall": 1.0,
+      "e2e_required_citation_recall": 1.0,
+      "no_response_count": 0,
+      "prompt_count": 8,
+      "response_coverage": 1.0
+    },
+    "random_k": {
+      "avg_avoid_citations": 2.375,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.25,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.5,
+      "avg_wrong_scope_citations": 0.25,
+      "conditional_required_citation_recall": 0.5625,
+      "e2e_required_citation_recall": 0.3125,
+      "no_response_count": 0,
+      "prompt_count": 8,
+      "response_coverage": 1.0
+    }
+  },
+  "claim_boundary": "Automatic citation scaffold only; not answer-quality evaluation.",
+  "no_response_count": 0,
+  "prompt_count": 48,
+  "response_count": 48
+}
