@@ -154,6 +154,8 @@ python3 demo/run_demo.py --case demo/cases/case_001.json
 
 See [demo/README.md](demo/README.md) for the fixture list and commands.
 
+A downstream-lite context-efficiency proxy is documented in [docs/DOWNSTREAM_LITE_BENCHMARK.md](docs/DOWNSTREAM_LITE_BENCHMARK.md).
+
 ## Reproducibility
 
 - Locked evaluation file: `data/v05e/gold_v2/v05e_gold_v2_009_active_cases.jsonl`.

@@ -1,0 +1,88 @@
+{
+  "benchmark": "downstream_lite_context_efficiency_proxy",
+  "gold_path": "data/v05e/gold_v2/v05e_gold_v2_009_active_cases.jsonl",
+  "gold_rows": 150,
+  "metric_notes": {
+    "gold_read_recall": "selected gold READ ids divided by total gold READ ids",
+    "gold_relevant_memory": "memory id in the gold READ set",
+    "irrelevant_memory_reduction_vs_all": "1 - irrelevant_selected_count / irrelevant_all_count, or null when no irrelevant candidates exist",
+    "irrelevant_selected_memory": "selected memory id not in the gold READ set",
+    "selected_memory_chars": "approximate context chars from selected candidate memory text, not tokens",
+    "selected_memory_reduction_vs_all": "1 - selected_count / all_candidate_count"
+  },
+  "mode": "no_inference_saved_prediction_replay",
+  "parsed_cases": 150,
+  "prediction_rows": 150,
+  "predictions_path": "data/v05g/model_predictions/bf16_r16_1000_4090_gold_v2_009_predictions.jsonl",
+  "router_avg_selected_memory_count_for_top_k": 2.78,
+  "skipped_case_count": 0,
+  "skipped_case_details": [],
+  "strategies": {
+    "all_candidates": {
+      "avg_irrelevant_memory_count": 0.6666666666666666,
+      "avg_selected_memory_chars": 380.37333333333333,
+      "avg_selected_memory_count": 3.42,
+      "cases": 150,
+      "exact_read_set_match": 0.54,
+      "exact_read_set_match_count": 81,
+      "gold_read_recall": 1.0,
+      "irrelevant_memory_count": 100,
+      "irrelevant_memory_reduction_vs_all": 0.0,
+      "selected_memory_reduction_vs_all": 0.0,
+      "skipped_cases": 0
+    },
+    "no_memory": {
+      "avg_irrelevant_memory_count": 0.0,
+      "avg_selected_memory_chars": 0.0,
+      "avg_selected_memory_count": 0.0,
+      "cases": 150,
+      "exact_read_set_match": 0.0,
+      "exact_read_set_match_count": 0,
+      "gold_read_recall": 0.0,
+      "irrelevant_memory_count": 0,
+      "irrelevant_memory_reduction_vs_all": 1.0,
+      "selected_memory_reduction_vs_all": 1.0,
+      "skipped_cases": 0
+    },
+    "oracle_selected": {
+      "avg_irrelevant_memory_count": 0.0,
+      "avg_selected_memory_chars": 315.49333333333334,
+      "avg_selected_memory_count": 2.7533333333333334,
+      "cases": 150,
+      "exact_read_set_match": 1.0,
+      "exact_read_set_match_count": 150,
+      "gold_read_recall": 1.0,
+      "irrelevant_memory_count": 0,
+      "irrelevant_memory_reduction_vs_all": 1.0,
+      "selected_memory_reduction_vs_all": 0.1949317738791423,
+      "skipped_cases": 0
+    },
+    "router_selected": {
+      "avg_irrelevant_memory_count": 0.43333333333333335,
+      "avg_selected_memory_chars": 316.85333333333335,
+      "avg_selected_memory_count": 2.78,
+      "cases": 150,
+      "exact_read_set_match": 0.37333333333333335,
+      "exact_read_set_match_count": 56,
+      "gold_read_recall": 0.8523002421307506,
+      "irrelevant_memory_count": 65,
+      "irrelevant_memory_reduction_vs_all": 0.35,
+      "selected_memory_reduction_vs_all": 0.1871345029239766,
+      "skipped_cases": 0
+    },
+    "top_k_naive": {
+      "avg_irrelevant_memory_count": 0.44666666666666666,
+      "avg_selected_memory_chars": 308.24,
+      "avg_selected_memory_count": 2.7533333333333334,
+      "cases": 150,
+      "exact_read_set_match": 0.6266666666666667,
+      "exact_read_set_match_count": 94,
+      "gold_read_recall": 0.837772397094431,
+      "irrelevant_memory_count": 67,
+      "irrelevant_memory_reduction_vs_all": 0.32999999999999996,
+      "selected_memory_reduction_vs_all": 0.1949317738791423,
+      "skipped_cases": 0
+    }
+  },
+  "top_k_naive_k": 3
+}
