@@ -185,6 +185,7 @@ Next v1.0 packaging steps:
 - Demo fixtures that show the input/output shape without model inference.
 - Downstream-lite efficiency proxy over existing predictions and labels.
 - An execution-ready LLM downstream-lite prompt pack is documented in [docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md](docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md); it has not yet been executed.
+- A small LLM downstream-lite pilot scaffold is prepared under `data/v10/llm_downstream_lite/`; it has not yet been executed.
 - Resume and interview notes with conservative claims.
 - Final audit before a v1.0 tag.
 
