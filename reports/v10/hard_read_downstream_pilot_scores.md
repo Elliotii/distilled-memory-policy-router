@@ -3,19 +3,19 @@
 These are partial automatic citation metrics for scaffold validation. They are not answer-quality proof.
 
 - Prompt count: 24
-- Response count: 0
-- No-response count: 24
+- Response count: 24
+- No-response count: 0
 
 ## Strategy Aggregates
 
 | Strategy | Prompts | Coverage | E2E required recall | Conditional required recall | Avoid avg | Stale avg | Contradictory avg | Wrong-scope avg | Hallucinated avg | Bare refs avg | Current-unit citations avg | No response |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| all_candidates | 4 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 4 |
-| budgeted_candidate_order | 4 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 4 |
-| keyword_top_k | 4 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 4 |
-| no_memory | 4 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 4 |
-| oracle_selected | 4 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 4 |
-| random_k | 4 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 4 |
+| all_candidates | 4 | 1.00 | 1.00 | 1.00 | 2.00 | 0.75 | 0.75 | 0.00 | 0.00 | 0.00 | 0.00 | 0 |
+| budgeted_candidate_order | 4 | 1.00 | 1.00 | 1.00 | 0.25 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0 |
+| keyword_top_k | 4 | 1.00 | 0.50 | 0.62 | 1.75 | 0.50 | 0.50 | 0.00 | 0.00 | 0.00 | 0.00 | 0 |
+| no_memory | 4 | 1.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0 |
+| oracle_selected | 4 | 1.00 | 1.00 | 1.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0 |
+| random_k | 4 | 1.00 | 0.50 | 0.75 | 1.25 | 0.50 | 0.25 | 0.00 | 0.00 | 0.00 | 0.00 | 0 |
 
 ## Boundary
 
