@@ -1,0 +1,33 @@
+{
+  "selected_case_ids": [
+    "hard_read_v2_009",
+    "hard_read_v2_026",
+    "hard_read_v2_011",
+    "hard_read_v2_020",
+    "hard_read_v2_013",
+    "hard_read_v2_014",
+    "hard_read_v2_031",
+    "hard_read_v2_032"
+  ],
+  "selection_notes": {
+    "hard_read_v2_009": "coding/service implementation; keyword_top_k reaches full required recall but still selects one avoid memory, giving a reasonable non-failure comparison case; budgeted_candidate_order required recall is 0.00.",
+    "hard_read_v2_011": "data/privacy/compliance; keyword_top_k required recall is 0.00 and selects contradictory/avoid memory; all_candidates includes sensitive_boundary risk; budgeted_candidate_order required recall is 0.00.",
+    "hard_read_v2_013": "customer-support/CRM workflow; keyword_top_k has partial required recall and selects stale plus contradictory hard negatives; sensitive_boundary risk is present; budgeted_candidate_order required recall is 0.00.",
+    "hard_read_v2_014": "security/auth; keyword_top_k required recall is 0.00 and selects stale plus contradictory memory; sensitive_boundary risk is present; budgeted_candidate_order required recall is 0.00.",
+    "hard_read_v2_020": "product/business process; keyword_top_k has partial required recall and selects stale plus wrong-scope hard negatives; sensitive_boundary risk is present; budgeted_candidate_order required recall is 0.00.",
+    "hard_read_v2_026": "repo validation / CI; keyword_top_k has partial required recall and selects contradictory plus wrong-scope hard negatives; budgeted_candidate_order required recall is 0.00.",
+    "hard_read_v2_031": "observability/SRE; keyword_top_k required recall is 0.00 and selects stale plus contradictory memory; budgeted_candidate_order required recall is 0.00.",
+    "hard_read_v2_032": "documentation/process-agent; keyword_top_k required recall is 0.00 and selects stale plus wrong-scope memory; budgeted_candidate_order required recall is 0.00."
+  },
+  "source_by_case": "reports/v10/hard_read_v2_expanded_selection_eval/by_case.jsonl",
+  "source_cases": "data/v10/hard_read_v2_expanded/hard_read_v2_expanded_cases.jsonl",
+  "source_memory_pool": "data/v10/hard_read_v2_expanded/hard_read_v2_expanded_memory_pool.jsonl",
+  "strategies": [
+    "no_memory",
+    "all_candidates",
+    "budgeted_candidate_order",
+    "keyword_top_k",
+    "random_k",
+    "oracle_selected"
+  ]
+}

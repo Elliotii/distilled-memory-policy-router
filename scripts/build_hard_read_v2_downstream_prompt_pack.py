@@ -56,6 +56,12 @@ def redact_prompt_memory_text(text: str) -> Tuple[str, bool]:
     return redacted, redacted != text
 
 
+def prompt_value_text(value: object) -> str:
+    if isinstance(value, list):
+        return " ".join(str(item) for item in value)
+    return str(value)
+
+
 def current_unit_text(units: List[JsonDict]) -> str:
     return "\n".join(f"- {unit['text']}" for unit in units)
 
@@ -68,7 +74,7 @@ def memory_context(injected_ids: List[str], memory_by_id: Dict[str, JsonDict]) -
     any_redaction = False
     for memory_id in injected_ids:
         memory = memory_by_id[memory_id]
-        text, redacted = redact_prompt_memory_text(str(memory["text"]))
+        text, redacted = redact_prompt_memory_text(prompt_value_text(memory["text"]))
         any_redaction = any_redaction or redacted
         lines.append(f"[{memory_id}] {text}")
     return "\n".join(lines), any_redaction
