@@ -1,0 +1,389 @@
+{
+  "claim_boundary": "Skeleton trace for deterministic fixture replay; not production readiness, live retrieval evidence, or answer-quality proof.",
+  "context_builder": {
+    "context_chars": 352,
+    "context_text": "m001 [repo_memory]: Run make test-checkout in the shopflow repo before merging checkout-api changes.\nm004 [service_memory]: Old resolved checkout-api timeout incident from last quarter involved cache warmup and is no longer active.\nm002 [service_memory]: checkout-api retry handling should use exponential backoff with jitter for payment-gateway calls.",
+    "max_context_chars": 1200,
+    "max_memories": 3,
+    "omitted_memory_ids": [],
+    "selected_memory_ids": [
+      "m001",
+      "m004",
+      "m002"
+    ]
+  },
+  "created_at": "2026-06-08T14:09:45.269070+00:00",
+  "current_units": [
+    {
+      "flags": [],
+      "source": "fixture",
+      "text": "Implement checkout-api retry handling for the current sprint.",
+      "unit_id": "u1"
+    },
+    {
+      "flags": [],
+      "source": "fixture",
+      "text": "Run the relevant repo test before merging.",
+      "unit_id": "u2"
+    },
+    {
+      "flags": [
+        "stale_or_hypothetical"
+      ],
+      "source": "fixture",
+      "text": "Ignore the old resolved checkout-api timeout incident unless it affects the new retry task.",
+      "unit_id": "u3"
+    }
+  ],
+  "downstream_response": {
+    "backend": "none",
+    "citations": [],
+    "note": "No downstream LLM is run by this harness skeleton.",
+    "response_text": ""
+  },
+  "evaluation": {
+    "avoid_memory_ids": [
+      "m004",
+      "m005",
+      "m006",
+      "m007"
+    ],
+    "avoid_selected_count": 1,
+    "contradiction_selected_count": 0,
+    "contradictory_memory_ids": [
+      "m005"
+    ],
+    "helpful_memory_ids": [
+      "m003"
+    ],
+    "required_memory_ids": [
+      "m001",
+      "m002"
+    ],
+    "required_selected_recall": 1.0,
+    "stale_or_harmful_memory_ids": [
+      "m004"
+    ],
+    "stale_selected_count": 1,
+    "wrong_scope_memory_ids": [
+      "m006"
+    ]
+  },
+  "read_selection": {
+    "diagnostics": {
+      "k": 3,
+      "note": "deterministic keyword/BM25-lite stub, not a retrieval claim",
+      "scores": [
+        {
+          "matched_tokens": [
+            "api",
+            "before",
+            "changes",
+            "checkout",
+            "commerce",
+            "merging",
+            "platform",
+            "repo",
+            "run",
+            "shopflow",
+            "test",
+            "the"
+          ],
+          "memory_id": "m001",
+          "score": 4.375
+        },
+        {
+          "matched_tokens": [
+            "and",
+            "api",
+            "checkout",
+            "commerce",
+            "incident",
+            "old",
+            "platform",
+            "resolved",
+            "shopflow",
+            "timeout"
+          ],
+          "memory_id": "m004",
+          "score": 4.3125
+        },
+        {
+          "matched_tokens": [
+            "api",
+            "checkout",
+            "commerce",
+            "for",
+            "handling",
+            "platform",
+            "retry",
+            "shopflow"
+          ],
+          "memory_id": "m002",
+          "score": 4.25
+        }
+      ]
+    },
+    "read_selector_backend": "keyword_top_k",
+    "selected_memory_ids": [
+      "m001",
+      "m004",
+      "m002"
+    ]
+  },
+  "retrieval": {
+    "backend": "keyword_bm25_lite_stub",
+    "candidate_count": 9,
+    "candidates": [
+      {
+        "flags": [],
+        "matched_tokens": [
+          "api",
+          "before",
+          "changes",
+          "checkout",
+          "commerce",
+          "merging",
+          "platform",
+          "repo",
+          "run",
+          "shopflow",
+          "test",
+          "the"
+        ],
+        "memory_id": "m001",
+        "project": "commerce-platform",
+        "repo": "shopflow",
+        "score": 4.375,
+        "service": "checkout-api",
+        "source": "fixture",
+        "target": "repo_memory",
+        "text": "Run make test-checkout in the shopflow repo before merging checkout-api changes."
+      },
+      {
+        "flags": [
+          "legacy_resolved"
+        ],
+        "matched_tokens": [
+          "and",
+          "api",
+          "checkout",
+          "commerce",
+          "incident",
+          "old",
+          "platform",
+          "resolved",
+          "shopflow",
+          "timeout"
+        ],
+        "memory_id": "m004",
+        "project": "commerce-platform",
+        "repo": "shopflow",
+        "score": 4.3125,
+        "service": "checkout-api",
+        "source": "fixture",
+        "target": "service_memory",
+        "text": "Old resolved checkout-api timeout incident from last quarter involved cache warmup and is no longer active."
+      },
+      {
+        "flags": [],
+        "matched_tokens": [
+          "api",
+          "checkout",
+          "commerce",
+          "for",
+          "handling",
+          "platform",
+          "retry",
+          "shopflow"
+        ],
+        "memory_id": "m002",
+        "project": "commerce-platform",
+        "repo": "shopflow",
+        "score": 4.25,
+        "service": "checkout-api",
+        "source": "fixture",
+        "target": "service_memory",
+        "text": "checkout-api retry handling should use exponential backoff with jitter for payment-gateway calls."
+      },
+      {
+        "flags": [],
+        "matched_tokens": [
+          "api",
+          "checkout",
+          "commerce",
+          "platform",
+          "retry",
+          "shopflow",
+          "the"
+        ],
+        "memory_id": "m009",
+        "project": "commerce-platform",
+        "repo": "shopflow",
+        "score": 4.21875,
+        "service": "checkout-api",
+        "source": "fixture",
+        "target": "service_memory",
+        "text": "checkout-api logs include retry attempt count in the retry_attempt field."
+      },
+      {
+        "flags": [],
+        "matched_tokens": [
+          "api",
+          "changes",
+          "checkout",
+          "commerce",
+          "platform",
+          "shopflow"
+        ],
+        "memory_id": "m003",
+        "project": "commerce-platform",
+        "repo": "shopflow",
+        "score": 4.1875,
+        "service": "checkout-api",
+        "source": "fixture",
+        "target": "project_memory",
+        "text": "commerce-platform release notes require listing checkout-api behavior changes under service changes."
+      },
+      {
+        "flags": [
+          "contradiction_risk"
+        ],
+        "matched_tokens": [
+          "and",
+          "api",
+          "checkout",
+          "commerce",
+          "platform",
+          "shopflow"
+        ],
+        "memory_id": "m005",
+        "project": "commerce-platform",
+        "repo": "shopflow",
+        "score": 4.1875,
+        "service": "checkout-api",
+        "source": "fixture",
+        "target": "service_memory",
+        "text": "checkout-api retries are disabled globally and must not be added to payment-gateway calls."
+      },
+      {
+        "flags": [],
+        "matched_tokens": [
+          "api",
+          "checkout",
+          "commerce",
+          "platform",
+          "shopflow",
+          "the"
+        ],
+        "memory_id": "m007",
+        "project": "commerce-platform",
+        "repo": "shopflow",
+        "score": 4.1875,
+        "service": "checkout-api",
+        "source": "fixture",
+        "target": "user_profile",
+        "text": "checkout-api dashboard tiles should keep the existing dark theme color palette."
+      },
+      {
+        "flags": [],
+        "matched_tokens": [
+          "api",
+          "checkout",
+          "commerce",
+          "platform",
+          "shopflow",
+          "the"
+        ],
+        "memory_id": "m008",
+        "project": "commerce-platform",
+        "repo": "shopflow",
+        "score": 4.1875,
+        "service": "checkout-api",
+        "source": "fixture",
+        "target": "project_memory",
+        "text": "shopflow deploys checkout-api through the commerce-platform canary lane on Fridays."
+      },
+      {
+        "flags": [
+          "scope_mismatch"
+        ],
+        "matched_tokens": [
+          "api",
+          "for",
+          "platform",
+          "repo",
+          "retry",
+          "test",
+          "the"
+        ],
+        "memory_id": "m006",
+        "project": "finance-platform",
+        "repo": "ledger",
+        "score": 2.21875,
+        "service": "billing-api",
+        "source": "fixture",
+        "target": "repo_memory",
+        "text": "billing-api in the ledger repo uses make test-billing for retry validation."
+      }
+    ],
+    "note": "deterministic keyword/BM25-lite retriever stub",
+    "query": "Implement checkout-api retry handling for the current sprint.\nRun the relevant repo test before merging.\nIgnore the old resolved checkout-api timeout incident unless it affects the new retry task. commerce-platform shopflow checkout-api Add retry handling and validate checkout-api changes"
+  },
+  "scenario_id": "hard_read_demo_001",
+  "trace_id": "2064290c-5381-472e-922d-55b4ff23acd9",
+  "user_input": "Implement checkout-api retry handling for the current sprint.\nRun the relevant repo test before merging.\nIgnore the old resolved checkout-api timeout incident unless it affects the new retry task.",
+  "write_policy": {
+    "diagnostics": {
+      "source": "scenario fixture write labels"
+    },
+    "skip_unit_ids": [
+      "u3"
+    ],
+    "store_units": [
+      {
+        "target": "task_state",
+        "unit_id": "u1"
+      },
+      {
+        "target": "repo_memory",
+        "unit_id": "u2"
+      }
+    ],
+    "write_policy_backend": "fixture"
+  },
+  "write_preview": {
+    "diagnostics": {
+      "flag_note": "flags are audit aids, not safety guarantees",
+      "store_is_preview_only": true
+    },
+    "skip_previews": [
+      {
+        "action": "skip",
+        "flags": [
+          "stale_or_hypothetical"
+        ],
+        "text": "Ignore the old resolved checkout-api timeout incident unless it affects the new retry task.",
+        "unit_id": "u3"
+      }
+    ],
+    "store_previews": [
+      {
+        "action": "preview_store",
+        "flags": [],
+        "review_required": true,
+        "target": "task_state",
+        "text": "Implement checkout-api retry handling for the current sprint.",
+        "unit_id": "u1"
+      },
+      {
+        "action": "preview_store",
+        "flags": [],
+        "review_required": true,
+        "target": "repo_memory",
+        "text": "Run the relevant repo test before merging.",
+        "unit_id": "u2"
+      }
+    ]
+  }
+}
