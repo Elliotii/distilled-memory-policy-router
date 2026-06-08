@@ -174,22 +174,26 @@ def write_report(
     total_latency: float,
     retry_empty: int,
     max_tokens: int,
+    temperature: float,
 ) -> None:
     lines = [
         "# Hard READ Downstream API Run Report",
         "",
-        "Context: 7.4-B-S hard READ downstream DeepSeek micro-pilot token-budget repair.",
+        "Context: hard READ downstream API micro-pilot.",
         "",
         f"- Model: `{model}`",
         f"- Base URL: `{base_url}`",
-        f"- Prompt count: {prompt_count}",
+        f"- Prompts attempted: {prompt_count}",
         f"- API OK count: {ok_count}",
         f"- Usable nonempty response count: {usable_count}",
         f"- Empty OK response count: {empty_ok_count}",
         f"- Error count: {error_count}",
         f"- Max tokens: {max_tokens}",
+        f"- Temperature: {temperature:g}",
         f"- Retry-empty setting: {retry_empty}",
         f"- Total latency seconds: {total_latency:.3f}",
+        f"- Payload metadata sent: false",
+        f"- API keys logged: false",
         "",
         "## Payload Boundary",
         "",
@@ -197,7 +201,7 @@ def write_report(
         "",
         "## Claim Boundaries",
         "",
-        "This is a 24-response micro-pilot. It does not evaluate learned router/live LoRA behavior, does not prove downstream utility, and does not establish that any selector or router outperforms alternatives. Manual review is still required for answer quality.",
+        "This is a response-collection and citation-diagnostic micro-pilot. It does not evaluate learned router/live LoRA behavior, does not establish downstream answer quality, and does not establish that any selector or router outperforms alternatives. Manual review is still required for answer quality.",
     ]
     Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -330,6 +334,7 @@ def run(args: argparse.Namespace) -> JsonDict:
         total_latency=total_latency,
         retry_empty=args.retry_empty,
         max_tokens=args.max_tokens,
+        temperature=args.temperature,
     )
     return {
         "prompt_count": len(prompts),
