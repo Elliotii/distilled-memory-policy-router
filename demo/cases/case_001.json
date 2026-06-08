@@ -1,0 +1,63 @@
+{
+  "case_id": "v05e_gold_active_0002",
+  "title": "Exact READ and STORE/SKIP match",
+  "source": {
+    "gold_file": "data/v05e/gold_v2/v05e_gold_v2_009_active_cases.jsonl",
+    "prediction_file": "data/v05g/model_predictions/bf16_r16_1000_4090_gold_v2_009_predictions.jsonl",
+    "model": "bf16_r16_1000_4090",
+    "split": "gold_v2_009"
+  },
+  "candidate_memories": [
+    {
+      "memory_id": "m1",
+      "target": "service_memory",
+      "text": "Service circuit-breaker behavior for the current orchestrator."
+    },
+    {
+      "memory_id": "m2",
+      "target": "repo_memory",
+      "text": "Repository process requirement for changes to the current service."
+    },
+    {
+      "memory_id": "m3",
+      "target": "project_memory",
+      "text": "Project-level architecture review requirement for related changes."
+    }
+  ],
+  "current_units": [
+    {
+      "unit_id": "u1",
+      "text": "Resolved old incident; no longer active."
+    },
+    {
+      "unit_id": "u2",
+      "text": "Durable service reliability fact for the current service."
+    },
+    {
+      "unit_id": "u3",
+      "text": "Current sprint task to add circuit breaking for downstream calls."
+    }
+  ],
+  "gold_policy": {
+    "read": ["m1", "m2", "m3"],
+    "store": [
+      {"unit_id": "u2", "target": "service_memory"},
+      {"unit_id": "u3", "target": "task_state"}
+    ],
+    "skip": ["u1"]
+  },
+  "predicted_policy": {
+    "read": ["m1", "m2", "m3"],
+    "store": [
+      {"unit_id": "u2", "target": "service_memory"},
+      {"unit_id": "u3", "target": "task_state"}
+    ],
+    "skip": ["u1"]
+  },
+  "notes": {
+    "exact_match": true,
+    "illustrates": "The saved router prediction exactly matches READ, STORE/SKIP, and STORE target labels.",
+    "limitations": "Replay demo only; no live inference."
+  }
+}
+

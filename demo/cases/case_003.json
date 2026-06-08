@@ -1,0 +1,58 @@
+{
+  "case_id": "v05e_gold_active_0030",
+  "title": "STORE target routing across service and project memory",
+  "source": {
+    "gold_file": "data/v05e/gold_v2/v05e_gold_v2_009_active_cases.jsonl",
+    "prediction_file": "data/v05g/model_predictions/bf16_r16_1000_4090_gold_v2_009_predictions.jsonl",
+    "model": "bf16_r16_1000_4090",
+    "split": "gold_v2_009"
+  },
+  "candidate_memories": [
+    {
+      "memory_id": "m1",
+      "target": "service_memory",
+      "text": "Service circuit-breaker behavior for the current engine."
+    },
+    {
+      "memory_id": "m2",
+      "target": "repo_memory",
+      "text": "Repository configuration location for the current service."
+    }
+  ],
+  "current_units": [
+    {
+      "unit_id": "u1",
+      "text": "Resolved old incident; no longer active."
+    },
+    {
+      "unit_id": "u2",
+      "text": "Durable service API behavior for the current service."
+    },
+    {
+      "unit_id": "u3",
+      "text": "Project-level metrics reporting requirement across services."
+    }
+  ],
+  "gold_policy": {
+    "read": ["m1", "m2"],
+    "store": [
+      {"unit_id": "u2", "target": "service_memory"},
+      {"unit_id": "u3", "target": "project_memory"}
+    ],
+    "skip": ["u1"]
+  },
+  "predicted_policy": {
+    "read": ["m1", "m2"],
+    "store": [
+      {"unit_id": "u2", "target": "service_memory"},
+      {"unit_id": "u3", "target": "project_memory"}
+    ],
+    "skip": ["u1"]
+  },
+  "notes": {
+    "exact_match": true,
+    "illustrates": "The router assigns different STORE targets correctly: service behavior to service_memory and cross-service reporting policy to project_memory.",
+    "limitations": "Replay demo only; no live inference."
+  }
+}
+

@@ -143,6 +143,17 @@ Expected gold hash:
 f5cf7be1d06f085e62b87cf0b9c8021119b54ed94968bb5519b3150995eb4f72
 ```
 
+## Demo
+
+A no-inference replay demo is available under `demo/`. It uses small fixtures extracted from locked gold and saved prediction artifacts; it does not load a model, run retrieval, call APIs, or prove downstream task success.
+
+```bash
+python3 demo/run_demo.py --list
+python3 demo/run_demo.py --case demo/cases/case_001.json
+```
+
+See [demo/README.md](demo/README.md) for the fixture list and commands.
+
 ## Reproducibility
 
 - Locked evaluation file: `data/v05e/gold_v2/v05e_gold_v2_009_active_cases.jsonl`.

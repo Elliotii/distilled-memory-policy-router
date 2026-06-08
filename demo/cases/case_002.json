@@ -1,0 +1,68 @@
+{
+  "case_id": "v05e_gold_active_0006",
+  "title": "READ bottleneck with correct STORE/SKIP",
+  "source": {
+    "gold_file": "data/v05e/gold_v2/v05e_gold_v2_009_active_cases.jsonl",
+    "prediction_file": "data/v05g/model_predictions/bf16_r16_1000_4090_gold_v2_009_predictions.jsonl",
+    "model": "bf16_r16_1000_4090",
+    "split": "gold_v2_009"
+  },
+  "candidate_memories": [
+    {
+      "memory_id": "m1",
+      "target": "user_profile",
+      "text": "Stable user preference about dashboard display style."
+    },
+    {
+      "memory_id": "m2",
+      "target": "repo_memory",
+      "text": "Repository benchmark/test command for the current service."
+    },
+    {
+      "memory_id": "m3",
+      "target": "project_memory",
+      "text": "Project-level metrics reporting requirement."
+    },
+    {
+      "memory_id": "m4",
+      "target": "service_memory",
+      "text": "Service circuit-breaker behavior for a dependency."
+    }
+  ],
+  "current_units": [
+    {
+      "unit_id": "u1",
+      "text": "Hypothetical failure mode, explicitly not current."
+    },
+    {
+      "unit_id": "u2",
+      "text": "Current sprint task to add graceful degradation."
+    },
+    {
+      "unit_id": "u3",
+      "text": "Stable user preference for alert criticality."
+    }
+  ],
+  "gold_policy": {
+    "read": ["m2", "m3", "m4"],
+    "store": [
+      {"unit_id": "u2", "target": "task_state"},
+      {"unit_id": "u3", "target": "user_profile"}
+    ],
+    "skip": ["u1"]
+  },
+  "predicted_policy": {
+    "read": ["m2", "m4"],
+    "store": [
+      {"unit_id": "u2", "target": "task_state"},
+      {"unit_id": "u3", "target": "user_profile"}
+    ],
+    "skip": ["u1"]
+  },
+  "notes": {
+    "exact_match": false,
+    "illustrates": "The router gets STORE/SKIP and targets right but misses one project-level READ memory, matching the documented READ bottleneck pattern.",
+    "limitations": "Replay demo only; no live inference."
+  }
+}
+

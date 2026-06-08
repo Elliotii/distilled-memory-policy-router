@@ -1,0 +1,20 @@
+{
+  "cases": [
+    {
+      "path": "demo/cases/case_001.json",
+      "case_id": "v05e_gold_active_0002",
+      "title": "Exact READ and STORE/SKIP match"
+    },
+    {
+      "path": "demo/cases/case_002.json",
+      "case_id": "v05e_gold_active_0006",
+      "title": "READ bottleneck with correct STORE/SKIP"
+    },
+    {
+      "path": "demo/cases/case_003.json",
+      "case_id": "v05e_gold_active_0030",
+      "title": "STORE target routing across service and project memory"
+    }
+  ]
+}
+
