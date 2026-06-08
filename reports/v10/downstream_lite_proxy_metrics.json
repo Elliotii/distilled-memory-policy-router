@@ -14,7 +14,9 @@
   "parsed_cases": 150,
   "prediction_rows": 150,
   "predictions_path": "data/v05g/model_predictions/bf16_r16_1000_4090_gold_v2_009_predictions.jsonl",
+  "random_baseline_seed": "dmpr-v10-random-k-seed-2026-06-08",
   "router_avg_selected_memory_count_for_top_k": 2.78,
+  "shuffled_top_k_seed": "dmpr-v10-shuffled-top-k-seed-2026-06-08",
   "skipped_case_count": 0,
   "skipped_case_details": [],
   "strategies": {
@@ -57,6 +59,19 @@
       "selected_memory_reduction_vs_all": 0.1949317738791423,
       "skipped_cases": 0
     },
+    "random_k": {
+      "avg_irrelevant_memory_count": 0.41333333333333333,
+      "avg_selected_memory_chars": 308.36,
+      "avg_selected_memory_count": 2.7533333333333334,
+      "cases": 150,
+      "exact_read_set_match": 0.64,
+      "exact_read_set_match_count": 96,
+      "gold_read_recall": 0.8498789346246973,
+      "irrelevant_memory_count": 62,
+      "irrelevant_memory_reduction_vs_all": 0.38,
+      "selected_memory_reduction_vs_all": 0.1949317738791423,
+      "skipped_cases": 0
+    },
     "router_selected": {
       "avg_irrelevant_memory_count": 0.43333333333333335,
       "avg_selected_memory_chars": 316.85333333333335,
@@ -68,6 +83,19 @@
       "irrelevant_memory_count": 65,
       "irrelevant_memory_reduction_vs_all": 0.35,
       "selected_memory_reduction_vs_all": 0.1871345029239766,
+      "skipped_cases": 0
+    },
+    "shuffled_top_k": {
+      "avg_irrelevant_memory_count": 0.44,
+      "avg_selected_memory_chars": 308.7,
+      "avg_selected_memory_count": 2.7533333333333334,
+      "cases": 150,
+      "exact_read_set_match": 0.6133333333333333,
+      "exact_read_set_match_count": 92,
+      "gold_read_recall": 0.8401937046004843,
+      "irrelevant_memory_count": 66,
+      "irrelevant_memory_reduction_vs_all": 0.33999999999999997,
+      "selected_memory_reduction_vs_all": 0.1949317738791423,
       "skipped_cases": 0
     },
     "top_k_naive": {

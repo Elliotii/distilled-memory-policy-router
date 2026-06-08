@@ -28,6 +28,8 @@ The derived files are review-required fixtures. They are not new locked gold and
 | `router_selected` | READ IDs parsed from saved BF16 r16 1000_4090 router predictions. |
 | `oracle_selected` | Gold READ IDs from the locked case. |
 | `top_k_naive` | First three candidate memories by original order. |
+| `random_k` | Three candidate memories from a fixed per-case deterministic shuffle. |
+| `shuffled_top_k` | First three candidate memories after a second fixed per-case deterministic shuffle. |
 
 ## Prompt-Pack Schema
 
@@ -37,13 +39,15 @@ Each prompt object has:
 {
   "prompt_id": "case_id__strategy",
   "case_id": "source case id",
-  "strategy": "no_memory|all_candidates|router_selected|oracle_selected|top_k_naive",
+  "strategy": "no_memory|all_candidates|router_selected|oracle_selected|top_k_naive|random_k|shuffled_top_k",
   "source": {},
   "injected_memory_ids": [],
   "current_units": [],
   "prompt_text": "downstream answer prompt",
   "expected_required_memory_ids": [],
+  "expected_injected_required_memory_ids": [],
   "expected_avoid_memory_ids": [],
+  "contradiction_risk": {},
   "rubric": {},
   "limitations": "execution and claim-boundary note"
 }
@@ -51,22 +55,43 @@ Each prompt object has:
 
 The prompt asks the downstream LLM to write a short assistant response or task update using only the available memory context. It does not ask the LLM to solve the router classification task and does not expose gold labels.
 
+Every prompt requires memory-id citation when memory facts are used:
+
+```text
+When you use a memory fact, cite its memory id in brackets, e.g. [m2].
+Do not cite memory ids for facts not present in the provided memory context.
+```
+
+The output is constrained to 80 words or fewer and no more than four sentences, with one concise next action and a memory-backed rationale using citations where applicable.
+
 ## Judge Rubric
 
-Later manual or LLM-judge scoring should use four 0/1/2 fields:
+Later manual or LLM-judge scoring should use these fields:
 
 | Field | Direction | Meaning |
 | --- | --- | --- |
 | `required_memory_fact_coverage` | Higher is better | Whether required memory facts are used correctly. |
+| `conditional_injected_required_coverage` | Higher is better | Optional diagnostic over required memory facts that were actually injected. |
 | `irrelevant_memory_contamination` | Lower is better | Whether irrelevant injected memories contaminate the response. |
 | `hallucinated_memory_usage` | Lower is better | Whether the response invents unsupported memory facts. |
+| `citation_accuracy` | Lower is better | Whether citations match memory facts present in the provided context. |
 | `task_response_quality` | Higher is better | Whether the response is concise, grounded, and useful. |
+
+The headline `required_memory_fact_coverage` score is end-to-end against the gold-required memory IDs, regardless of what the strategy injected. If `router_selected` or another strategy fails to inject a required memory, downstream coverage should lose credit. `conditional_injected_required_coverage` is an optional decomposition to separate "the policy did not inject the fact" from "the LLM ignored an injected fact."
 
 Suggested score:
 
 ```text
-required_memory_fact_coverage + task_response_quality - irrelevant_memory_contamination - hallucinated_memory_usage
+required_memory_fact_coverage + task_response_quality - irrelevant_memory_contamination - hallucinated_memory_usage - citation_accuracy
 ```
+
+## Contradiction Handling
+
+The builder adds a `contradiction_risk` field to each case and prompt. For this v1.0 execution pack, cases with a simple numeric contradiction pattern between candidate memories and current units are excluded from the main pack rather than silently mixed into normal prompts. They can be revisited later as explicitly labeled stress tests.
+
+## Audit Trace
+
+The builder also prepares `data/v10/llm_downstream_lite/llm_downstream_lite_audit_trace_template.jsonl`. Future execution should fill response-dependent fields such as `cited_memory_ids`, missing required citations, irrelevant citations, hallucinated citations, and judge scores.
 
 ## Future Execution
 
@@ -75,7 +100,8 @@ required_memory_fact_coverage + task_response_quality - irrelevant_memory_contam
 3. Run each prompt under fixed model settings in a later context.
 4. Save raw responses in a separate response JSONL file.
 5. Score responses with `reports/v10/llm_downstream_lite_judge_template.md`.
-6. Report results by strategy with uncertainty and examples.
+6. Fill or derive the audit trace fields after response collection.
+7. Report results by strategy with uncertainty and examples.
 
 ## Limitations
 

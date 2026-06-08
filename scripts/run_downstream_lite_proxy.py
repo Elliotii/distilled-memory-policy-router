@@ -8,6 +8,7 @@ not load a model, call an API, train, retrieve, or modify input artifacts.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 from dataclasses import dataclass
@@ -21,7 +22,12 @@ STRATEGY_ORDER = [
     "oracle_selected",
     "no_memory",
     "top_k_naive",
+    "random_k",
+    "shuffled_top_k",
 ]
+
+RANDOM_BASELINE_SEED = "dmpr-v10-random-k-seed-2026-06-08"
+SHUFFLED_TOP_K_SEED = "dmpr-v10-shuffled-top-k-seed-2026-06-08"
 
 
 @dataclass(frozen=True)
@@ -220,7 +226,18 @@ def selected_ids_for_strategy(record: CaseRecord, strategy: str, top_k: int) -> 
         return set()
     if strategy == "top_k_naive":
         return set(record.candidate_ids[:top_k])
+    if strategy == "random_k":
+        return set(stable_shuffled_ids(record.candidate_ids, record.case_id, RANDOM_BASELINE_SEED)[:top_k])
+    if strategy == "shuffled_top_k":
+        return set(stable_shuffled_ids(record.candidate_ids, record.case_id, SHUFFLED_TOP_K_SEED)[:top_k])
     raise ValueError(f"unknown strategy: {strategy}")
+
+
+def stable_shuffled_ids(candidate_ids: list[str], case_id: str, seed: str) -> list[str]:
+    return sorted(
+        candidate_ids,
+        key=lambda memory_id: hashlib.sha256(f"{seed}:{case_id}:{memory_id}".encode("utf-8")).hexdigest(),
+    )
 
 
 def compute_strategy_metrics(
@@ -302,7 +319,9 @@ def build_markdown_report(metrics: dict[str, Any], command: str) -> str:
         "",
         "## Strategy Comparison",
         "",
-        f"`top_k_naive` uses k={top_k}, the rounded average number of router-selected memories per parsed case.",
+        f"`top_k_naive`, `random_k`, and `shuffled_top_k` use k={top_k}, the rounded average number of router-selected memories per parsed case.",
+        "",
+        "`top_k_naive` keeps the source candidate order and is ordering-sensitive. Opus review noted that relevant memories often appear early, so this baseline can be unexpectedly strong. `random_k` and `shuffled_top_k` use fixed per-case deterministic shuffles to expose that ordering confound.",
         "",
         "| Strategy | Cases | Avg selected memories | Avg selected chars | Selected reduction vs all | Gold READ recall | Irrelevant memories | Avg irrelevant | Irrelevant reduction vs all | Exact READ set match | Skipped cases |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
@@ -330,6 +349,9 @@ def build_markdown_report(metrics: dict[str, Any], command: str) -> str:
     all_candidates = strategies["all_candidates"]
     oracle = strategies["oracle_selected"]
     no_memory = strategies["no_memory"]
+    top_k_naive = strategies["top_k_naive"]
+    random_k = strategies["random_k"]
+    shuffled_top_k = strategies["shuffled_top_k"]
     lines.extend(
         [
             "",
@@ -340,6 +362,8 @@ def build_markdown_report(metrics: dict[str, Any], command: str) -> str:
             f"- `router_selected` retained {fmt_percent(router['gold_read_recall'])} gold READ recall, while `oracle_selected` is {fmt_percent(oracle['gold_read_recall'])} by construction and `no_memory` is {fmt_percent(no_memory['gold_read_recall'])}.",
             f"- `router_selected` selected {router['irrelevant_memory_count']} irrelevant memories across parsed cases, a {fmt_percent(router['irrelevant_memory_reduction_vs_all'])} reduction versus `all_candidates`.",
             f"- `router_selected` exact READ set match is {fmt_percent(router['exact_read_set_match'])}; this should be interpreted as saved prediction replay over locked `gold_v2_009`, not as live inference.",
+            f"- `top_k_naive` reaches {fmt_percent(top_k_naive['gold_read_recall'])} gold READ recall and {fmt_percent(top_k_naive['exact_read_set_match'])} exact READ set match, which shows the original-order proxy is confounded by candidate ordering.",
+            f"- Against fixed shuffled baselines, `router_selected` has {fmt_percent(router['gold_read_recall'])} recall versus {fmt_percent(random_k['gold_read_recall'])} for `random_k` and {fmt_percent(shuffled_top_k['gold_read_recall'])} for `shuffled_top_k`; this proxy does not clearly distinguish router quality from simple top-k selection in all settings.",
             "",
             "## Limitations",
             "",
@@ -350,10 +374,11 @@ def build_markdown_report(metrics: dict[str, Any], command: str) -> str:
             "- Character count is only an approximate context-size proxy, not a token-cost measurement.",
             "- The benchmark is controlled and uses fixed candidate memories from locked artifacts.",
             "- The proxy uses saved prediction raw outputs, not live model responses.",
+            "- Candidate ordering is a known confound. `top_k_naive` is retained for transparency but should not be treated as a robust naive baseline.",
             "",
             "## Claim Boundaries",
             "",
-            "This report can support only a narrow context-efficiency proxy claim: under locked `gold_v2_009` artifacts, saved router predictions select fewer candidate memories than injecting all candidates while preserving most labeled READ memories. It does not prove downstream answer quality, real deployment savings, production safety, retriever behavior, or full-agent behavior.",
+            "This report can support only a narrow context-efficiency proxy claim: under locked `gold_v2_009` artifacts, saved router predictions select fewer candidate memories than injecting all candidates while preserving many labeled READ memories. It does not clearly distinguish the router from ordering-sensitive naive top-k in the original candidate order, and it does not prove downstream answer quality, real deployment savings, production safety, retriever behavior, or full-agent behavior.",
         ]
     )
 
@@ -414,6 +439,8 @@ def main() -> int:
         "skipped_case_count": skipped_case_count,
         "skipped_case_details": skipped_cases,
         "top_k_naive_k": top_k,
+        "random_baseline_seed": RANDOM_BASELINE_SEED,
+        "shuffled_top_k_seed": SHUFFLED_TOP_K_SEED,
         "router_avg_selected_memory_count_for_top_k": avg_router_selected,
         "metric_notes": {
             "gold_relevant_memory": "memory id in the gold READ set",

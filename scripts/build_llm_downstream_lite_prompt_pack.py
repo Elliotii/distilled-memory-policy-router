@@ -8,6 +8,7 @@ not load models, call APIs, train, retrieve, or modify source artifacts.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from collections import Counter
@@ -21,11 +22,15 @@ STRATEGIES = [
     "router_selected",
     "oracle_selected",
     "top_k_naive",
+    "random_k",
+    "shuffled_top_k",
 ]
 
 TOP_K_NAIVE_K = 3
-MAX_CASES = 10
-MAX_TEXT_CHARS = 900
+MAX_CASES = 24
+MAX_TEXT_CHARS = 1000
+RANDOM_BASELINE_SEED = "dmpr-v10-random-k-seed-2026-06-08"
+SHUFFLED_TOP_K_SEED = "dmpr-v10-shuffled-top-k-seed-2026-06-08"
 
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -100,6 +105,13 @@ def memory_id(memory: dict[str, Any]) -> str:
     return value
 
 
+def stable_shuffled_ids(candidate_ids: list[str], case_id: str, seed: str) -> list[str]:
+    return sorted(
+        candidate_ids,
+        key=lambda item: hashlib.sha256(f"{seed}:{case_id}:{item}".encode("utf-8")).hexdigest(),
+    )
+
+
 def selected_ids(case: dict[str, Any], router_read: list[str], strategy: str) -> list[str]:
     candidate_ids = [memory_id(memory) for memory in case["candidate_memories"]]
     gold_read = stable_strings(case["gold"].get("read"))
@@ -113,6 +125,10 @@ def selected_ids(case: dict[str, Any], router_read: list[str], strategy: str) ->
         return [memory_id for memory_id in gold_read if memory_id in set(candidate_ids)]
     if strategy == "top_k_naive":
         return candidate_ids[:TOP_K_NAIVE_K]
+    if strategy == "random_k":
+        return stable_shuffled_ids(candidate_ids, case["case_id"], RANDOM_BASELINE_SEED)[:TOP_K_NAIVE_K]
+    if strategy == "shuffled_top_k":
+        return stable_shuffled_ids(candidate_ids, case["case_id"], SHUFFLED_TOP_K_SEED)[:TOP_K_NAIVE_K]
     raise ValueError(f"unknown strategy: {strategy}")
 
 
@@ -120,6 +136,37 @@ def case_size(case: dict[str, Any]) -> int:
     memory_chars = sum(len(str(memory.get("text", ""))) for memory in case.get("candidate_memories", []))
     unit_chars = sum(len(str(unit.get("text", ""))) for unit in case.get("current_units", []))
     return memory_chars + unit_chars
+
+
+def numeric_tokens(text: str) -> set[str]:
+    pattern = r"\b\d+(?:\.\d+)?\s*(?:%|ms|s|seconds?|minutes?|minute|consecutive|items?|rules?|days?|weeks?|months?|quarterly)?\b"
+    return {match.strip().lower() for match in re.findall(pattern, text, flags=re.IGNORECASE)}
+
+
+def numeric_units(values: set[str]) -> set[str]:
+    result: set[str] = set()
+    for value in values:
+        unit = re.sub(r"^\d+(?:\.\d+)?\s*", "", value).strip()
+        if unit:
+            result.add(unit)
+    return result
+
+
+def contradiction_risk(case: dict[str, Any]) -> dict[str, Any]:
+    memory_text = " ".join(str(memory.get("text", "")) for memory in case.get("candidate_memories", []))
+    unit_text = " ".join(str(unit.get("text", "")) for unit in case.get("current_units", []))
+    memory_numbers = numeric_tokens(memory_text)
+    current_numbers = numeric_tokens(unit_text)
+    shared_units = sorted(numeric_units(memory_numbers).intersection(numeric_units(current_numbers)))
+    conflicting_values = sorted((memory_numbers - current_numbers).union(current_numbers - memory_numbers))
+    has_risk = bool(memory_numbers and current_numbers and shared_units and conflicting_values)
+    return {
+        "level": "exclude_numeric_conflict" if has_risk else "none",
+        "reason": "Memory and current units contain different numeric facts with shared units; exclude from main execution pack unless reviewed as a stress test." if has_risk else "No simple numeric contradiction pattern detected.",
+        "memory_numeric_tokens": sorted(memory_numbers),
+        "current_numeric_tokens": sorted(current_numbers),
+        "shared_numeric_units": shared_units,
+    }
 
 
 def classify_case(case: dict[str, Any], prediction: dict[str, Any]) -> tuple[str, str] | None:
@@ -167,6 +214,10 @@ def select_cases(
         if case_size(case) > MAX_TEXT_CHARS:
             skipped.append({"case_id": case_id, "reason": "excluded long case"})
             continue
+        risk = contradiction_risk(case)
+        if risk["level"] != "none":
+            skipped.append({"case_id": case_id, "reason": f"excluded contradiction risk: {risk['reason']}"})
+            continue
         prediction = predictions_by_case.get(case_id)
         if prediction is None:
             skipped.append({"case_id": case_id, "reason": "missing saved prediction"})
@@ -180,9 +231,9 @@ def select_cases(
 
     selected: list[dict[str, Any]] = []
     quotas = {
-        "full_exact_or_read_exact": 4,
-        "read_mismatch_write_correct": 4,
-        "irrelevant_memory_reduction": 2,
+        "full_exact_or_read_exact": 8,
+        "read_mismatch_write_correct": 10,
+        "irrelevant_memory_reduction": 6,
     }
     used: set[str] = set()
     for category, quota in quotas.items():
@@ -254,6 +305,7 @@ def build_case_fixture(item: dict[str, Any], gold_path: Path, predictions_path: 
         "gold_skip_ids": stable_strings(case["gold"].get("skip")),
         "predicted_skip_ids": stable_strings(prediction.get("skip")),
         "selected_ids_by_strategy": strategy_ids,
+        "contradiction_risk": contradiction_risk(case),
         "limitations": "Derived fixture for later prompt execution; not new gold and not an answer-quality result.",
     }
 
@@ -265,6 +317,10 @@ def prompt_text(case_fixture: dict[str, Any], strategy: str, injected_ids: list[
         "You are assisting with a coding/business-agent task.",
         "Given the current task notes and the provided memory context, write a concise next-step response for the assistant.",
         "Use relevant memory facts if they are helpful. Do not invent memory facts.",
+        "When you use a memory fact, cite its memory id in brackets, e.g. [m2].",
+        "Do not cite memory ids for facts not present in the provided memory context.",
+        "Keep the response to 80 words or fewer and no more than 4 sentences.",
+        "Use this output shape: 1. one concise next action; 2. memory-backed rationale using cited memory ids where applicable.",
         "",
         "Current task context:",
         json.dumps(case_fixture.get("runtime_context", {}), sort_keys=True),
@@ -293,7 +349,11 @@ def rubric() -> dict[str, Any]:
     return {
         "required_memory_fact_coverage": {
             "scale": "0/1/2",
-            "meaning": "0 misses required memory facts; 1 partially uses them; 2 uses the important required facts correctly.",
+            "meaning": "End-to-end coverage against gold-required memory ids, regardless of whether the strategy injected them. 0 misses required memory facts; 1 partially uses them; 2 uses the important required facts correctly.",
+        },
+        "conditional_injected_required_coverage": {
+            "scale": "0/1/2/null",
+            "meaning": "Optional decomposition over required memory ids that were actually injected. Use null when no required memory was injected. This separates router-dropped facts from LLM-ignored injected facts.",
         },
         "irrelevant_memory_contamination": {
             "scale": "0/1/2",
@@ -305,11 +365,16 @@ def rubric() -> dict[str, Any]:
             "meaning": "0 no invented memory facts; 1 minor unsupported inference; 2 clear invented memory facts.",
             "lower_is_better": True,
         },
+        "citation_accuracy": {
+            "scale": "0/1/2",
+            "meaning": "0 citations match provided memory facts; 1 minor citation error; 2 cites ids that are absent or unsupported.",
+            "lower_is_better": True,
+        },
         "task_response_quality": {
             "scale": "0/1/2",
             "meaning": "0 not useful; 1 partially useful; 2 concise, grounded, and actionable.",
         },
-        "total_score_formula": "required_memory_fact_coverage + task_response_quality - irrelevant_memory_contamination - hallucinated_memory_usage",
+        "total_score_formula": "required_memory_fact_coverage + task_response_quality - irrelevant_memory_contamination - hallucinated_memory_usage - citation_accuracy",
     }
 
 
@@ -330,12 +395,33 @@ def build_prompts(cases: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "current_units": case_fixture["current_units"],
                     "prompt_text": prompt_text(case_fixture, strategy, injected_ids),
                     "expected_required_memory_ids": expected_required,
+                    "expected_injected_required_memory_ids": [item for item in injected_ids if item in set(expected_required)],
                     "expected_avoid_memory_ids": expected_avoid,
+                    "contradiction_risk": case_fixture["contradiction_risk"],
                     "rubric": rubric(),
                     "limitations": "Execution fixture only; later answers must be collected and judged before making downstream claims.",
                 }
             )
     return prompts
+
+
+def build_audit_trace(prompts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [
+        {
+            "prompt_id": prompt["prompt_id"],
+            "case_id": prompt["case_id"],
+            "strategy": prompt["strategy"],
+            "injected_memory_ids": prompt["injected_memory_ids"],
+            "expected_required_memory_ids": prompt["expected_required_memory_ids"],
+            "expected_avoid_memory_ids": prompt["expected_avoid_memory_ids"],
+            "cited_memory_ids": [],
+            "missing_required_citations": [],
+            "irrelevant_citations": [],
+            "hallucinated_citations": [],
+            "judge_scores": None,
+        }
+        for prompt in prompts
+    ]
 
 
 def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -377,10 +463,12 @@ def build_report(cases: list[dict[str, Any]], prompts: list[dict[str, Any]], ski
             f"- Prompt objects generated: {len(prompts)}",
             f"- Case category distribution: {dict(sorted(category_counts.items()))}",
             f"- Strategy distribution: {dict(sorted(strategy_counts.items()))}",
+            "- Each prompt requires memory-id citations for used memory facts.",
+            "- Cases with simple numeric contradiction risk are excluded from the main execution pack rather than silently mixed in.",
             "",
             "## Skipped Cases",
             "",
-            "The builder skips cases with sensitive-boundary tags, long raw text, missing predictions, or categories not needed for this small balanced pack.",
+            "The builder skips cases with sensitive-boundary tags, long raw text, simple numeric contradiction risk, missing predictions, or categories not needed for this balanced pack.",
             f"Skipped count: {len(skipped)}",
             "",
             "| Case ID | Reason |",
@@ -399,6 +487,8 @@ def build_report(cases: list[dict[str, Any]], prompts: list[dict[str, Any]], ski
             "- The fixtures are derived benchmark inputs, not new locked gold.",
             "- The pack compares memory injection strategies with fixed candidate memories; it does not evaluate retrieval.",
             "- It uses saved router predictions, not live router inference.",
+            "- The pack includes citation instructions to support partial automatic checks, but final scoring still requires response review.",
+            "- End-to-end required-memory coverage should penalize strategies that failed to inject required memory; conditional injected-required coverage is only a diagnostic decomposition.",
             "- The prompt pack has not been executed or judged.",
             "- Any later answer-quality claim needs collected responses, manual or LLM-judge scoring, and clear uncertainty notes.",
             "",
@@ -418,6 +508,7 @@ def main() -> int:
     parser.add_argument("--out-cases", type=Path, required=True)
     parser.add_argument("--out-prompts", type=Path, required=True)
     parser.add_argument("--out-report", type=Path, required=True)
+    parser.add_argument("--out-audit-trace", type=Path)
     args = parser.parse_args()
 
     gold_rows = load_jsonl(args.gold)
@@ -438,8 +529,11 @@ def main() -> int:
 
     case_fixtures = [build_case_fixture(item, args.gold, args.predictions) for item in selected]
     prompts = build_prompts(case_fixtures)
+    audit_trace = build_audit_trace(prompts)
     write_jsonl(args.out_cases, case_fixtures)
     write_jsonl(args.out_prompts, prompts)
+    audit_trace_path = args.out_audit_trace or args.out_prompts.with_name("llm_downstream_lite_audit_trace_template.jsonl")
+    write_jsonl(audit_trace_path, audit_trace)
     command = (
         "python3 scripts/build_llm_downstream_lite_prompt_pack.py "
         f"--gold {args.gold} --predictions {args.predictions} "

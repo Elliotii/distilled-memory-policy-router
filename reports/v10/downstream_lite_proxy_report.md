@@ -14,7 +14,9 @@ python3 scripts/run_downstream_lite_proxy.py \
 
 ## Strategy Comparison
 
-`top_k_naive` uses k=3, the rounded average number of router-selected memories per parsed case.
+`top_k_naive`, `random_k`, and `shuffled_top_k` use k=3, the rounded average number of router-selected memories per parsed case.
+
+`top_k_naive` keeps the source candidate order and is ordering-sensitive. Opus review noted that relevant memories often appear early, so this baseline can be unexpectedly strong. `random_k` and `shuffled_top_k` use fixed per-case deterministic shuffles to expose that ordering confound.
 
 | Strategy | Cases | Avg selected memories | Avg selected chars | Selected reduction vs all | Gold READ recall | Irrelevant memories | Avg irrelevant | Irrelevant reduction vs all | Exact READ set match | Skipped cases |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -23,6 +25,8 @@ python3 scripts/run_downstream_lite_proxy.py \
 | oracle_selected | 150 | 2.75 | 315.5 | 19.5% | 100.0% | 0 | 0.00 | 100.0% | 100.0% | 0 |
 | no_memory | 150 | 0.00 | 0.0 | 100.0% | 0.0% | 0 | 0.00 | 100.0% | 0.0% | 0 |
 | top_k_naive | 150 | 2.75 | 308.2 | 19.5% | 83.8% | 67 | 0.45 | 33.0% | 62.7% | 0 |
+| random_k | 150 | 2.75 | 308.4 | 19.5% | 85.0% | 62 | 0.41 | 38.0% | 64.0% | 0 |
+| shuffled_top_k | 150 | 2.75 | 308.7 | 19.5% | 84.0% | 66 | 0.44 | 34.0% | 61.3% | 0 |
 
 ## Main Findings
 
@@ -31,6 +35,8 @@ python3 scripts/run_downstream_lite_proxy.py \
 - `router_selected` retained 85.2% gold READ recall, while `oracle_selected` is 100.0% by construction and `no_memory` is 0.0%.
 - `router_selected` selected 65 irrelevant memories across parsed cases, a 35.0% reduction versus `all_candidates`.
 - `router_selected` exact READ set match is 37.3%; this should be interpreted as saved prediction replay over locked `gold_v2_009`, not as live inference.
+- `top_k_naive` reaches 83.8% gold READ recall and 62.7% exact READ set match, which shows the original-order proxy is confounded by candidate ordering.
+- Against fixed shuffled baselines, `router_selected` has 85.2% recall versus 85.0% for `random_k` and 84.0% for `shuffled_top_k`; this proxy does not clearly distinguish router quality from simple top-k selection in all settings.
 
 ## Limitations
 
@@ -41,10 +47,11 @@ python3 scripts/run_downstream_lite_proxy.py \
 - Character count is only an approximate context-size proxy, not a token-cost measurement.
 - The benchmark is controlled and uses fixed candidate memories from locked artifacts.
 - The proxy uses saved prediction raw outputs, not live model responses.
+- Candidate ordering is a known confound. `top_k_naive` is retained for transparency but should not be treated as a robust naive baseline.
 
 ## Claim Boundaries
 
-This report can support only a narrow context-efficiency proxy claim: under locked `gold_v2_009` artifacts, saved router predictions select fewer candidate memories than injecting all candidates while preserving most labeled READ memories. It does not prove downstream answer quality, real deployment savings, production safety, retriever behavior, or full-agent behavior.
+This report can support only a narrow context-efficiency proxy claim: under locked `gold_v2_009` artifacts, saved router predictions select fewer candidate memories than injecting all candidates while preserving many labeled READ memories. It does not clearly distinguish the router from ordering-sensitive naive top-k in the original candidate order, and it does not prove downstream answer quality, real deployment savings, production safety, retriever behavior, or full-agent behavior.
 
 ## Skipped Cases
 

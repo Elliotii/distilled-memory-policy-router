@@ -22,6 +22,10 @@ The benchmark uses saved `raw_output` predictions only. It does not load Qwen, c
 | `oracle_selected` | Gold READ memory IDs from the locked case. |
 | `no_memory` | No candidate memories. |
 | `top_k_naive` | First k candidate memories by original order, where k is the rounded average number of router-selected memories per parsed case. |
+| `random_k` | k candidate memories chosen by fixed per-case deterministic shuffle. |
+| `shuffled_top_k` | First k candidate memories after a second fixed per-case deterministic shuffle. |
+
+`top_k_naive` is retained for transparency, but it is ordering-sensitive. Opus review noted that relevant memories often appear early in the locked cases, so this baseline can be stronger than expected. Use `random_k` and `shuffled_top_k` to check how much the original-order result depends on candidate ordering.
 
 ## Metrics
 
@@ -47,7 +51,8 @@ The benchmark uses saved `raw_output` predictions only. It does not load Qwen, c
 - The benchmark is controlled and uses fixed candidate memories from locked artifacts.
 - It uses saved predictions, not live inference.
 - It does not evaluate memory writing, updating, merging, deletion, truth verification, or lifecycle management.
+- Candidate ordering is a known confound; current router replay is not clearly distinguishable from naive top-k in the original ordering-sensitive proxy.
 
 ## Claim Boundary
 
-This benchmark can only support a context-efficiency proxy statement over locked artifacts: saved router predictions select fewer candidate memories than injecting all candidates while preserving most labeled READ memories. It does not establish downstream answer quality, deployment savings, production safety, retriever behavior, or full-agent behavior.
+This benchmark can only support a context-efficiency proxy statement over locked artifacts: saved router predictions select fewer candidate memories than injecting all candidates while preserving many labeled READ memories. It does not establish downstream answer quality, deployment savings, production safety, retriever behavior, or full-agent behavior, and it does not by itself prove that the router beats ordering-sensitive naive top-k selection.
