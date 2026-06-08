@@ -30,6 +30,23 @@ def select_all_candidates(scenario: JsonDict, candidates: List[JsonDict], **_: o
     }
 
 
+def select_budgeted_candidate_order(
+    scenario: JsonDict,
+    candidates: List[JsonDict],
+    *,
+    k: int,
+    **_: object,
+) -> JsonDict:
+    return {
+        "selected_memory_ids": [memory["memory_id"] for memory in candidates[: max(k, 0)]],
+        "backend": "budgeted_candidate_order",
+        "diagnostics": {
+            "k": k,
+            "note": "order-sensitive first-k candidate baseline, not a learned selector",
+        },
+    }
+
+
 def select_keyword_top_k(
     scenario: JsonDict,
     candidates: List[JsonDict],
@@ -106,6 +123,7 @@ def select_replay_router_selected(scenario: JsonDict, candidates: List[JsonDict]
 READ_SELECTORS = {
     "no_memory": select_no_memory,
     "all_candidates": select_all_candidates,
+    "budgeted_candidate_order": select_budgeted_candidate_order,
     "keyword_top_k": select_keyword_top_k,
     "random_k": select_random_k,
     "oracle_selected": select_oracle_selected,
@@ -124,4 +142,3 @@ def run_read_selector(
     if name not in READ_SELECTORS:
         raise ValueError(f"unknown read selector: {name}")
     return READ_SELECTORS[name](scenario, candidates, query=query, k=k)
-
