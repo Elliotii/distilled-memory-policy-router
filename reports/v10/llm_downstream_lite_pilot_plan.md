@@ -56,6 +56,19 @@ python3 scripts/score_llm_downstream_lite_responses.py \
 - Treat `no_memory` as a floor reference.
 - Citation metrics are partial automatic checks, not full answer-quality judgments.
 
+## C1-R Citation Repair
+
+The first C1 micro-pilot run showed citation-format issues: some responses used bare memory IDs such as `m4` instead of bracketed citations such as `[m4]`, and some no-memory responses cited current-unit IDs such as `[u2]`. C1-R strengthens future prompt text and scoring before rerun:
+
+- prompts now state that bare memory IDs do not count as citations;
+- prompts forbid current-unit citations such as `[u1]` and `[u2]`;
+- prompts require exactly two bullets: `Next action` and `Memory-backed rationale`;
+- the scorer now reports invalid current-unit citations, bare memory references, and total citation-format violations.
+
+## C1-R2 Current-Unit ID Repair
+
+The C1-R rerun still showed invalid current-unit citations such as `[u2]` and `[u3]`. The root cause was that LLM-facing prompt text rendered current notes with labels like `u1:` and `u2:`. C1-R2 hides current-unit IDs from prompt text while preserving `unit_id` values in JSON sidecar metadata. Memory IDs remain visible in the provided memory context because they are the only valid citation targets.
+
 ## Claim Boundaries
 
 - This pilot does not prove downstream utility.

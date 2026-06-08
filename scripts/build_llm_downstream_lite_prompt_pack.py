@@ -328,7 +328,7 @@ def prompt_text(case_fixture: dict[str, Any], strategy: str, injected_ids: list[
         "Current units:",
     ]
     for unit in case_fixture["current_units"]:
-        lines.append(f"- {unit['unit_id']}: {unit['safe_text']}")
+        lines.append(f"- {unit['safe_text']}")
     lines.append("")
     lines.append("Provided memory context:")
     if injected:

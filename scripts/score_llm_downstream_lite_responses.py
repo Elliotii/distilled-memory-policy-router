@@ -15,7 +15,9 @@ from pathlib import Path
 from typing import Any
 
 
-CITATION_RE = re.compile(r"\[(m\d+)\]", re.IGNORECASE)
+MEMORY_CITATION_RE = re.compile(r"\[(m\d+)\]", re.IGNORECASE)
+CURRENT_UNIT_CITATION_RE = re.compile(r"\[(u\d+)\]", re.IGNORECASE)
+BARE_MEMORY_RE = re.compile(r"(?<![\[\w])(m\d+)(?![\]\w])", re.IGNORECASE)
 
 
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
@@ -51,12 +53,38 @@ def extract_citations(text: Any) -> list[str]:
         return []
     seen: set[str] = set()
     citations: list[str] = []
-    for match in CITATION_RE.findall(text):
+    for match in MEMORY_CITATION_RE.findall(text):
         memory_id = match.lower()
         if memory_id not in seen:
             seen.add(memory_id)
             citations.append(memory_id)
     return citations
+
+
+def extract_current_unit_citations(text: Any) -> list[str]:
+    if not isinstance(text, str):
+        return []
+    seen: set[str] = set()
+    citations: list[str] = []
+    for match in CURRENT_UNIT_CITATION_RE.findall(text):
+        unit_id = match.lower()
+        if unit_id not in seen:
+            seen.add(unit_id)
+            citations.append(unit_id)
+    return citations
+
+
+def extract_bare_memory_references(text: Any) -> list[str]:
+    if not isinstance(text, str):
+        return []
+    seen: set[str] = set()
+    references: list[str] = []
+    for match in BARE_MEMORY_RE.findall(text):
+        memory_id = match.lower()
+        if memory_id not in seen:
+            seen.add(memory_id)
+            references.append(memory_id)
+    return references
 
 
 def safe_recall(count: int, total: int) -> float | None:
@@ -74,6 +102,8 @@ def average(values: list[float]) -> float | None:
 def score_response(prompt: dict[str, Any], response: dict[str, Any] | None) -> dict[str, Any]:
     response_text = response.get("response_text", "") if response else ""
     cited = extract_citations(response_text)
+    invalid_current_units = extract_current_unit_citations(response_text)
+    bare_memory_refs = extract_bare_memory_references(response_text)
     cited_set = set(cited)
     required = set(stable_strings(prompt.get("expected_required_memory_ids")))
     avoid = set(stable_strings(prompt.get("expected_avoid_memory_ids")))
@@ -90,6 +120,8 @@ def score_response(prompt: dict[str, Any], response: dict[str, Any] | None) -> d
         "case_id": prompt["case_id"],
         "strategy": prompt["strategy"],
         "cited_memory_ids": cited,
+        "invalid_current_unit_citations": invalid_current_units,
+        "bare_memory_references": bare_memory_refs,
         "required_cited_count": len(required_cited),
         "required_total_count": len(required),
         "end_to_end_required_citation_recall": safe_recall(len(required_cited), len(required)),
@@ -97,6 +129,9 @@ def score_response(prompt: dict[str, Any], response: dict[str, Any] | None) -> d
         "conditional_required_total_count": len(injected_required),
         "irrelevant_citation_count": len(irrelevant),
         "hallucinated_citation_count": len(hallucinated),
+        "invalid_current_unit_citation_count": len(invalid_current_units),
+        "bare_memory_reference_count": len(bare_memory_refs),
+        "citation_format_violation_count": len(invalid_current_units) + len(bare_memory_refs),
         "irrelevant_citations": sorted(irrelevant),
         "hallucinated_citations": sorted(hallucinated),
         "missing_required_citations": sorted(required - cited_set),
@@ -129,6 +164,9 @@ def aggregate_by_strategy(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any
             "avg_conditional_required_citation_recall": average(conditional_values),
             "avg_irrelevant_citation_count": average([item["irrelevant_citation_count"] for item in items]),
             "avg_hallucinated_citation_count": average([item["hallucinated_citation_count"] for item in items]),
+            "avg_invalid_current_unit_citation_count": average([item["invalid_current_unit_citation_count"] for item in items]),
+            "avg_bare_memory_reference_count": average([item["bare_memory_reference_count"] for item in items]),
+            "avg_citation_format_violation_count": average([item["citation_format_violation_count"] for item in items]),
             "no_response_count": no_response_count,
             "response_coverage": 0.0 if prompts == 0 else (prompts - no_response_count) / prompts,
         }
@@ -157,12 +195,12 @@ def build_markdown(results: dict[str, Any]) -> str:
         "",
         "## Strategy Aggregates",
         "",
-        "| Strategy | Prompts | Response coverage | End-to-end required citation recall | Conditional required citation recall | Avg irrelevant citations | Avg hallucinated citations | No responses |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Strategy | Prompts | Response coverage | End-to-end required citation recall | Conditional required citation recall | Avg irrelevant citations | Avg hallucinated citations | Avg current-unit citations | Avg bare memory refs | Avg format violations | No responses |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for strategy, item in sorted(results["strategy_aggregates"].items()):
         lines.append(
-            "| {strategy} | {prompts} | {coverage} | {e2e} | {conditional} | {irrelevant} | {hallucinated} | {no_response} |".format(
+            "| {strategy} | {prompts} | {coverage} | {e2e} | {conditional} | {irrelevant} | {hallucinated} | {current_units} | {bare_refs} | {format_violations} | {no_response} |".format(
                 strategy=strategy,
                 prompts=item["prompts"],
                 coverage=format_float(item["response_coverage"]),
@@ -170,6 +208,9 @@ def build_markdown(results: dict[str, Any]) -> str:
                 conditional=format_float(item["avg_conditional_required_citation_recall"]),
                 irrelevant=format_float(item["avg_irrelevant_citation_count"]),
                 hallucinated=format_float(item["avg_hallucinated_citation_count"]),
+                current_units=format_float(item["avg_invalid_current_unit_citation_count"]),
+                bare_refs=format_float(item["avg_bare_memory_reference_count"]),
+                format_violations=format_float(item["avg_citation_format_violation_count"]),
                 no_response=item["no_response_count"],
             )
         )
@@ -178,7 +219,7 @@ def build_markdown(results: dict[str, Any]) -> str:
             "",
             "## Interpretation Boundary",
             "",
-            "Citation recall is a proxy for whether a response cites required memory IDs. It is not full memory-fact coverage, and a response can be useful or flawed in ways this script cannot detect.",
+            "Citation recall is a proxy for whether a response cites required memory IDs. Bare references like `m2` do not count as citations. Bracketed current-unit references like `[u2]` are diagnosed as invalid current-unit citations, not memory citations. These metrics are not full memory-fact coverage, and a response can be useful or flawed in ways this script cannot detect.",
             "",
         ]
     )

@@ -26,6 +26,9 @@ It extracts citations from `response_text` using bracketed memory IDs such as `[
 | `conditional_required_citation_recall` | Required cited count over required IDs that were actually injected. |
 | `irrelevant_citation_count` | Cited IDs that were injected but listed as expected avoid IDs. |
 | `hallucinated_citation_count` | Cited IDs not present in the injected memory context. |
+| `invalid_current_unit_citation_count` | Bracketed current-unit citations such as `[u2]`; these are not memory citations. |
+| `bare_memory_reference_count` | Bare memory references such as `m2` that are not inside brackets. |
+| `citation_format_violation_count` | Invalid current-unit citations plus bare memory references. |
 | `no_response_count` | `1` when `response_text` is empty for a prompt, else `0`. |
 
 ## End-To-End Vs Conditional Coverage
@@ -45,3 +48,11 @@ Automatic citation scoring does not judge:
 - answer usefulness or actionability.
 
 Use the citation scores alongside manual or LLM-judge review before making any output-level claim.
+
+## Citation Format Diagnostics
+
+Valid memory citations must be bracketed memory IDs such as `[m2]`. Bare references like `m2` do not count toward required-memory citation recall and are counted as citation-format violations.
+
+Bracketed current-unit references such as `[u1]` or `[u2]` are diagnosed separately as invalid current-unit citations. They may point to prompt context, but they are not durable memory citations and must not be counted as memory evidence.
+
+C1-R2 also hides current-unit IDs from LLM-facing prompt text. The `unit_id` values remain in JSON sidecar metadata for auditing, but current notes are rendered as plain bullets so the model has fewer non-memory IDs to cite.

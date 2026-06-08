@@ -1,0 +1,475 @@
+{
+  "duplicate_response_ids": [],
+  "extra_response_prompt_ids": [],
+  "metric_scope": "partial automatic citation metrics only; not full answer-quality judging",
+  "missing_response_prompt_ids": [],
+  "no_response_count": 0,
+  "prompt_count": 14,
+  "prompt_path": "data/v10/llm_downstream_lite/micro_pilot_prompt_pack.jsonl",
+  "prompt_scores": [
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0002",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [],
+      "conditional_required_citation_recall": null,
+      "conditional_required_total_count": 0,
+      "end_to_end_required_citation_recall": 0.0,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m1",
+        "m2",
+        "m3"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0002__no_memory",
+      "required_cited_count": 0,
+      "required_total_count": 3,
+      "strategy": "no_memory"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0002",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m1",
+        "m2"
+      ],
+      "conditional_required_citation_recall": 0.6666666666666666,
+      "conditional_required_total_count": 3,
+      "end_to_end_required_citation_recall": 0.6666666666666666,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0002__all_candidates",
+      "required_cited_count": 2,
+      "required_total_count": 3,
+      "strategy": "all_candidates"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0002",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m1",
+        "m2"
+      ],
+      "conditional_required_citation_recall": 0.6666666666666666,
+      "conditional_required_total_count": 3,
+      "end_to_end_required_citation_recall": 0.6666666666666666,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0002__router_selected",
+      "required_cited_count": 2,
+      "required_total_count": 3,
+      "strategy": "router_selected"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0002",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m1",
+        "m2"
+      ],
+      "conditional_required_citation_recall": 0.6666666666666666,
+      "conditional_required_total_count": 3,
+      "end_to_end_required_citation_recall": 0.6666666666666666,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0002__oracle_selected",
+      "required_cited_count": 2,
+      "required_total_count": 3,
+      "strategy": "oracle_selected"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0002",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m1",
+        "m2"
+      ],
+      "conditional_required_citation_recall": 0.6666666666666666,
+      "conditional_required_total_count": 3,
+      "end_to_end_required_citation_recall": 0.6666666666666666,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0002__top_k_naive",
+      "required_cited_count": 2,
+      "required_total_count": 3,
+      "strategy": "top_k_naive"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0002",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m1",
+        "m2"
+      ],
+      "conditional_required_citation_recall": 0.6666666666666666,
+      "conditional_required_total_count": 3,
+      "end_to_end_required_citation_recall": 0.6666666666666666,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0002__random_k",
+      "required_cited_count": 2,
+      "required_total_count": 3,
+      "strategy": "random_k"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0002",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m1",
+        "m2"
+      ],
+      "conditional_required_citation_recall": 0.6666666666666666,
+      "conditional_required_total_count": 3,
+      "end_to_end_required_citation_recall": 0.6666666666666666,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0002__shuffled_top_k",
+      "required_cited_count": 2,
+      "required_total_count": 3,
+      "strategy": "shuffled_top_k"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0006",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [],
+      "conditional_required_citation_recall": null,
+      "conditional_required_total_count": 0,
+      "end_to_end_required_citation_recall": 0.0,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0006__no_memory",
+      "required_cited_count": 0,
+      "required_total_count": 3,
+      "strategy": "no_memory"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0006",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m4",
+        "m2"
+      ],
+      "conditional_required_citation_recall": 0.6666666666666666,
+      "conditional_required_total_count": 3,
+      "end_to_end_required_citation_recall": 0.6666666666666666,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0006__all_candidates",
+      "required_cited_count": 2,
+      "required_total_count": 3,
+      "strategy": "all_candidates"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0006",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m2",
+        "m4"
+      ],
+      "conditional_required_citation_recall": 1.0,
+      "conditional_required_total_count": 2,
+      "end_to_end_required_citation_recall": 0.6666666666666666,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0006__router_selected",
+      "required_cited_count": 2,
+      "required_total_count": 3,
+      "strategy": "router_selected"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0006",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m2"
+      ],
+      "conditional_required_citation_recall": 0.3333333333333333,
+      "conditional_required_total_count": 3,
+      "end_to_end_required_citation_recall": 0.3333333333333333,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3",
+        "m4"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0006__oracle_selected",
+      "required_cited_count": 1,
+      "required_total_count": 3,
+      "strategy": "oracle_selected"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0006",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m2"
+      ],
+      "conditional_required_citation_recall": 0.5,
+      "conditional_required_total_count": 2,
+      "end_to_end_required_citation_recall": 0.3333333333333333,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3",
+        "m4"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0006__top_k_naive",
+      "required_cited_count": 1,
+      "required_total_count": 3,
+      "strategy": "top_k_naive"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0006",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m2",
+        "m4"
+      ],
+      "conditional_required_citation_recall": 1.0,
+      "conditional_required_total_count": 2,
+      "end_to_end_required_citation_recall": 0.6666666666666666,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m3"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0006__random_k",
+      "required_cited_count": 2,
+      "required_total_count": 3,
+      "strategy": "random_k"
+    },
+    {
+      "bare_memory_reference_count": 0,
+      "bare_memory_references": [],
+      "case_id": "v05e_gold_active_0006",
+      "citation_format_violation_count": 0,
+      "cited_memory_ids": [
+        "m4",
+        "m3"
+      ],
+      "conditional_required_citation_recall": 1.0,
+      "conditional_required_total_count": 2,
+      "end_to_end_required_citation_recall": 0.6666666666666666,
+      "hallucinated_citation_count": 0,
+      "hallucinated_citations": [],
+      "invalid_current_unit_citation_count": 0,
+      "invalid_current_unit_citations": [],
+      "irrelevant_citation_count": 0,
+      "irrelevant_citations": [],
+      "missing_required_citations": [
+        "m2"
+      ],
+      "no_response_count": 0,
+      "prompt_id": "v05e_gold_active_0006__shuffled_top_k",
+      "required_cited_count": 2,
+      "required_total_count": 3,
+      "strategy": "shuffled_top_k"
+    }
+  ],
+  "response_count": 14,
+  "response_path": "data/v10/llm_downstream_lite/micro_pilot_responses_deepseek_v4_flash.jsonl",
+  "strategy_aggregates": {
+    "all_candidates": {
+      "avg_bare_memory_reference_count": 0.0,
+      "avg_citation_format_violation_count": 0.0,
+      "avg_conditional_required_citation_recall": 0.6666666666666666,
+      "avg_end_to_end_required_citation_recall": 0.6666666666666666,
+      "avg_hallucinated_citation_count": 0.0,
+      "avg_invalid_current_unit_citation_count": 0.0,
+      "avg_irrelevant_citation_count": 0.0,
+      "no_response_count": 0,
+      "prompts": 2,
+      "response_coverage": 1.0
+    },
+    "no_memory": {
+      "avg_bare_memory_reference_count": 0.0,
+      "avg_citation_format_violation_count": 0.0,
+      "avg_conditional_required_citation_recall": null,
+      "avg_end_to_end_required_citation_recall": 0.0,
+      "avg_hallucinated_citation_count": 0.0,
+      "avg_invalid_current_unit_citation_count": 0.0,
+      "avg_irrelevant_citation_count": 0.0,
+      "no_response_count": 0,
+      "prompts": 2,
+      "response_coverage": 1.0
+    },
+    "oracle_selected": {
+      "avg_bare_memory_reference_count": 0.0,
+      "avg_citation_format_violation_count": 0.0,
+      "avg_conditional_required_citation_recall": 0.5,
+      "avg_end_to_end_required_citation_recall": 0.5,
+      "avg_hallucinated_citation_count": 0.0,
+      "avg_invalid_current_unit_citation_count": 0.0,
+      "avg_irrelevant_citation_count": 0.0,
+      "no_response_count": 0,
+      "prompts": 2,
+      "response_coverage": 1.0
+    },
+    "random_k": {
+      "avg_bare_memory_reference_count": 0.0,
+      "avg_citation_format_violation_count": 0.0,
+      "avg_conditional_required_citation_recall": 0.8333333333333333,
+      "avg_end_to_end_required_citation_recall": 0.6666666666666666,
+      "avg_hallucinated_citation_count": 0.0,
+      "avg_invalid_current_unit_citation_count": 0.0,
+      "avg_irrelevant_citation_count": 0.0,
+      "no_response_count": 0,
+      "prompts": 2,
+      "response_coverage": 1.0
+    },
+    "router_selected": {
+      "avg_bare_memory_reference_count": 0.0,
+      "avg_citation_format_violation_count": 0.0,
+      "avg_conditional_required_citation_recall": 0.8333333333333333,
+      "avg_end_to_end_required_citation_recall": 0.6666666666666666,
+      "avg_hallucinated_citation_count": 0.0,
+      "avg_invalid_current_unit_citation_count": 0.0,
+      "avg_irrelevant_citation_count": 0.0,
+      "no_response_count": 0,
+      "prompts": 2,
+      "response_coverage": 1.0
+    },
+    "shuffled_top_k": {
+      "avg_bare_memory_reference_count": 0.0,
+      "avg_citation_format_violation_count": 0.0,
+      "avg_conditional_required_citation_recall": 0.8333333333333333,
+      "avg_end_to_end_required_citation_recall": 0.6666666666666666,
+      "avg_hallucinated_citation_count": 0.0,
+      "avg_invalid_current_unit_citation_count": 0.0,
+      "avg_irrelevant_citation_count": 0.0,
+      "no_response_count": 0,
+      "prompts": 2,
+      "response_coverage": 1.0
+    },
+    "top_k_naive": {
+      "avg_bare_memory_reference_count": 0.0,
+      "avg_citation_format_violation_count": 0.0,
+      "avg_conditional_required_citation_recall": 0.5833333333333333,
+      "avg_end_to_end_required_citation_recall": 0.5,
+      "avg_hallucinated_citation_count": 0.0,
+      "avg_invalid_current_unit_citation_count": 0.0,
+      "avg_irrelevant_citation_count": 0.0,
+      "no_response_count": 0,
+      "prompts": 2,
+      "response_coverage": 1.0
+    }
+  }
+}
