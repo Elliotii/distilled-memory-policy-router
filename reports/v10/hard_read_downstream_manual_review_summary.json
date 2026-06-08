@@ -1,0 +1,302 @@
+{
+  "auto_by_strategy": {
+    "all_candidates": {
+      "avg_avoid_citations": 2.0,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.75,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.75,
+      "avg_wrong_scope_citations": 0.0,
+      "conditional_required_citation_recall": 1.0,
+      "e2e_required_citation_recall": 1.0,
+      "no_response_count": 0,
+      "prompt_count": 4,
+      "response_coverage": 1.0
+    },
+    "budgeted_candidate_order": {
+      "avg_avoid_citations": 0.25,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.0,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.0,
+      "avg_wrong_scope_citations": 0.0,
+      "conditional_required_citation_recall": 1.0,
+      "e2e_required_citation_recall": 1.0,
+      "no_response_count": 0,
+      "prompt_count": 4,
+      "response_coverage": 1.0
+    },
+    "keyword_top_k": {
+      "avg_avoid_citations": 1.75,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.5,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.5,
+      "avg_wrong_scope_citations": 0.0,
+      "conditional_required_citation_recall": 0.625,
+      "e2e_required_citation_recall": 0.5,
+      "no_response_count": 0,
+      "prompt_count": 4,
+      "response_coverage": 1.0
+    },
+    "no_memory": {
+      "avg_avoid_citations": 0.0,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.0,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.0,
+      "avg_wrong_scope_citations": 0.0,
+      "conditional_required_citation_recall": 0.0,
+      "e2e_required_citation_recall": 0.0,
+      "no_response_count": 0,
+      "prompt_count": 4,
+      "response_coverage": 1.0
+    },
+    "oracle_selected": {
+      "avg_avoid_citations": 0.0,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.0,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.0,
+      "avg_wrong_scope_citations": 0.0,
+      "conditional_required_citation_recall": 1.0,
+      "e2e_required_citation_recall": 1.0,
+      "no_response_count": 0,
+      "prompt_count": 4,
+      "response_coverage": 1.0
+    },
+    "random_k": {
+      "avg_avoid_citations": 1.25,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.25,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.5,
+      "avg_wrong_scope_citations": 0.0,
+      "conditional_required_citation_recall": 0.75,
+      "e2e_required_citation_recall": 0.5,
+      "no_response_count": 0,
+      "prompt_count": 4,
+      "response_coverage": 1.0
+    }
+  },
+  "by_case": {
+    "hard_read_pilot_001": {
+      "avg_citation_compliance": 2.0,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 1.0,
+      "avg_manual_utility": 10.0,
+      "avg_required_fact_coverage": 1.833333,
+      "avg_stale_or_contradictory_use": 1.666667,
+      "avg_task_response_quality": 1.5,
+      "count": 6,
+      "flag_counts": {
+        "citation_issue": 0,
+        "generic_no_memory": 1,
+        "hallucinated_memory": 0,
+        "irrelevant_contamination": 4,
+        "missing_required_fact": 1,
+        "stale_or_contradictory_contamination": 2,
+        "strong_answer": 1
+      }
+    },
+    "hard_read_pilot_002": {
+      "avg_citation_compliance": 2.0,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 1.166667,
+      "avg_manual_utility": 9.166667,
+      "avg_required_fact_coverage": 1.5,
+      "avg_stale_or_contradictory_use": 1.166667,
+      "avg_task_response_quality": 1.333333,
+      "count": 6,
+      "flag_counts": {
+        "citation_issue": 0,
+        "generic_no_memory": 1,
+        "hallucinated_memory": 0,
+        "irrelevant_contamination": 3,
+        "missing_required_fact": 3,
+        "stale_or_contradictory_contamination": 3,
+        "strong_answer": 2
+      }
+    },
+    "hard_read_pilot_003": {
+      "avg_citation_compliance": 2.0,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 1.333333,
+      "avg_manual_utility": 9.0,
+      "avg_required_fact_coverage": 1.333333,
+      "avg_stale_or_contradictory_use": 1.333333,
+      "avg_task_response_quality": 1.0,
+      "count": 6,
+      "flag_counts": {
+        "citation_issue": 0,
+        "generic_no_memory": 1,
+        "hallucinated_memory": 0,
+        "irrelevant_contamination": 2,
+        "missing_required_fact": 3,
+        "stale_or_contradictory_contamination": 2,
+        "strong_answer": 2
+      }
+    },
+    "hard_read_pilot_009": {
+      "avg_citation_compliance": 2.0,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 1.5,
+      "avg_manual_utility": 9.833333,
+      "avg_required_fact_coverage": 1.333333,
+      "avg_stale_or_contradictory_use": 1.666667,
+      "avg_task_response_quality": 1.333333,
+      "count": 6,
+      "flag_counts": {
+        "citation_issue": 0,
+        "generic_no_memory": 1,
+        "hallucinated_memory": 0,
+        "irrelevant_contamination": 2,
+        "missing_required_fact": 3,
+        "stale_or_contradictory_contamination": 2,
+        "strong_answer": 2
+      }
+    }
+  },
+  "by_strategy": {
+    "all_candidates": {
+      "avg_citation_compliance": 2.0,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 0.25,
+      "avg_manual_utility": 7.5,
+      "avg_required_fact_coverage": 2.0,
+      "avg_stale_or_contradictory_use": 0.5,
+      "avg_task_response_quality": 0.75,
+      "count": 4,
+      "flag_counts": {
+        "citation_issue": 0,
+        "generic_no_memory": 0,
+        "hallucinated_memory": 0,
+        "irrelevant_contamination": 4,
+        "missing_required_fact": 0,
+        "stale_or_contradictory_contamination": 4,
+        "strong_answer": 0
+      }
+    },
+    "budgeted_candidate_order": {
+      "avg_citation_compliance": 2.0,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 1.75,
+      "avg_manual_utility": 11.75,
+      "avg_required_fact_coverage": 2.0,
+      "avg_stale_or_contradictory_use": 2.0,
+      "avg_task_response_quality": 2.0,
+      "count": 4,
+      "flag_counts": {
+        "citation_issue": 0,
+        "generic_no_memory": 0,
+        "hallucinated_memory": 0,
+        "irrelevant_contamination": 1,
+        "missing_required_fact": 0,
+        "stale_or_contradictory_contamination": 0,
+        "strong_answer": 3
+      }
+    },
+    "keyword_top_k": {
+      "avg_citation_compliance": 2.0,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 0.75,
+      "avg_manual_utility": 7.5,
+      "avg_required_fact_coverage": 1.0,
+      "avg_stale_or_contradictory_use": 1.0,
+      "avg_task_response_quality": 0.75,
+      "count": 4,
+      "flag_counts": {
+        "citation_issue": 0,
+        "generic_no_memory": 0,
+        "hallucinated_memory": 0,
+        "irrelevant_contamination": 3,
+        "missing_required_fact": 3,
+        "stale_or_contradictory_contamination": 2,
+        "strong_answer": 0
+      }
+    },
+    "no_memory": {
+      "avg_citation_compliance": 2.0,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 2.0,
+      "avg_manual_utility": 10.25,
+      "avg_required_fact_coverage": 1.0,
+      "avg_stale_or_contradictory_use": 2.0,
+      "avg_task_response_quality": 1.25,
+      "count": 4,
+      "flag_counts": {
+        "citation_issue": 0,
+        "generic_no_memory": 4,
+        "hallucinated_memory": 0,
+        "irrelevant_contamination": 0,
+        "missing_required_fact": 4,
+        "stale_or_contradictory_contamination": 0,
+        "strong_answer": 0
+      }
+    },
+    "oracle_selected": {
+      "avg_citation_compliance": 2.0,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 2.0,
+      "avg_manual_utility": 12.0,
+      "avg_required_fact_coverage": 2.0,
+      "avg_stale_or_contradictory_use": 2.0,
+      "avg_task_response_quality": 2.0,
+      "count": 4,
+      "flag_counts": {
+        "citation_issue": 0,
+        "generic_no_memory": 0,
+        "hallucinated_memory": 0,
+        "irrelevant_contamination": 0,
+        "missing_required_fact": 0,
+        "stale_or_contradictory_contamination": 0,
+        "strong_answer": 4
+      }
+    },
+    "random_k": {
+      "avg_citation_compliance": 2.0,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 0.75,
+      "avg_manual_utility": 8.0,
+      "avg_required_fact_coverage": 1.0,
+      "avg_stale_or_contradictory_use": 1.25,
+      "avg_task_response_quality": 1.0,
+      "count": 4,
+      "flag_counts": {
+        "citation_issue": 0,
+        "generic_no_memory": 0,
+        "hallucinated_memory": 0,
+        "irrelevant_contamination": 3,
+        "missing_required_fact": 3,
+        "stale_or_contradictory_contamination": 3,
+        "strong_answer": 0
+      }
+    }
+  },
+  "claim_boundary": "Internal rubric review only; no downstream utility proof or learned-router result.",
+  "flag_keys": [
+    "missing_required_fact",
+    "irrelevant_contamination",
+    "stale_or_contradictory_contamination",
+    "hallucinated_memory",
+    "citation_issue",
+    "generic_no_memory",
+    "strong_answer"
+  ],
+  "review_method": "internal rubric review; diagnostic, not a formal benchmark",
+  "row_count": 24,
+  "score_keys": [
+    "required_fact_coverage",
+    "irrelevant_memory_contamination",
+    "stale_or_contradictory_use",
+    "hallucinated_memory_use",
+    "task_response_quality",
+    "citation_compliance"
+  ]
+}
