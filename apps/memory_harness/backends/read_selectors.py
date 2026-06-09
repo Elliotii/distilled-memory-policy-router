@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import random
 from typing import Dict, List
 
@@ -120,6 +121,80 @@ def select_replay_router_selected(scenario: JsonDict, candidates: List[JsonDict]
     }
 
 
+def _coerce_prediction_ids(prediction: JsonDict) -> tuple[List[str], str, str | None]:
+    parse_status = prediction.get("parse_status") or "ok"
+    parse_error = prediction.get("parse_error")
+    selected = prediction.get("selected_memory_ids")
+    if isinstance(selected, list):
+        return [item for item in selected if isinstance(item, str)], str(parse_status), parse_error
+
+    raw = prediction.get("raw_prediction", prediction.get("raw_output", ""))
+    if not isinstance(raw, str) or not raw.strip():
+        return [], "error", "missing selected_memory_ids and raw_prediction"
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        return [], "error", f"raw_prediction JSON parse error: {exc}"
+    read = parsed.get("read", [])
+    if not isinstance(read, list):
+        return [], "error", "raw_prediction.read is not a list"
+    return [item for item in read if isinstance(item, str)], str(parse_status), parse_error
+
+
+def select_replay_learned_router(
+    scenario: JsonDict,
+    candidates: List[JsonDict],
+    *,
+    replay_predictions: Dict[str, JsonDict] | None = None,
+    **_: object,
+) -> JsonDict:
+    candidate_ids = [memory["memory_id"] for memory in candidates]
+    case_id = str(scenario.get("case_id") or scenario.get("scenario_id"))
+    prediction = (replay_predictions or {}).get(case_id)
+    if prediction is None:
+        return {
+            "selected_memory_ids": [],
+            "backend": "replay_learned_router",
+            "diagnostics": {
+                "prediction_found": False,
+                "parse_status": "error",
+                "parse_error": "missing prediction for case_id",
+            },
+        }
+
+    raw_ids, parse_status, parse_error = _coerce_prediction_ids(prediction)
+    seen: set[str] = set()
+    duplicate_ids: List[str] = []
+    deduped_raw_ids: List[str] = []
+    for memory_id in raw_ids:
+        if memory_id in seen:
+            duplicate_ids.append(memory_id)
+            continue
+        seen.add(memory_id)
+        deduped_raw_ids.append(memory_id)
+
+    candidate_set = set(candidate_ids)
+    invalid_ids = [memory_id for memory_id in deduped_raw_ids if memory_id not in candidate_set]
+    selected = _ordered_existing(deduped_raw_ids, candidate_ids)
+    return {
+        "selected_memory_ids": selected,
+        "backend": "replay_learned_router",
+        "diagnostics": {
+            "prediction_found": True,
+            "prediction_source": prediction.get("source", ""),
+            "model_id": prediction.get("model_id", ""),
+            "adapter_id": prediction.get("adapter_id", ""),
+            "rendered_input_hash": prediction.get("rendered_input_hash", ""),
+            "parse_status": parse_status,
+            "parse_error": parse_error,
+            "raw_selected_memory_ids": raw_ids,
+            "duplicate_memory_ids": duplicate_ids,
+            "invalid_memory_ids": invalid_ids,
+            "selected_memory_ids_after_candidate_filter": selected,
+        },
+    }
+
+
 READ_SELECTORS = {
     "no_memory": select_no_memory,
     "all_candidates": select_all_candidates,
@@ -128,6 +203,7 @@ READ_SELECTORS = {
     "random_k": select_random_k,
     "oracle_selected": select_oracle_selected,
     "replay_router_selected": select_replay_router_selected,
+    "replay_learned_router": select_replay_learned_router,
 }
 
 
@@ -138,7 +214,14 @@ def run_read_selector(
     *,
     query: str,
     k: int,
+    replay_predictions: Dict[str, JsonDict] | None = None,
 ) -> JsonDict:
     if name not in READ_SELECTORS:
         raise ValueError(f"unknown read selector: {name}")
-    return READ_SELECTORS[name](scenario, candidates, query=query, k=k)
+    return READ_SELECTORS[name](
+        scenario,
+        candidates,
+        query=query,
+        k=k,
+        replay_predictions=replay_predictions,
+    )

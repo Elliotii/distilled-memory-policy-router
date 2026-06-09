@@ -55,6 +55,20 @@ def load_jsonl(path: str) -> List[JsonDict]:
     return rows
 
 
+def load_replay_predictions(path: str | None) -> Dict[str, JsonDict]:
+    if not path:
+        return {}
+    predictions: Dict[str, JsonDict] = {}
+    for row in load_jsonl(path):
+        case_id = row.get("case_id")
+        if not isinstance(case_id, str) or not case_id:
+            raise ValueError(f"{path}: replay prediction row missing case_id")
+        if case_id in predictions:
+            raise ValueError(f"{path}: duplicate replay prediction case_id {case_id}")
+        predictions[case_id] = row
+    return predictions
+
+
 def _require_keys(row: JsonDict, keys: Iterable[str], label: str) -> None:
     missing = [key for key in keys if key not in row]
     if missing:
@@ -412,6 +426,9 @@ def evaluate(args: argparse.Namespace) -> JsonDict:
 
     store = load_memory_pool(args.memory_pool)
     strategies = [item.strip() for item in args.strategies.split(",") if item.strip()]
+    replay_predictions = load_replay_predictions(args.replay_predictions)
+    if "replay_learned_router" in strategies and not replay_predictions:
+        raise ValueError("--replay-predictions is required for replay_learned_router")
     by_case_rows: List[JsonDict] = []
     trace_rows: List[JsonDict] = []
 
@@ -426,6 +443,7 @@ def evaluate(args: argparse.Namespace) -> JsonDict:
                 candidates,
                 query=query,
                 k=args.top_k,
+                replay_predictions=replay_predictions,
             )
             selected_ids = selection["selected_memory_ids"]
             selected_memories = store.get_by_ids(selected_ids)
@@ -455,6 +473,7 @@ def evaluate(args: argparse.Namespace) -> JsonDict:
                 "avoid_memory_ids": case["labels"].get("avoid_memory_ids", []),
                 "pre_budget_selection": pre_metrics,
                 "post_budget_context": post_metrics,
+                "selector_diagnostics": selection.get("diagnostics", {}),
                 "metrics": {
                     "pre_budget_selection": pre_metrics,
                     "post_budget_context": post_metrics,
@@ -476,6 +495,12 @@ def evaluate(args: argparse.Namespace) -> JsonDict:
         "case_count": len(cases),
         "memory_pool_count": len(memory_rows),
         "strategies": strategies,
+        "replay_predictions": {
+            "path": args.replay_predictions,
+            "count": len(replay_predictions),
+            "used": "replay_learned_router" in strategies,
+            "claim_boundary": "Saved predictions are replayed only; eval_hard_read does not load a model.",
+        },
         "aggregates": aggregates,
         "claim_boundary": "Selection-only pilot; no downstream answer quality or learned-router result.",
     }
@@ -506,6 +531,7 @@ def main() -> int:
     parser.add_argument("--top-k", type=int, default=4)
     parser.add_argument("--max-context-chars", type=int, default=1600)
     parser.add_argument("--out-dir", required=True)
+    parser.add_argument("--replay-predictions")
     args = parser.parse_args()
     metrics = evaluate(args)
     print(json.dumps({
