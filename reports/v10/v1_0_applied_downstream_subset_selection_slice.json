@@ -1,0 +1,158 @@
+{
+  "by_case": [
+    {
+      "avoid_injected": 1,
+      "case_id": "hard_read_v2_009",
+      "contradictory_injected": 1,
+      "injected_count": 4,
+      "injected_memory_ids": [
+        "m281",
+        "m282",
+        "m283",
+        "m286"
+      ],
+      "required_recall": 1.0,
+      "sensitive_boundary_injected": 0,
+      "stale_injected": 0,
+      "wrong_scope_injected": 0
+    },
+    {
+      "avoid_injected": 1,
+      "case_id": "hard_read_v2_026",
+      "contradictory_injected": 1,
+      "injected_count": 3,
+      "injected_memory_ids": [
+        "m451",
+        "m453",
+        "m456"
+      ],
+      "required_recall": 0.5,
+      "sensitive_boundary_injected": 0,
+      "stale_injected": 0,
+      "wrong_scope_injected": 0
+    },
+    {
+      "avoid_injected": 2,
+      "case_id": "hard_read_v2_011",
+      "contradictory_injected": 1,
+      "injected_count": 4,
+      "injected_memory_ids": [
+        "m301",
+        "m303",
+        "m305",
+        "m306"
+      ],
+      "required_recall": 0.5,
+      "sensitive_boundary_injected": 0,
+      "stale_injected": 1,
+      "wrong_scope_injected": 0
+    },
+    {
+      "avoid_injected": 1,
+      "case_id": "hard_read_v2_020",
+      "contradictory_injected": 0,
+      "injected_count": 3,
+      "injected_memory_ids": [
+        "m394",
+        "m391",
+        "m393"
+      ],
+      "required_recall": 0.5,
+      "sensitive_boundary_injected": 0,
+      "stale_injected": 0,
+      "wrong_scope_injected": 0
+    },
+    {
+      "avoid_injected": 1,
+      "case_id": "hard_read_v2_013",
+      "contradictory_injected": 1,
+      "injected_count": 3,
+      "injected_memory_ids": [
+        "m321",
+        "m326",
+        "m322"
+      ],
+      "required_recall": 1.0,
+      "sensitive_boundary_injected": 0,
+      "stale_injected": 0,
+      "wrong_scope_injected": 0
+    },
+    {
+      "avoid_injected": 0,
+      "case_id": "hard_read_v2_014",
+      "contradictory_injected": 0,
+      "injected_count": 2,
+      "injected_memory_ids": [
+        "m331",
+        "m332"
+      ],
+      "required_recall": 1.0,
+      "sensitive_boundary_injected": 0,
+      "stale_injected": 0,
+      "wrong_scope_injected": 0
+    },
+    {
+      "avoid_injected": 1,
+      "case_id": "hard_read_v2_031",
+      "contradictory_injected": 1,
+      "injected_count": 3,
+      "injected_memory_ids": [
+        "m501",
+        "m503",
+        "m506"
+      ],
+      "required_recall": 0.5,
+      "sensitive_boundary_injected": 0,
+      "stale_injected": 0,
+      "wrong_scope_injected": 0
+    },
+    {
+      "avoid_injected": 1,
+      "case_id": "hard_read_v2_032",
+      "contradictory_injected": 0,
+      "injected_count": 3,
+      "injected_memory_ids": [
+        "m511",
+        "m513",
+        "m514"
+      ],
+      "required_recall": 0.5,
+      "sensitive_boundary_injected": 0,
+      "stale_injected": 0,
+      "wrong_scope_injected": 0
+    }
+  ],
+  "case_count": 8,
+  "case_ids": [
+    "hard_read_v2_009",
+    "hard_read_v2_026",
+    "hard_read_v2_011",
+    "hard_read_v2_020",
+    "hard_read_v2_013",
+    "hard_read_v2_014",
+    "hard_read_v2_031",
+    "hard_read_v2_032"
+  ],
+  "contradictory_injection_cases": [
+    "hard_read_v2_009",
+    "hard_read_v2_026",
+    "hard_read_v2_011",
+    "hard_read_v2_013",
+    "hard_read_v2_031"
+  ],
+  "interpretation": "The 8-case downstream slice is harder for learned_router than the full 32-case selection set: mean required recall is lower and both missed required memories and contradictory contamination are concentrated in the slice.",
+  "mean_injected_count": 3.125,
+  "mean_required_recall": 0.6875,
+  "missed_required_cases": [
+    "hard_read_v2_026",
+    "hard_read_v2_011",
+    "hard_read_v2_020",
+    "hard_read_v2_031",
+    "hard_read_v2_032"
+  ],
+  "total_avoid_injected": 8,
+  "total_contradictory_injected": 5,
+  "total_sensitive_boundary_injected": 0,
+  "total_stale_injected": 1,
+  "total_wrong_scope_injected": 0
+}

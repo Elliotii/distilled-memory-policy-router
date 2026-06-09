@@ -1,0 +1,179 @@
+{
+  "by_case": {
+    "hard_read_v2_009": {
+      "cited_memory_ids": [],
+      "empty_response": true,
+      "prompt_id": "hard_read_v2_009__learned_router",
+      "rationale": "Empty API response after retries. It has no harmful content, but it is unusable and covers no required facts or citations.",
+      "score_citation_compliance": 0,
+      "score_hallucinated_memory_use": 2,
+      "score_irrelevant_memory_contamination": 2,
+      "score_required_fact_coverage": 0,
+      "score_stale_or_contradictory_use": 2,
+      "score_task_response_quality": 0,
+      "total_utility_score": 6,
+      "usable_response": false
+    },
+    "hard_read_v2_011": {
+      "cited_memory_ids": [
+        "m301",
+        "m305",
+        "m306",
+        "m303"
+      ],
+      "empty_response": false,
+      "prompt_id": "hard_read_v2_011__learned_router",
+      "rationale": "The response correctly suppresses revoked opt-in rows and includes audit fields, but misses the pytest command. It cites stale/contradictory memories only to reject them.",
+      "score_citation_compliance": 2,
+      "score_hallucinated_memory_use": 2,
+      "score_irrelevant_memory_contamination": 1,
+      "score_required_fact_coverage": 1,
+      "score_stale_or_contradictory_use": 1,
+      "score_task_response_quality": 1,
+      "total_utility_score": 8,
+      "usable_response": true
+    },
+    "hard_read_v2_013": {
+      "cited_memory_ids": [
+        "m321",
+        "m326",
+        "m322"
+      ],
+      "empty_response": false,
+      "prompt_id": "hard_read_v2_013__learned_router",
+      "rationale": "The response uses the contradictory Account-Owners route and directly violates the required Escalations-Refunds routing rule, despite including the pytest command.",
+      "score_citation_compliance": 2,
+      "score_hallucinated_memory_use": 2,
+      "score_irrelevant_memory_contamination": 0,
+      "score_required_fact_coverage": 0,
+      "score_stale_or_contradictory_use": 0,
+      "score_task_response_quality": 0,
+      "total_utility_score": 4,
+      "usable_response": true
+    },
+    "hard_read_v2_014": {
+      "cited_memory_ids": [
+        "m331",
+        "m332"
+      ],
+      "empty_response": false,
+      "prompt_id": "hard_read_v2_014__learned_router",
+      "rationale": "Complete, useful answer with the recovery_code_set_id rotation rule and correct pytest command; no hard-negative contamination.",
+      "score_citation_compliance": 2,
+      "score_hallucinated_memory_use": 2,
+      "score_irrelevant_memory_contamination": 2,
+      "score_required_fact_coverage": 2,
+      "score_stale_or_contradictory_use": 2,
+      "score_task_response_quality": 2,
+      "total_utility_score": 12,
+      "usable_response": true
+    },
+    "hard_read_v2_020": {
+      "cited_memory_ids": [
+        "m394",
+        "m391",
+        "m393"
+      ],
+      "empty_response": false,
+      "prompt_id": "hard_read_v2_020__learned_router",
+      "rationale": "The response covers the high-volume activation blocking rule and optional fields, but misses the pytest command and leans on an irrelevant profile-completeness memory.",
+      "score_citation_compliance": 2,
+      "score_hallucinated_memory_use": 2,
+      "score_irrelevant_memory_contamination": 1,
+      "score_required_fact_coverage": 1,
+      "score_stale_or_contradictory_use": 2,
+      "score_task_response_quality": 1,
+      "total_utility_score": 9,
+      "usable_response": true
+    },
+    "hard_read_v2_026": {
+      "cited_memory_ids": [
+        "m456",
+        "m453"
+      ],
+      "empty_response": false,
+      "prompt_id": "hard_read_v2_026__learned_router",
+      "rationale": "The answer follows the contradictory one-failure quarantine memory and omits the required three-failures-within-24-hours rule and Swift test command.",
+      "score_citation_compliance": 2,
+      "score_hallucinated_memory_use": 2,
+      "score_irrelevant_memory_contamination": 0,
+      "score_required_fact_coverage": 0,
+      "score_stale_or_contradictory_use": 0,
+      "score_task_response_quality": 0,
+      "total_utility_score": 4,
+      "usable_response": true
+    },
+    "hard_read_v2_031": {
+      "cited_memory_ids": [
+        "m501",
+        "m503",
+        "m506"
+      ],
+      "empty_response": false,
+      "prompt_id": "hard_read_v2_031__learned_router",
+      "rationale": "The response cites the 2 percent/6 minute threshold and annotation fields, but adopts the contradictory dashboard-only/business-hours suppression and misses the promtool validation command.",
+      "score_citation_compliance": 2,
+      "score_hallucinated_memory_use": 2,
+      "score_irrelevant_memory_contamination": 0,
+      "score_required_fact_coverage": 1,
+      "score_stale_or_contradictory_use": 0,
+      "score_task_response_quality": 0,
+      "total_utility_score": 5,
+      "usable_response": true
+    },
+    "hard_read_v2_032": {
+      "cited_memory_ids": [
+        "m511",
+        "m513",
+        "m514"
+      ],
+      "empty_response": false,
+      "prompt_id": "hard_read_v2_032__learned_router",
+      "rationale": "The response requires primary and backup owners and includes optional metadata, but misses the pytest command and cites an irrelevant style-check memory as a harmless validation note.",
+      "score_citation_compliance": 2,
+      "score_hallucinated_memory_use": 2,
+      "score_irrelevant_memory_contamination": 1,
+      "score_required_fact_coverage": 1,
+      "score_stale_or_contradictory_use": 2,
+      "score_task_response_quality": 1,
+      "total_utility_score": 9,
+      "usable_response": true
+    }
+  },
+  "by_strategy": {
+    "learned_router": {
+      "avg_citation_compliance": 1.75,
+      "avg_hallucinated_memory_use": 2.0,
+      "avg_irrelevant_memory_contamination": 0.875,
+      "avg_manual_utility": 7.125,
+      "avg_required_fact_coverage": 0.75,
+      "avg_stale_or_contradictory_use": 1.125,
+      "avg_task_response_quality": 0.625,
+      "count": 8,
+      "material_contamination_count": 3,
+      "missing_required_count": 7,
+      "no_response_count": 1,
+      "review_flag_counts": {
+        "citation_issue": 1,
+        "hallucinated_memory": 0,
+        "material_contamination": 3,
+        "missing_required_fact": 7,
+        "no_response": 1,
+        "stale_or_contradictory_material_use": 3,
+        "strong_answer": 1
+      },
+      "stale_or_contradictory_material_use_count": 3
+    }
+  },
+  "claim_boundary": "Eight-case manual rubric diagnostic only; not general downstream utility proof.",
+  "review_method": "Internal manual rubric review of 8 learned_router downstream responses.",
+  "row_count": 8,
+  "score_keys": [
+    "required_fact_coverage",
+    "irrelevant_memory_contamination",
+    "stale_or_contradictory_use",
+    "hallucinated_memory_use",
+    "task_response_quality",
+    "citation_compliance"
+  ]
+}

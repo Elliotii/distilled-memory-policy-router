@@ -19,12 +19,13 @@ Close the learned-router READ gap before any v1.0-applied packaging. Keep the wo
    - 7.6-E should add `learned_router` as a seventh strategy to the existing expanded 8-case downstream subset.
    - Use saved replay predictions only; do not run new model inference.
 
-4. Then: rubric review
-   - 7.6-F should review the learned-router downstream subset responses with the existing rubric.
-   - Report whether contradictory contamination harms answer quality.
+4. Completed: rubric review
+   - 7.6-F reviewed the learned-router downstream subset responses with the existing rubric.
+   - learned_router outperformed keyword/order/random in mean manual utility, but not no_memory, all_candidates, or oracle_selected.
+   - Contradictory contamination materially harmed several learned-router responses.
 
-5. Then: final packaging
-   - 7.6-G can resume final packaging after learned-router selection and downstream subset results are documented.
+5. Next: final packaging
+   - 7.6-G can resume final packaging now that learned-router selection, automatic downstream scoring, and manual rubric review are documented.
    - Package regardless of positive or negative learned-router downstream outcome.
 
 ## Prior Gap-Closure Plan
