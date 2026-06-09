@@ -156,6 +156,10 @@ See [demo/README.md](demo/README.md) for the fixture list and commands.
 
 A downstream-lite context-efficiency proxy is documented in [docs/DOWNSTREAM_LITE_BENCHMARK.md](docs/DOWNSTREAM_LITE_BENCHMARK.md). A tiny LLM downstream-lite micro-pilot is documented in [docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md](docs/LLM_DOWNSTREAM_LITE_BENCHMARK.md) and summarized in [reports/v10/v10_benchmark_synthesis.md](reports/v10/v10_benchmark_synthesis.md).
 
+## v1.0-Applied Artifacts
+
+The applied-harness package is summarized in [docs/V1_0_APPLIED_PORTFOLIO_SUMMARY.md](docs/V1_0_APPLIED_PORTFOLIO_SUMMARY.md), with a reviewer navigation map at [docs/V1_0_APPLIED_ARTIFACT_MAP.md](docs/V1_0_APPLIED_ARTIFACT_MAP.md). The final report is [reports/v10/v1_0_applied_final_report.md](reports/v10/v1_0_applied_final_report.md), and conservative claim boundaries are listed in [reports/v10/v1_0_applied_claim_boundary.md](reports/v10/v1_0_applied_claim_boundary.md).
+
 ## 中文作品集 / 面试材料
 
 中文作品集摘要、简历 bullet、面试讲解和 v1.1 roadmap 见 [docs/portfolio_zh/index.html](docs/portfolio_zh/index.html)。

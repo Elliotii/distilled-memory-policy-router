@@ -15,18 +15,24 @@ Close the learned-router READ gap before any v1.0-applied packaging. Keep the wo
    - 7.6-D formalizes the real AutoDL v0.5g offline prediction replay against expanded selection baselines.
    - Evidence is selection-level only; no downstream utility claim is made here.
 
-3. Next: downstream subset with learned-router
-   - 7.6-E should add `learned_router` as a seventh strategy to the existing expanded 8-case downstream subset.
-   - Use saved replay predictions only; do not run new model inference.
+3. Completed: downstream subset with learned-router
+   - 7.6-E added `learned_router` as a seventh strategy to the existing expanded 8-case downstream subset.
+   - It used saved replay predictions only; no new model inference was run.
 
 4. Completed: rubric review
    - 7.6-F reviewed the learned-router downstream subset responses with the existing rubric.
    - learned_router outperformed keyword/order/random in mean manual utility, but not no_memory, all_candidates, or oracle_selected.
    - Contradictory contamination materially harmed several learned-router responses.
 
-5. Next: final packaging
-   - 7.6-G can resume final packaging now that learned-router selection, automatic downstream scoring, and manual rubric review are documented.
-   - Package regardless of positive or negative learned-router downstream outcome.
+5. Completed: final packaging
+   - 7.6-G completed final packaging now that learned-router selection, automatic downstream scoring, manual rubric review, empty-response sensitivity, and downstream-slice analysis are documented.
+   - The final interpretation is negative/limited downstream transfer: learned_router did not beat no_memory or all_candidates downstream.
+
+## Next
+
+- User review.
+- Optional tag `v1.0-applied` after user review.
+- v1.1 only if continuing with contradiction-aware READ or related architecture changes.
 
 ## Prior Gap-Closure Plan
 
