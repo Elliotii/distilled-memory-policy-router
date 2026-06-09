@@ -1,0 +1,242 @@
+{
+  "by_prompt": [
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_009",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": false,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_009__learned_router",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "learned_router",
+      "valid_memory_citations": [],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m456"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_026",
+      "conditional_required_citation_recall": 0.0,
+      "contradictory_citations": [
+        "m456"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m453"
+      ],
+      "prompt_id": "hard_read_v2_026__learned_router",
+      "required_citation_recall": 0.0,
+      "required_citations": [],
+      "stale_citations": [],
+      "strategy": "learned_router",
+      "valid_memory_citations": [
+        "m456",
+        "m453"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m305",
+        "m306"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_011",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [
+        "m306"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m303"
+      ],
+      "prompt_id": "hard_read_v2_011__learned_router",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m301"
+      ],
+      "stale_citations": [
+        "m305"
+      ],
+      "strategy": "learned_router",
+      "valid_memory_citations": [
+        "m301",
+        "m305",
+        "m306",
+        "m303"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m394"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_020",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m393"
+      ],
+      "prompt_id": "hard_read_v2_020__learned_router",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m391"
+      ],
+      "stale_citations": [],
+      "strategy": "learned_router",
+      "valid_memory_citations": [
+        "m394",
+        "m391",
+        "m393"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m326"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_013",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [
+        "m326"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_013__learned_router",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m321",
+        "m322"
+      ],
+      "stale_citations": [],
+      "strategy": "learned_router",
+      "valid_memory_citations": [
+        "m321",
+        "m326",
+        "m322"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_014",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [],
+      "prompt_id": "hard_read_v2_014__learned_router",
+      "required_citation_recall": 1.0,
+      "required_citations": [
+        "m331",
+        "m332"
+      ],
+      "stale_citations": [],
+      "strategy": "learned_router",
+      "valid_memory_citations": [
+        "m331",
+        "m332"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m506"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_031",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [
+        "m506"
+      ],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m503"
+      ],
+      "prompt_id": "hard_read_v2_031__learned_router",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m501"
+      ],
+      "stale_citations": [],
+      "strategy": "learned_router",
+      "valid_memory_citations": [
+        "m501",
+        "m503",
+        "m506"
+      ],
+      "wrong_scope_citations": []
+    },
+    {
+      "avoid_citations": [
+        "m514"
+      ],
+      "bare_memory_refs": [],
+      "case_id": "hard_read_v2_032",
+      "conditional_required_citation_recall": 1.0,
+      "contradictory_citations": [],
+      "current_unit_citations": [],
+      "hallucinated_memory_citations": [],
+      "has_response": true,
+      "helpful_citations": [
+        "m513"
+      ],
+      "prompt_id": "hard_read_v2_032__learned_router",
+      "required_citation_recall": 0.5,
+      "required_citations": [
+        "m511"
+      ],
+      "stale_citations": [],
+      "strategy": "learned_router",
+      "valid_memory_citations": [
+        "m511",
+        "m513",
+        "m514"
+      ],
+      "wrong_scope_citations": []
+    }
+  ],
+  "by_strategy": {
+    "learned_router": {
+      "avg_avoid_citations": 0.875,
+      "avg_bare_memory_refs": 0.0,
+      "avg_contradictory_citations": 0.5,
+      "avg_current_unit_citations": 0.0,
+      "avg_hallucinated_memory_citations": 0.0,
+      "avg_stale_citations": 0.125,
+      "avg_wrong_scope_citations": 0.0,
+      "conditional_required_citation_recall": 0.75,
+      "e2e_required_citation_recall": 0.5,
+      "no_response_count": 1,
+      "prompt_count": 8,
+      "response_coverage": 0.875
+    }
+  },
+  "claim_boundary": "Automatic citation scaffold only; not answer-quality evaluation.",
+  "no_response_count": 1,
+  "prompt_count": 8,
+  "response_count": 7
+}

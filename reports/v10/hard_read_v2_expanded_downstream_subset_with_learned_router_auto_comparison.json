@@ -1,0 +1,216 @@
+{
+  "automatic_comparison_only": true,
+  "claim_boundaries": [
+    "automatic citation metrics only",
+    "no rubric review yet",
+    "no downstream utility proof yet",
+    "READ not solved",
+    "no production claim"
+  ],
+  "learned_router_observations": [
+    "learned_router automatic e2e required citation recall is above keyword_top_k, random_k, budgeted_candidate_order, and no_memory on this subset.",
+    "learned_router automatic e2e required citation recall is below oracle_selected and all_candidates on this subset.",
+    "learned_router has fewer avoid citations than keyword_top_k, random_k, and budgeted_candidate_order, but more than oracle_selected and no_memory.",
+    "Contradictory citations remain visible and require rubric review.",
+    "One learned_router API row returned an empty OK response after retries."
+  ],
+  "prompt_scope": {
+    "api_run_scope": "Only the 8 learned_router prompts were run in Context 7.6-E.",
+    "existing_prompt_count": 48,
+    "learned_router_prompt_count": 8,
+    "total_compared_prompt_count": 56
+  },
+  "rubric_review_completed": false,
+  "selection_level_only": false,
+  "strategies": {
+    "all_candidates": {
+      "automatic_citation_metrics": {
+        "avg_avoid_citations": 1.125,
+        "avg_bare_memory_refs": 0.0,
+        "avg_contradictory_citations": 0.25,
+        "avg_current_unit_citations": 0.0,
+        "avg_hallucinated_memory_citations": 0.0,
+        "avg_stale_citations": 0.375,
+        "avg_wrong_scope_citations": 0.0,
+        "conditional_required_citation_recall": 0.8125,
+        "e2e_required_citation_recall": 0.8125,
+        "no_response_count": 0,
+        "prompt_count": 8,
+        "response_coverage": 1.0
+      },
+      "selection_metrics": {
+        "case_count": 32,
+        "mean_post_injected_count": 10.0,
+        "mean_post_required_recall": 1.0,
+        "total_post_avoid_injected_count": 224,
+        "total_post_contradictory_injected_count": 32,
+        "total_post_sensitive_boundary_injected_count": 13,
+        "total_post_stale_injected_count": 32,
+        "total_post_wrong_scope_injected_count": 32
+      },
+      "selection_metrics_source_strategy": "all_candidates"
+    },
+    "budgeted_candidate_order": {
+      "automatic_citation_metrics": {
+        "avg_avoid_citations": 2.625,
+        "avg_bare_memory_refs": 0.0,
+        "avg_contradictory_citations": 0.0,
+        "avg_current_unit_citations": 0.0,
+        "avg_hallucinated_memory_citations": 0.0,
+        "avg_stale_citations": 0.0,
+        "avg_wrong_scope_citations": 0.75,
+        "conditional_required_citation_recall": 0.0,
+        "e2e_required_citation_recall": 0.0,
+        "no_response_count": 0,
+        "prompt_count": 8,
+        "response_coverage": 1.0
+      },
+      "selection_metrics": {
+        "case_count": 32,
+        "mean_post_injected_count": 4.0,
+        "mean_post_required_recall": 0.0625,
+        "total_post_avoid_injected_count": 96,
+        "total_post_contradictory_injected_count": 2,
+        "total_post_sensitive_boundary_injected_count": 1,
+        "total_post_stale_injected_count": 2,
+        "total_post_wrong_scope_injected_count": 25
+      },
+      "selection_metrics_source_strategy": "budgeted_candidate_order"
+    },
+    "keyword_top_k": {
+      "automatic_citation_metrics": {
+        "avg_avoid_citations": 2.375,
+        "avg_bare_memory_refs": 0.0,
+        "avg_contradictory_citations": 0.625,
+        "avg_current_unit_citations": 0.0,
+        "avg_hallucinated_memory_citations": 0.0,
+        "avg_stale_citations": 0.5,
+        "avg_wrong_scope_citations": 0.375,
+        "conditional_required_citation_recall": 0.5,
+        "e2e_required_citation_recall": 0.3125,
+        "no_response_count": 0,
+        "prompt_count": 8,
+        "response_coverage": 1.0
+      },
+      "selection_metrics": {
+        "case_count": 32,
+        "mean_post_injected_count": 4.0,
+        "mean_post_required_recall": 0.453125,
+        "total_post_avoid_injected_count": 73,
+        "total_post_contradictory_injected_count": 14,
+        "total_post_sensitive_boundary_injected_count": 4,
+        "total_post_stale_injected_count": 14,
+        "total_post_wrong_scope_injected_count": 6
+      },
+      "selection_metrics_source_strategy": "keyword_top_k"
+    },
+    "learned_router": {
+      "automatic_citation_metrics": {
+        "avg_avoid_citations": 0.875,
+        "avg_bare_memory_refs": 0.0,
+        "avg_contradictory_citations": 0.5,
+        "avg_current_unit_citations": 0.0,
+        "avg_hallucinated_memory_citations": 0.0,
+        "avg_stale_citations": 0.125,
+        "avg_wrong_scope_citations": 0.0,
+        "conditional_required_citation_recall": 0.75,
+        "e2e_required_citation_recall": 0.5,
+        "no_response_count": 1,
+        "prompt_count": 8,
+        "response_coverage": 0.875
+      },
+      "selection_metrics": {
+        "case_count": 32,
+        "mean_post_injected_count": 3.1875,
+        "mean_post_required_recall": 0.890625,
+        "total_post_avoid_injected_count": 25,
+        "total_post_contradictory_injected_count": 19,
+        "total_post_sensitive_boundary_injected_count": 0,
+        "total_post_stale_injected_count": 2,
+        "total_post_wrong_scope_injected_count": 0
+      },
+      "selection_metrics_source_strategy": "replay_learned_router"
+    },
+    "no_memory": {
+      "automatic_citation_metrics": {
+        "avg_avoid_citations": 0.0,
+        "avg_bare_memory_refs": 0.0,
+        "avg_contradictory_citations": 0.0,
+        "avg_current_unit_citations": 0.0,
+        "avg_hallucinated_memory_citations": 0.0,
+        "avg_stale_citations": 0.0,
+        "avg_wrong_scope_citations": 0.0,
+        "conditional_required_citation_recall": 0.0,
+        "e2e_required_citation_recall": 0.0,
+        "no_response_count": 0,
+        "prompt_count": 8,
+        "response_coverage": 1.0
+      },
+      "selection_metrics": {
+        "case_count": 32,
+        "mean_post_injected_count": 0.0,
+        "mean_post_required_recall": 0.0,
+        "total_post_avoid_injected_count": 0,
+        "total_post_contradictory_injected_count": 0,
+        "total_post_sensitive_boundary_injected_count": 0,
+        "total_post_stale_injected_count": 0,
+        "total_post_wrong_scope_injected_count": 0
+      },
+      "selection_metrics_source_strategy": "no_memory"
+    },
+    "oracle_selected": {
+      "automatic_citation_metrics": {
+        "avg_avoid_citations": 0.0,
+        "avg_bare_memory_refs": 0.0,
+        "avg_contradictory_citations": 0.0,
+        "avg_current_unit_citations": 0.0,
+        "avg_hallucinated_memory_citations": 0.0,
+        "avg_stale_citations": 0.0,
+        "avg_wrong_scope_citations": 0.0,
+        "conditional_required_citation_recall": 1.0,
+        "e2e_required_citation_recall": 1.0,
+        "no_response_count": 0,
+        "prompt_count": 8,
+        "response_coverage": 1.0
+      },
+      "selection_metrics": {
+        "case_count": 32,
+        "mean_post_injected_count": 3.0,
+        "mean_post_required_recall": 1.0,
+        "total_post_avoid_injected_count": 0,
+        "total_post_contradictory_injected_count": 0,
+        "total_post_sensitive_boundary_injected_count": 0,
+        "total_post_stale_injected_count": 0,
+        "total_post_wrong_scope_injected_count": 0
+      },
+      "selection_metrics_source_strategy": "oracle_selected"
+    },
+    "random_k": {
+      "automatic_citation_metrics": {
+        "avg_avoid_citations": 2.375,
+        "avg_bare_memory_refs": 0.0,
+        "avg_contradictory_citations": 0.25,
+        "avg_current_unit_citations": 0.0,
+        "avg_hallucinated_memory_citations": 0.0,
+        "avg_stale_citations": 0.5,
+        "avg_wrong_scope_citations": 0.25,
+        "conditional_required_citation_recall": 0.5625,
+        "e2e_required_citation_recall": 0.3125,
+        "no_response_count": 0,
+        "prompt_count": 8,
+        "response_coverage": 1.0
+      },
+      "selection_metrics": {
+        "case_count": 32,
+        "mean_post_injected_count": 4.0,
+        "mean_post_required_recall": 0.4375,
+        "total_post_avoid_injected_count": 90,
+        "total_post_contradictory_injected_count": 10,
+        "total_post_sensitive_boundary_injected_count": 7,
+        "total_post_stale_injected_count": 14,
+        "total_post_wrong_scope_injected_count": 14
+      },
+      "selection_metrics_source_strategy": "random_k"
+    }
+  }
+}
