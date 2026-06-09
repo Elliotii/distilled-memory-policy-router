@@ -6,6 +6,29 @@ Close the learned-router READ gap before any v1.0-applied packaging. Keep the wo
 
 ## Ordered Steps
 
+1. Completed: feasibility audit and conversion
+   - 7.6-A audited offline learned-router READ evaluation feasibility.
+   - 7.6-B rendered hard READ v2 expanded cases into v0.5 Unit JSON router inputs and added `replay_learned_router` scaffold.
+   - 7.6-C added the paste-only AutoDL prediction workflow.
+
+2. Completed: selection-level learned-router comparison
+   - 7.6-D formalizes the real AutoDL v0.5g offline prediction replay against expanded selection baselines.
+   - Evidence is selection-level only; no downstream utility claim is made here.
+
+3. Next: downstream subset with learned-router
+   - 7.6-E should add `learned_router` as a seventh strategy to the existing expanded 8-case downstream subset.
+   - Use saved replay predictions only; do not run new model inference.
+
+4. Then: rubric review
+   - 7.6-F should review the learned-router downstream subset responses with the existing rubric.
+   - Report whether contradictory contamination harms answer quality.
+
+5. Then: final packaging
+   - 7.6-G can resume final packaging after learned-router selection and downstream subset results are documented.
+   - Package regardless of positive or negative learned-router downstream outcome.
+
+## Prior Gap-Closure Plan
+
 1. Restore artifacts check
    - Confirm `results/v05g_bf16_lora/qwen35_json_r16_1000_4090/adapter` exists.
    - Confirm local `${QWEN35_MODEL_PATH}` exists.
@@ -58,4 +81,3 @@ Close the learned-router READ gap before any v1.0-applied packaging. Keep the wo
 ## v1.1 Future Work
 
 Live serving, real retriever integration, and trace viewer/UI work should remain v1.1 future work until offline replay results are understood.
-

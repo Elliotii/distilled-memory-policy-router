@@ -1,0 +1,102 @@
+{
+  "selection_level_only": true,
+  "prediction_provenance": {
+    "source": "v0.5g_offline_batch_prediction",
+    "prediction_rows": 32,
+    "debug_fixture_used": false,
+    "offline_prediction_host": "AutoDL",
+    "replay_strategy": "replay_learned_router"
+  },
+  "strategies": {
+    "no_memory": {
+      "case_count": 32,
+      "mean_post_required_recall": 0.0,
+      "mean_post_injected_count": 0.0,
+      "mean_context_chars": 0.0,
+      "total_post_avoid_injected_count": 0,
+      "total_post_stale_injected_count": 0,
+      "total_post_contradictory_injected_count": 0,
+      "total_post_wrong_scope_injected_count": 0,
+      "total_post_sensitive_boundary_injected_count": 0
+    },
+    "all_candidates": {
+      "case_count": 32,
+      "mean_post_required_recall": 1.0,
+      "mean_post_injected_count": 10.0,
+      "mean_context_chars": 1092.78125,
+      "total_post_avoid_injected_count": 224,
+      "total_post_stale_injected_count": 32,
+      "total_post_contradictory_injected_count": 32,
+      "total_post_wrong_scope_injected_count": 32,
+      "total_post_sensitive_boundary_injected_count": 13
+    },
+    "budgeted_candidate_order": {
+      "case_count": 32,
+      "mean_post_required_recall": 0.0625,
+      "mean_post_injected_count": 4.0,
+      "mean_context_chars": 441.90625,
+      "total_post_avoid_injected_count": 96,
+      "total_post_stale_injected_count": 2,
+      "total_post_contradictory_injected_count": 2,
+      "total_post_wrong_scope_injected_count": 25,
+      "total_post_sensitive_boundary_injected_count": 1
+    },
+    "keyword_top_k": {
+      "case_count": 32,
+      "mean_post_required_recall": 0.453125,
+      "mean_post_injected_count": 4.0,
+      "mean_context_chars": 451.1875,
+      "total_post_avoid_injected_count": 73,
+      "total_post_stale_injected_count": 14,
+      "total_post_contradictory_injected_count": 14,
+      "total_post_wrong_scope_injected_count": 6,
+      "total_post_sensitive_boundary_injected_count": 4
+    },
+    "random_k": {
+      "case_count": 32,
+      "mean_post_required_recall": 0.4375,
+      "mean_post_injected_count": 4.0,
+      "mean_context_chars": 439.0,
+      "total_post_avoid_injected_count": 90,
+      "total_post_stale_injected_count": 14,
+      "total_post_contradictory_injected_count": 10,
+      "total_post_wrong_scope_injected_count": 14,
+      "total_post_sensitive_boundary_injected_count": 7
+    },
+    "oracle_selected": {
+      "case_count": 32,
+      "mean_post_required_recall": 1.0,
+      "mean_post_injected_count": 3.0,
+      "mean_context_chars": 339.71875,
+      "total_post_avoid_injected_count": 0,
+      "total_post_stale_injected_count": 0,
+      "total_post_contradictory_injected_count": 0,
+      "total_post_wrong_scope_injected_count": 0,
+      "total_post_sensitive_boundary_injected_count": 0
+    },
+    "replay_learned_router": {
+      "case_count": 32,
+      "mean_post_required_recall": 0.890625,
+      "mean_post_injected_count": 3.1875,
+      "mean_context_chars": 362.84375,
+      "total_post_avoid_injected_count": 25,
+      "total_post_stale_injected_count": 2,
+      "total_post_contradictory_injected_count": 19,
+      "total_post_wrong_scope_injected_count": 0,
+      "total_post_sensitive_boundary_injected_count": 0
+    }
+  },
+  "key_observations": [
+    "replay_learned_router has substantially higher required recall than keyword_top_k, random_k, and budgeted_candidate_order on this 32-case fixture.",
+    "replay_learned_router injects far fewer avoid memories than all_candidates while retaining most required-memory recall.",
+    "replay_learned_router remains below oracle_selected and has nontrivial contradictory-memory contamination.",
+    "Downstream response tests are needed to determine whether the selection result improves answer quality."
+  ],
+  "claim_boundaries": [
+    "selection-level evidence only",
+    "no downstream utility proof",
+    "READ not solved",
+    "no production claim",
+    "no real retriever claim"
+  ]
+}

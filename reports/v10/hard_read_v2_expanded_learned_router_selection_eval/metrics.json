@@ -1,0 +1,34 @@
+{
+  "aggregates": {
+    "replay_learned_router": {
+      "case_count": 32,
+      "mean_context_chars": 362.84375,
+      "mean_post_injected_count": 3.1875,
+      "mean_post_required_recall": 0.890625,
+      "mean_pre_required_recall": 0.90625,
+      "mean_pre_selected_count": 3.25,
+      "total_post_avoid_injected_count": 25,
+      "total_post_contradictory_injected_count": 19,
+      "total_post_sensitive_boundary_injected_count": 0,
+      "total_post_stale_injected_count": 2,
+      "total_post_wrong_scope_injected_count": 0,
+      "total_pre_avoid_selected_count": 26,
+      "total_pre_contradictory_selected_count": 19,
+      "total_pre_sensitive_boundary_selected_count": 0,
+      "total_pre_stale_selected_count": 2,
+      "total_pre_wrong_scope_selected_count": 0
+    }
+  },
+  "case_count": 32,
+  "claim_boundary": "Selection-only pilot; no downstream answer quality or learned-router result.",
+  "memory_pool_count": 320,
+  "replay_predictions": {
+    "claim_boundary": "Saved predictions are replayed only; eval_hard_read does not load a model.",
+    "count": 32,
+    "path": "data/v10/learned_router_eval/hard_read_v2_expanded_v05_learned_router_predictions.jsonl",
+    "used": true
+  },
+  "strategies": [
+    "replay_learned_router"
+  ]
+}
